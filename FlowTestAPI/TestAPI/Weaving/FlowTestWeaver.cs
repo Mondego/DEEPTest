@@ -29,11 +29,16 @@ namespace FlowTestAPI
 				TypeDefinition moduleMainClassType = module.Types.Single(t => t.Name == "MainClass");
 
 				string testDriverHookFieldName = "mTestDriverHook";
-				FieldDefinition addTestDriverHookFieldDef = new FieldDefinition(
+				/*FieldDefinition addTestDriverHookFieldDef = new FieldDefinition(
 					testDriverHookFieldName,
 					Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
 					module.Import(typeof(FlowTestAwayTeam)));
-				moduleMainClassType.Fields.Add(addTestDriverHookFieldDef);
+				moduleMainClassType.Fields.Add(addTestDriverHookFieldDef);*/
+				WeavingCustomFields.WeavePublicStaticFieldIntoModuleEntry(
+					m: module,
+					customFieldName: "mTestDriverHook",
+					fieldType: typeof(FlowTestAwayTeam)
+				);
 
 				//
 				// Next we need to invoke a constructor for a FlowTestAwayTeam named mTestDriverHook, 
