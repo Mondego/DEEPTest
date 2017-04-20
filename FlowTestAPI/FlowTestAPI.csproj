@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{06F87015-D1B2-4BD8-8CE1-F484F65BC6A4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FlowTestAPI</RootNamespace>
+    <AssemblyName>FlowTestAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b9a188c8922137c6">
+      <Package>monodevelop</Package>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestAPI\Runtime\FlowTestRuntime.cs" />
+    <Compile Include="TestAPI\Runtime\TargetComponentRuntime.cs" />
+    <Compile Include="TestAPI\Weaving\FlowTestWeaver.cs" />
+    <Compile Include="TestAPI\Runtime\FlowTestPointOfInterest.cs" />
+    <Compile Include="TestAPI\Runtime\FlowTestPropertyOfInterest.cs" />
+    <Compile Include="TestAPI\FlowTestAttributes\FTTargetAttribute.cs" />
+    <Compile Include="TestAPI\Runtime\PropertyOfInterestRequestPayload.cs" />
+    <Compile Include="TestAPI\Runtime\FlowTestAwayTeam.cs" />
+    <Compile Include="TestAPI\Runtime\FlowTestRuntimeMothership.cs" />
+    <Compile Include="TestAPI\Runtime\FlowTestRuntimeConnection.cs" />
+    <Compile Include="TestAPI\Weaving\WeavingCustomFields.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestAPI\" />
+    <Folder Include="TestAPI\Runtime\" />
+    <Folder Include="TestAPI\Weaving\" />
+    <Folder Include="TestAPI\FlowTestAttributes\" />
+  </ItemGroup>
+</Project>
