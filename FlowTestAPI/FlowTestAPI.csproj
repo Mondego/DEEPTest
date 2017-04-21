@@ -58,6 +58,7 @@
     <Compile Include="TestAPI\Runtime\FlowTestRuntimeMothership.cs" />
     <Compile Include="TestAPI\Runtime\FlowTestRuntimeConnection.cs" />
     <Compile Include="TestAPI\Weaving\WeavingCustomFields.cs" />
+    <Compile Include="TestAPI\Weaving\WeavingAtLocation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

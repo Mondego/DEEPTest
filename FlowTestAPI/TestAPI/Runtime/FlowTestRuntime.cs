@@ -33,6 +33,14 @@ namespace FlowTestAPI
 		public void WatchPoint(FlowTestPointOfInterest poi)
 		{
 			string pathToPointOfInterest = poi.PointOfInterest;
+
+			if (poi.watchAfter) {
+
+			}
+
+			if (poi.watchBefore) {
+
+			}
 		}
 
 		// Weaving API

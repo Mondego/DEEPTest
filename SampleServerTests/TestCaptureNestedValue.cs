@@ -1,9 +1,9 @@
 ﻿using System;
 using FlowTestAPI;
-using NUnit.Framework;
 using System.IO;
 using System.Threading;
 using SampleServer;
+using NUnit.Framework;
 
 namespace SampleServerTests
 {
@@ -17,7 +17,9 @@ namespace SampleServerTests
 		string WovenComponentLocation = TestContext.CurrentContext.TestDirectory + "/SampleServer.exe.woven";
 
 		FlowTestPropertyOfInterest chatServerInnerValue;
+		FlowTestPropertyOfInterest chatServerNMessagesSent;
 		FlowTestPointOfInterest chatServerMsgSent;
+
 
 		[OneTimeSetUp]
 		public void SetUpFlowTest()
@@ -38,13 +40,16 @@ namespace SampleServerTests
 				destinationExecutable: WovenComponentLocation
 			);
 
-			/*chatServerMsgSent = new FlowTestPointOfInterest ("EchoServer.SendMessage");
+			chatServerMsgSent = new FlowTestPointOfInterest ("EchoServer.SendMessage");
 			chatServerMsgSent.After();
-			chatServerMsgSent.Before();
-			runtime.WatchPoint (chatServerMsgSent);*/
+			runtime.WatchPoint (chatServerMsgSent);
 
 			chatServerInnerValue = new FlowTestPropertyOfInterest ("EchoServer.inner");
 			runtime.WatchProperty (chatServerInnerValue);
+
+			chatServerNMessagesSent = new FlowTestPropertyOfInterest("EchoServer.nMessagesSent");
+			runtime.WatchProperty(chatServerNMessagesSent);
+
 			runtime.Write ();
 
 			// Execution
@@ -71,6 +76,26 @@ namespace SampleServerTests
 			var expectedValue = 42;
 		
 			Assert.AreEqual(expectedValue, poiRequestResult);
+		}
+
+		[Test]
+		public void Test_CountEchoServerMessagesSent()
+		{
+			string clientLocation = TestContext.CurrentContext.TestDirectory + "/SampleClient.exe";
+
+			TargetComponentRuntime client1 = new TargetComponentRuntime(clientLocation, new string[] { "7777" });
+
+			int expectedInitialNMessages = 0;
+			var actualInitialNMessages = chatServerNMessagesSent.GetPropertyFromRuntime (runtime);
+			Assert.AreEqual(expectedInitialNMessages, actualInitialNMessages);
+
+			client1.SendMessageToComponentConsole("Hello from Client1");
+			Thread.Sleep(1000);
+			client1.Stop();
+
+			int expectedNMessages = 1;
+			var actualNMessages = chatServerNMessagesSent.GetPropertyFromRuntime (runtime);
+			Assert.AreEqual(expectedNMessages, actualNMessages);
 		}
 			
 		[TearDown]

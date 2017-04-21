@@ -36,7 +36,7 @@ namespace FlowTestAPI
 			ProcessStreamInterface = process.StandardInput;
 		}
 
-		public void SendMessagToProcessConsole(string msg)
+		public void SendMessageToComponentConsole(string msg)
 		{
 			ProcessStreamInterface.WriteLine(msg);
 			Thread.Sleep(1000);

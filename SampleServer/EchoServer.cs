@@ -14,6 +14,7 @@ namespace SampleServer
 		protected bool running = false;
 		protected int mPort;
 		private int inner = 42;
+		private int nMessagesSent = 0;
 
 		public EchoServer (int serverPort)
 		{
@@ -42,6 +43,7 @@ namespace SampleServer
 		{
 			byte[] encodedMessage = Encoding.ASCII.GetBytes(messageText);
 			mListener.Client.SendTo(encodedMessage, destination);
+			nMessagesSent += 1;
 		}
 
 		public void Stop()
