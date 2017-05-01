@@ -20,7 +20,6 @@ namespace SampleServerTests
 		FlowTestPropertyOfInterest chatServerNMessagesSent;
 		FlowTestPointOfInterest chatServerMsgSent;
 
-
 		[OneTimeSetUp]
 		public void SetUpFlowTest()
 		{

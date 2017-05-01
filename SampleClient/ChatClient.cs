@@ -53,7 +53,7 @@ namespace SampleClient
 
 		protected void ReceivedMessage(string message)
 		{
-			Console.WriteLine("[Server] {0}", message);
+			Console.WriteLine("[From Server] {0}", message);
 		}
 
 		public void Stop()
