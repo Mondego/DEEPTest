@@ -25,8 +25,6 @@ namespace FlowTestAPI
 					Console.WriteLine("[FTEndPoint] " + e.Data);
 				}
 			};
-
-			Start();
 		}
 
 		public void Start()

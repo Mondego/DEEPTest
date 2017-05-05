@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace SampleServerTests
 {
 	[TestFixture]
-	public class Test_CaptureNestedValueAtRuntime
+	public class Test_CaptureNestedProperty
 	{
 		FlowTestRuntime runtime;
 		TargetComponentRuntime wovenComponent;
