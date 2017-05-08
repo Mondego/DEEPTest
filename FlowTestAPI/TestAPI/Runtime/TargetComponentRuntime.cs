@@ -22,7 +22,7 @@ namespace FlowTestAPI
 			{
 				if (e.Data.Length > 0)
 				{
-					Console.WriteLine("[FTEndPoint] " + e.Data);
+					Console.WriteLine("[Debug] " + e.Data);
 				}
 			};
 		}
@@ -32,6 +32,7 @@ namespace FlowTestAPI
 			process.Start();
 			process.BeginOutputReadLine();
 			ProcessStreamInterface = process.StandardInput;
+			Thread.Sleep (3000);
 		}
 
 		public void SendMessageToComponentConsole(string msg)

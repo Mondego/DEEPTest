@@ -50,8 +50,6 @@
     <Compile Include="TestAPI\Runtime\FlowTestRuntime.cs" />
     <Compile Include="TestAPI\Runtime\TargetComponentRuntime.cs" />
     <Compile Include="TestAPI\Weaving\FlowTestWeaver.cs" />
-    <Compile Include="TestAPI\Runtime\FlowTestPointOfInterest.cs" />
-    <Compile Include="TestAPI\Runtime\FlowTestPropertyOfInterest.cs" />
     <Compile Include="TestAPI\FlowTestAttributes\FTTargetAttribute.cs" />
     <Compile Include="TestAPI\Runtime\PropertyOfInterestRequestPayload.cs" />
     <Compile Include="TestAPI\Runtime\FlowTestAwayTeam.cs" />
@@ -59,6 +57,10 @@
     <Compile Include="TestAPI\Runtime\FlowTestRuntimeConnection.cs" />
     <Compile Include="TestAPI\Weaving\WeavingCustomFields.cs" />
     <Compile Include="TestAPI\Weaving\WeavingAtLocation.cs" />
+    <Compile Include="TestAPI\Instrumentation\PointOfInterest\FlowTestPointOfInterest.cs" />
+    <Compile Include="TestAPI\Instrumentation\PointOfInterest\FlowTestPointOfInterestHandlers.cs" />
+    <Compile Include="TestAPI\Instrumentation\PropertyOfInterest\FlowTestPropertyOfInterest.cs" />
+    <Compile Include="TestAPI\Instrumentation\PointOfInterest\PointofInterestPayload.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -69,5 +71,8 @@
     <Folder Include="TestAPI\Runtime\" />
     <Folder Include="TestAPI\Weaving\" />
     <Folder Include="TestAPI\FlowTestAttributes\" />
+    <Folder Include="TestAPI\Instrumentation\" />
+    <Folder Include="TestAPI\Instrumentation\PointOfInterest\" />
+    <Folder Include="TestAPI\Instrumentation\PropertyOfInterest\" />
   </ItemGroup>
 </Project>

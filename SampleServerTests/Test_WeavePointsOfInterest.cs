@@ -1,8 +1,10 @@
 ﻿using System;
-using NUnit.Framework;
-using FlowTestAPI;
 using System.IO;
 using System.Threading;
+
+using NUnit.Framework;
+
+using FlowTestAPI;
 
 namespace SampleServerTests
 {
@@ -24,14 +26,16 @@ namespace SampleServerTests
 			);
 
 			Console.WriteLine ("=== One Time Setup ===");
-			Console.WriteLine ("Source Component Path: " + runtime.SourcePath);
-			Console.WriteLine ("Weaving Into Component: " + runtime.InstrumentedPath);
+			Console.WriteLine ("Source Component Path: " + runtime.getSourceComponentPath());
+			Console.WriteLine ("Weaving Into Component: " + runtime.getDestinationComponentPath());
 
 			// Weaving a point of interest
-			chatServerMsgSent = new FlowTestPointOfInterest ("EchoServer.SendMessage");
-			chatServerMsgSent.After();
+			chatServerMsgSent = new FlowTestPointOfInterest (
+				parentObject: "ChatServer", 
+				methodToWatch: "SendMessage"
+			);
 			runtime.WatchPoint (chatServerMsgSent);
-
+		
 			runtime.Write ();
 
 			// Running a woven executable

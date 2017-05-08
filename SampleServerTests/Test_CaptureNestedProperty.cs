@@ -20,7 +20,7 @@ namespace SampleServerTests
 		FlowTestPropertyOfInterest chatServerNMessagesSent;
 		FlowTestPointOfInterest chatServerMsgSent;
 
-		[OneTimeSetUp]
+		//[OneTimeSetUp]
 		public void SetUpFlowTest()
 		{
 			// Initialization 
@@ -39,10 +39,6 @@ namespace SampleServerTests
 				destinationExecutable: WovenComponentLocation
 			);
 
-			chatServerMsgSent = new FlowTestPointOfInterest ("EchoServer.SendMessage");
-			chatServerMsgSent.After();
-			runtime.WatchPoint (chatServerMsgSent);
-
 			chatServerInnerValue = new FlowTestPropertyOfInterest ("EchoServer.inner");
 			runtime.WatchProperty (chatServerInnerValue);
 
@@ -58,7 +54,7 @@ namespace SampleServerTests
 			Thread.Sleep (5000);
 		}
 
-		[OneTimeTearDown]
+		//[OneTimeTearDown]
 		public void TearDownFlowTest()
 		{
 			Console.WriteLine ("=== One Time Teardown ===");
@@ -66,7 +62,7 @@ namespace SampleServerTests
 			runtime.Stop ();
 		}
 
-		[Test]
+		//[Test]
 		public void Test_CaptureNestedValue()
 		{
 			Thread.Sleep (5000);
@@ -77,7 +73,7 @@ namespace SampleServerTests
 			Assert.AreEqual(expectedValue, poiRequestResult);
 		}
 
-		[Test]
+		//[Test]
 		public void Test_CountEchoServerMessagesSent()
 		{
 			string clientLocation = TestContext.CurrentContext.TestDirectory + "/SampleClient.exe";
@@ -97,7 +93,7 @@ namespace SampleServerTests
 			Assert.AreEqual(expectedNMessages, actualNMessages);
 		}
 			
-		[TearDown]
+		//[TearDown]
 		public void FormattingBetweenTests()
 		{
 			Console.WriteLine("====================");

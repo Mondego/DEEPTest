@@ -2,14 +2,12 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
-
-// Should I need this
 using FlowTestAPI;
 using System.Collections.Generic;
 
 namespace SampleServer
 {
-	public class EchoServer
+	public class ChatServer
 	{
 		protected UdpClient mListener;
 		protected IPEndPoint utilityEndpoint;
@@ -19,7 +17,7 @@ namespace SampleServer
 		private int nMessagesSent = 0;
 		private List<int> clientPorts;
 
-		public EchoServer (int serverPort)
+		public ChatServer (int serverPort)
 		{
 			mPort = serverPort;
 			mListener = new UdpClient(mPort);
@@ -30,7 +28,7 @@ namespace SampleServer
 		public void Run()
 		{
 			running = true;
-			Console.WriteLine("Running echo server at localhost:{0}", mPort);
+			Console.WriteLine("Running chat server at localhost:{0}", mPort);
 
 			while (running == true) {
 				if (mListener.Available > 0) {
@@ -43,8 +41,18 @@ namespace SampleServer
 		{
 			byte[] messageBuffer = mListener.Receive(ref utilityEndpoint);
 			string received = Encoding.ASCII.GetString(messageBuffer, 0, messageBuffer.Length);
-			Console.WriteLine("[From Client] {0}", received);
-			SendMessage(received, utilityEndpoint);
+			Console.WriteLine("[From Client {0}] {1}", utilityEndpoint.Port, received);
+
+			if (!clientPorts.Contains (utilityEndpoint.Port)) {
+				clientPorts.Add (utilityEndpoint.Port);
+			}
+
+			foreach (int localClientPort in clientPorts)
+			{
+				Console.WriteLine ("Hardcoded Before SendMsg");
+				SendMessage(received, new IPEndPoint(IPAddress.Any, localClientPort));
+				Console.WriteLine ("Hardcoded After SendMsg");
+			}
 		}
 
 		protected void SendMessage(string messageText, IPEndPoint destination)

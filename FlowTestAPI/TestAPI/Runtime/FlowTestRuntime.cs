@@ -15,16 +15,6 @@ namespace FlowTestAPI
 		private string pathToSourceExecutable;
 		private string pathToWriteWovenExecutable;
 
-		public string SourcePath 
-		{ 
-			get { return pathToSourceExecutable; }
-		}
-
-		public string InstrumentedPath
-		{
-			get { return pathToWriteWovenExecutable; }
-		}
-			
 		public FlowTestRuntime (string sourceExecutable, string destinationExecutable)
 		{
 			// This initializes the messenger for all communication between the test runtime
@@ -32,14 +22,28 @@ namespace FlowTestAPI
 			mothership = new FlowTestRuntimeMothership ();
 
 			// This initializes the weaving API, responsible for doing actual module read/writes
-			//weaver = new FlowTestWeaver();
 			pathToSourceExecutable = sourceExecutable;
 			pathToWriteWovenExecutable = destinationExecutable;
+			weaver = new FlowTestWeaver (
+				sourceModulePath: pathToSourceExecutable,
+				destinationModulePath: pathToWriteWovenExecutable
+			);
 
+			// For now, we don't want to hold on to previously woven executables
 			if (File.Exists(pathToWriteWovenExecutable)) {
 				Console.WriteLine("Deleting stale instrumented file {0}", pathToWriteWovenExecutable);
 				File.Delete(pathToWriteWovenExecutable);
 			}
+		}
+
+		public string getSourceComponentPath()
+		{
+			return pathToSourceExecutable;
+		}
+
+		public string getDestinationComponentPath()
+		{
+			return pathToWriteWovenExecutable;
 		}
 
 		// Tracking Properties and Points of Interest
@@ -51,27 +55,17 @@ namespace FlowTestAPI
 
 		public void WatchPoint(FlowTestPointOfInterest poi)
 		{
-			string pathToPointOfInterest = poi.PointOfInterest;
-
-			if (poi.watchAfter) {
-
-			}
-
-			if (poi.watchBefore) {
-
-			}
+			weaver.WeaveWatchpointAtPointOfInterest (poi);
 		}
 
 		// Weaving API
 		public void Write()
 		{
-			FlowTestWeaver.BindModuleToTestDriver(
-				modulePath: pathToSourceExecutable,
-				destinationPath: pathToWriteWovenExecutable
-			);
+			weaver.WriteInstrumentedCodeToFile ();
 		}
 
 		// Doing things during the test
+
 		public void ExecuteWovenWithArguments(params string[] arguments)
 		{
 			List<string> args = new List<string>();
