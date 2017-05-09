@@ -19,10 +19,20 @@ namespace FlowTestAPI
 				customFieldName,
 				Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
 				m.Import (fieldType));
-
 			moduleMainClassType.Fields.Add (publicStaticField); 
 
 			// 
+		}
+
+		public static void WeaveCustomFieldIntoClass (
+			ModuleDefinition m,
+			string destinationClassName,
+			FieldAttributes customFieldAttributes,
+			Type customFieldType,
+			string customFieldName
+		)
+		{
+
 		}
 	}
 }

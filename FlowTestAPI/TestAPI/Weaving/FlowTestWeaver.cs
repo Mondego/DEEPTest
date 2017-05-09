@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Linq;
+
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System.Linq;
 
 namespace FlowTestAPI
 {
 	public class FlowTestWeaver
 	{
-		ModuleDefinition mModule;
+		private ModuleDefinition mModule;
 
-		string moduleReadPath;
-		string moduleWritePath;
+		private string moduleReadPath;
+		private string moduleWritePath;
 
 		public FlowTestWeaver(string sourceModulePath, string destinationModulePath)
 		{

@@ -49,9 +49,7 @@ namespace SampleServer
 
 			foreach (int localClientPort in clientPorts)
 			{
-				Console.WriteLine ("Hardcoded Before SendMsg");
 				SendMessage(received, new IPEndPoint(IPAddress.Any, localClientPort));
-				Console.WriteLine ("Hardcoded After SendMsg");
 			}
 		}
 

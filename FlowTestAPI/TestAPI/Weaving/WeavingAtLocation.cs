@@ -24,7 +24,7 @@ namespace FlowTestAPI
 				{
 					WeaveDebugStatementBeforeMethod(
 						targetMethod: poiMethod,
-						printDebugValue: "Woven before SendMsg"
+						printDebugValue: "Some weaving happened before " + poi.methodOfInterest
 					);
 				}
 
@@ -32,7 +32,7 @@ namespace FlowTestAPI
 				{
 					WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,
-						printDebugValue: "Woven after SendMsg"
+						printDebugValue: "Some weaving happened after " + poi.methodOfInterest
 					);
 				}
 			}
