@@ -52,15 +52,15 @@
     <Compile Include="TestAPI\FlowTestAttributes\FTTargetAttribute.cs" />
     <Compile Include="TestAPI\Weaving\WeavingCustomFields.cs" />
     <Compile Include="TestAPI\Weaving\WeavingAtLocation.cs" />
-    <Compile Include="TestAPI\Runtime\Instrumentation\PointOfInterest\FlowTestPointOfInterest.cs" />
-    <Compile Include="TestAPI\Runtime\Instrumentation\PointOfInterest\FlowTestPointOfInterestHandlers.cs" />
-    <Compile Include="TestAPI\Runtime\Instrumentation\FlowTestInstrumentationEvent.cs" />
     <Compile Include="TestAPI\Runtime\Messaging\FlowTestAwayTeam.cs" />
     <Compile Include="TestAPI\Runtime\Messaging\FlowTestRuntimeMothership.cs" />
     <Compile Include="TestAPI\Runtime\Messaging\FlowTestRuntimeConnection.cs" />
     <Compile Include="TestAPI\Runtime\NetworkedComponents\TargetComponentRuntime.cs" />
-    <Compile Include="TestAPI\Runtime\Instrumentation\PropertyOfInterest\FlowTestPropertyOfInterest.cs" />
-    <Compile Include="TestAPI\Runtime\Instrumentation\InstrumentationToWeaveForTestFlows.cs" />
+    <Compile Include="TestAPI\Instrumentation\FlowTestInstrumentationEvent.cs" />
+    <Compile Include="TestAPI\Instrumentation\InstrumentationToWeaveForTestFlows.cs" />
+    <Compile Include="TestAPI\Instrumentation\PointOfInterest\FlowTestPointOfInterest.cs" />
+    <Compile Include="TestAPI\Instrumentation\PointOfInterest\FlowTestPointOfInterestHandlers.cs" />
+    <Compile Include="TestAPI\Instrumentation\PropertyOfInterest\FlowTestPropertyOfInterest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -71,10 +71,8 @@
     <Folder Include="TestAPI\Runtime\" />
     <Folder Include="TestAPI\Weaving\" />
     <Folder Include="TestAPI\FlowTestAttributes\" />
-    <Folder Include="TestAPI\Runtime\Instrumentation\" />
-    <Folder Include="TestAPI\Runtime\Instrumentation\PointOfInterest\" />
     <Folder Include="TestAPI\Runtime\Messaging\" />
     <Folder Include="TestAPI\Runtime\NetworkedComponents\" />
-    <Folder Include="TestAPI\Runtime\Instrumentation\PropertyOfInterest\" />
+    <Folder Include="TestAPI\Instrumentation\" />
   </ItemGroup>
 </Project>

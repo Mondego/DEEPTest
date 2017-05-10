@@ -92,7 +92,7 @@ namespace FlowTestAPI
 
 		/////////////////////////
 
-		private static void _WeaveListOfInstructionsAtMethodEntry(
+		public static void _WeaveListOfInstructionsAtMethodEntry(
 			MethodDefinition methodToWeave,
 			List<Instruction> listOfInstructionsToWeave
 		)
@@ -105,7 +105,7 @@ namespace FlowTestAPI
 			}
 		}
 
-		private static void _WeaveListOfInstructionsAtMethodExit(
+		public static void _WeaveListOfInstructionsAtMethodExit(
 			MethodDefinition methodToWeave,
 			List<Instruction> listOfInstructionsToWeave
 		)

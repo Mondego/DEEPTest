@@ -30,6 +30,11 @@ namespace FlowTestAPI
 			mRuntime = ftr;
 		}
 
+		public void getTestResults()
+		{
+			Console.WriteLine("Result: " + mRuntime.getLocalMessenger ().getRuntimeFlowByKey (this.GetHashCode ())); 
+		}
+
 		public string generatePayload()
 		{
 			FlowTestInstrumentationEvent poiInfo = new FlowTestInstrumentationEvent
