@@ -35,7 +35,6 @@ namespace SampleServerTests
 				methodToWatch: "SendMessage"
 			);
 			runtime.WatchPoint (chatServerMsgSent);
-		
 			runtime.Write ();
 
 			// Running a woven executable
@@ -46,6 +45,7 @@ namespace SampleServerTests
 		[OneTimeTearDown]
 		public void TearDownFlowTest()
 		{
+			Console.WriteLine ("Tearing down Points of Interest FlowTest");
 			runtime.Stop ();
 		}
 
@@ -59,12 +59,18 @@ namespace SampleServerTests
 
 			client1.Start();
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");
+			Thread.Sleep (3000);
+			chatServerMsgSent.getTestResults ();
 
 			client2.Start();
 			client1.SendMessageToComponentConsole("Client 1 - msg 2");
-			client2.SendMessageToComponentConsole("Client 2 - msg 1");
+			Thread.Sleep (3000);
+			chatServerMsgSent.getTestResults ();
 
-			Thread.Sleep(2000);
+			client2.SendMessageToComponentConsole("Client 2 - msg 1");
+			Thread.Sleep(3000);
+			chatServerMsgSent.getTestResults ();
+
 			client1.Stop();
 			client2.Stop();
 		}

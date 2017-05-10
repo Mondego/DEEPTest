@@ -56,10 +56,11 @@ namespace FlowTestAPI
 
 		public void WatchPoint(FlowTestPointOfInterest poi)
 		{
+			poi.setRuntime (this);
 			weaver.WeaveWatchpointAtPointOfInterest (poi);
 		}
 
-		public FlowTestRuntimeMothership getLocalMessanger()
+		public FlowTestRuntimeMothership getLocalMessenger()
 		{
 			return mothership;
 		}
@@ -93,7 +94,6 @@ namespace FlowTestAPI
 		public object GetPropertyOfInterest(string poiPath)
 		{
 			return null;
-			//eturn mothership.GetPropertyOfInterest (poiPath);
 		}
 	}
 }
