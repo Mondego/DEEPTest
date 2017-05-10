@@ -11,7 +11,7 @@ namespace SampleServer
 		{
 			int echoServerPort = (int)Int64.Parse (args [0]);
 
-			EchoServer server = new EchoServer(echoServerPort);
+			ChatServer server = new ChatServer(echoServerPort);
 			server.Run();
 		}
 	}

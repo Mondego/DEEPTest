@@ -11,11 +11,13 @@ namespace SampleClient
 		protected int mServerPort;
 		protected bool running = false;
 		protected UdpClient mClient;
+		protected int mClientPort;
 
 		public ChatClient (int chatServerPort)
 		{
 			mServerPort = chatServerPort;
 			mClient = new UdpClient(0);
+			mClientPort = ((IPEndPoint)mClient.Client.LocalEndPoint).Port;
 		}
 
 		public void Run()
@@ -30,7 +32,7 @@ namespace SampleClient
 				while (running == true)
 				{
 					string message = Console.ReadLine();
-					Console.WriteLine("[Client] {0}", message);
+					Console.WriteLine("[Client {0}][Sending] {1}", mClientPort, message);
 					SendMessage(message);
 				}
 			});
@@ -53,7 +55,7 @@ namespace SampleClient
 
 		protected void ReceivedMessage(string message)
 		{
-			Console.WriteLine("[Server] {0}", message);
+			Console.WriteLine("[Client {0}][From Server] {1}", mClientPort, message);
 		}
 
 		public void Stop()
