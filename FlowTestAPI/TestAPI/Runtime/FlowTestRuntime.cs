@@ -20,6 +20,7 @@ namespace FlowTestAPI
 			// This initializes the messenger for all communication between the test runtime
 			// and the hook into the target component.
 			mothership = new FlowTestRuntimeMothership ();
+			mothership.Run ();
 
 			// This initializes the weaving API, responsible for doing actual module read/writes
 			pathToSourceExecutable = sourceExecutable;
@@ -47,7 +48,7 @@ namespace FlowTestAPI
 		}
 
 		// Tracking Properties and Points of Interest
-
+		// TODO 
 		public void WatchProperty(FlowTestPropertyOfInterest poi)
 		{
 			string pathToProperty = poi.Property;
@@ -56,6 +57,11 @@ namespace FlowTestAPI
 		public void WatchPoint(FlowTestPointOfInterest poi)
 		{
 			weaver.WeaveWatchpointAtPointOfInterest (poi);
+		}
+
+		public FlowTestRuntimeMothership getLocalMessanger()
+		{
+			return mothership;
 		}
 
 		// Weaving API
@@ -80,12 +86,14 @@ namespace FlowTestAPI
 
 		public void Stop()
 		{
+			mothership.Stop ();
 			wovenComponent.Stop();
 		}
 
 		public object GetPropertyOfInterest(string poiPath)
 		{
-			return mothership.GetPropertyOfInterest (poiPath);
+			return null;
+			//eturn mothership.GetPropertyOfInterest (poiPath);
 		}
 	}
 }

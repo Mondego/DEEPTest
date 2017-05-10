@@ -11,6 +11,7 @@ namespace FlowTestAPI
 		public string methodOfInterest { get; }
 		public bool watchBefore { get; set; }
 		public bool watchAfter { get; set; }
+		private FlowTestRuntime mRuntime;
 
 		public FlowTestPointOfInterest (
 			string parentObject,
@@ -24,15 +25,21 @@ namespace FlowTestAPI
 			watchAfter = true;
 		}
 
+		public void setRuntime(FlowTestRuntime ftr)
+		{
+			mRuntime = ftr;
+		}
+
 		public string generatePayload()
 		{
-			PointofInterestPayload poiInfo = new PointofInterestPayload
+			FlowTestInstrumentationEvent poiInfo = new FlowTestInstrumentationEvent
 			{
-				poiParentObject = parentObjectOfWatchpoint,
-				poiName = methodOfInterest,
-				poiHashcode = this.GetHashCode(),
-				poiPayloadValue = null
+				flowParentType = parentObjectOfWatchpoint,
+				flowInstrumentationPath = methodOfInterest,
+				sourceFlowKey = this.GetHashCode(),
+				flowEventContent = null
 			};
+
 			return JsonConvert.SerializeObject (poiInfo, Formatting.None);
 		}
 	}
