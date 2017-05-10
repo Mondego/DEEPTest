@@ -1,14 +1,14 @@
 ﻿using System;
 using FlowTestAPI;
-using NUnit.Framework;
 using System.IO;
 using System.Threading;
 using SampleServer;
+using NUnit.Framework;
 
 namespace SampleServerTests
 {
 	[TestFixture]
-	public class Test_CaptureNestedValueAtRuntime
+	public class Test_CaptureNestedProperty
 	{
 		FlowTestRuntime runtime;
 		TargetComponentRuntime wovenComponent;
@@ -17,9 +17,10 @@ namespace SampleServerTests
 		string WovenComponentLocation = TestContext.CurrentContext.TestDirectory + "/SampleServer.exe.woven";
 
 		FlowTestPropertyOfInterest chatServerInnerValue;
+		FlowTestPropertyOfInterest chatServerNMessagesSent;
 		FlowTestPointOfInterest chatServerMsgSent;
 
-		[OneTimeSetUp]
+		//[OneTimeSetUp]
 		public void SetUpFlowTest()
 		{
 			// Initialization 
@@ -38,13 +39,12 @@ namespace SampleServerTests
 				destinationExecutable: WovenComponentLocation
 			);
 
-			/*chatServerMsgSent = new FlowTestPointOfInterest ("EchoServer.SendMessage");
-			chatServerMsgSent.After();
-			chatServerMsgSent.Before();
-			runtime.WatchPoint (chatServerMsgSent);*/
-
 			chatServerInnerValue = new FlowTestPropertyOfInterest ("EchoServer.inner");
 			runtime.WatchProperty (chatServerInnerValue);
+
+			chatServerNMessagesSent = new FlowTestPropertyOfInterest("EchoServer.nMessagesSent");
+			runtime.WatchProperty(chatServerNMessagesSent);
+
 			runtime.Write ();
 
 			// Execution
@@ -54,7 +54,7 @@ namespace SampleServerTests
 			Thread.Sleep (5000);
 		}
 
-		[OneTimeTearDown]
+		//[OneTimeTearDown]
 		public void TearDownFlowTest()
 		{
 			Console.WriteLine ("=== One Time Teardown ===");
@@ -62,7 +62,7 @@ namespace SampleServerTests
 			runtime.Stop ();
 		}
 
-		[Test]
+		//[Test]
 		public void Test_CaptureNestedValue()
 		{
 			Thread.Sleep (5000);
@@ -72,8 +72,28 @@ namespace SampleServerTests
 		
 			Assert.AreEqual(expectedValue, poiRequestResult);
 		}
+
+		//[Test]
+		public void Test_CountEchoServerMessagesSent()
+		{
+			string clientLocation = TestContext.CurrentContext.TestDirectory + "/SampleClient.exe";
+
+			TargetComponentRuntime client1 = new TargetComponentRuntime(clientLocation, new string[] { "7777" });
+
+			int expectedInitialNMessages = 0;
+			var actualInitialNMessages = chatServerNMessagesSent.GetPropertyFromRuntime (runtime);
+			Assert.AreEqual(expectedInitialNMessages, actualInitialNMessages);
+
+			client1.SendMessageToComponentConsole("Hello from Client1");
+			Thread.Sleep(1000);
+			client1.Stop();
+
+			int expectedNMessages = 1;
+			var actualNMessages = chatServerNMessagesSent.GetPropertyFromRuntime (runtime);
+			Assert.AreEqual(expectedNMessages, actualNMessages);
+		}
 			
-		[TearDown]
+		//[TearDown]
 		public void FormattingBetweenTests()
 		{
 			Console.WriteLine("====================");

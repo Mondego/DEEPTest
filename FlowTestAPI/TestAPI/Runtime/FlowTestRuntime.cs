@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Net;
+using System.IO;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace FlowTestAPI
 {
@@ -7,6 +10,7 @@ namespace FlowTestAPI
 	{
 		private FlowTestWeaver weaver;
 		private FlowTestRuntimeMothership mothership;
+		private TargetComponentRuntime wovenComponent;
 
 		private string pathToSourceExecutable;
 		private string pathToWriteWovenExecutable;
@@ -16,15 +20,35 @@ namespace FlowTestAPI
 			// This initializes the messenger for all communication between the test runtime
 			// and the hook into the target component.
 			mothership = new FlowTestRuntimeMothership ();
+			mothership.Run ();
 
 			// This initializes the weaving API, responsible for doing actual module read/writes
-			//weaver = new FlowTestWeaver();
 			pathToSourceExecutable = sourceExecutable;
 			pathToWriteWovenExecutable = destinationExecutable;
+			weaver = new FlowTestWeaver (
+				sourceModulePath: pathToSourceExecutable,
+				destinationModulePath: pathToWriteWovenExecutable
+			);
+
+			// For now, we don't want to hold on to previously woven executables
+			if (File.Exists(pathToWriteWovenExecutable)) {
+				Console.WriteLine("Deleting stale instrumented file {0}", pathToWriteWovenExecutable);
+				File.Delete(pathToWriteWovenExecutable);
+			}
+		}
+
+		public string getSourceComponentPath()
+		{
+			return pathToSourceExecutable;
+		}
+
+		public string getDestinationComponentPath()
+		{
+			return pathToWriteWovenExecutable;
 		}
 
 		// Tracking Properties and Points of Interest
-
+		// TODO 
 		public void WatchProperty(FlowTestPropertyOfInterest poi)
 		{
 			string pathToProperty = poi.Property;
@@ -32,30 +56,44 @@ namespace FlowTestAPI
 
 		public void WatchPoint(FlowTestPointOfInterest poi)
 		{
-			string pathToPointOfInterest = poi.PointOfInterest;
+			weaver.WeaveWatchpointAtPointOfInterest (poi);
+		}
+
+		public FlowTestRuntimeMothership getLocalMessanger()
+		{
+			return mothership;
 		}
 
 		// Weaving API
 		public void Write()
 		{
-			FlowTestWeaver.BindModuleToTestDriver(
-				modulePath: pathToSourceExecutable,
-				destinationPath: pathToWriteWovenExecutable
-			);
+			weaver.WriteInstrumentedCodeToFile ();
 		}
 
 		// Doing things during the test
-		public void Start()
+
+		public void ExecuteWovenWithArguments(params string[] arguments)
 		{
+			List<string> args = new List<string>();
+			for (int i = 0; i < arguments.Length; i++) {
+				args.Add(arguments [i]);
+			}
+			string[] targetComponentArguments = args.ToArray();
+
+			wovenComponent = new TargetComponentRuntime (pathToWriteWovenExecutable, targetComponentArguments);
+			wovenComponent.Start();
 		}
 
 		public void Stop()
 		{
+			mothership.Stop ();
+			wovenComponent.Stop();
 		}
 
 		public object GetPropertyOfInterest(string poiPath)
 		{
-			return mothership.GetPropertyOfInterest (poiPath);
+			return null;
+			//eturn mothership.GetPropertyOfInterest (poiPath);
 		}
 	}
 }

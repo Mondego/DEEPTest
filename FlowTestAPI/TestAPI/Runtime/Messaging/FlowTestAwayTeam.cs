@@ -108,8 +108,8 @@ namespace FlowTestAPI
 							StreamReader sr = new StreamReader(ns);
 
 							string propertyRequestJson = sr.ReadToEnd();
-							PropertyOfInterestRequestPayload poiRequestMessageContents = 
-								JsonConvert.DeserializeObject<PropertyOfInterestRequestPayload>(propertyRequestJson);
+							FlowTestInstrumentationEvent poiRequestMessageContents = 
+								JsonConvert.DeserializeObject<FlowTestInstrumentationEvent>(propertyRequestJson);
 							Console.WriteLine(
 								"[Message received by Test Runtime Away Team at localhost:{0}]: {1}", 
 								AwayTeamConnection.Port, 
@@ -122,7 +122,7 @@ namespace FlowTestAPI
 
 							// TODO begin super basic search for a matching type and appropriate nested values
 							object poiValueToReturn = null;
-							string valueRequestPath = poiRequestMessageContents.poiPath;
+							string valueRequestPath = poiRequestMessageContents.flowInstrumentationPath;
 
 							List<string> propertiesOfRequestedObject = new List<string>(valueRequestPath.Split(new char[] {'.'}));
 
@@ -150,11 +150,12 @@ namespace FlowTestAPI
 							}
 							// end super basic search for a matching type and appropriate nested values
 
-							PropertyOfInterestRequestPayload responseMessage = new PropertyOfInterestRequestPayload
+							FlowTestInstrumentationEvent responseMessage = new FlowTestInstrumentationEvent
 							{
-								poiType = null,
-								poiPath = poiRequestMessageContents.poiPath,
-								poiValue = poiValueToReturn
+								flowParentType = null,
+								flowInstrumentationPath = poiRequestMessageContents.flowInstrumentationPath,
+								sourceFlowKey = poiRequestMessageContents.sourceFlowKey,
+								flowEventContent = poiValueToReturn
 							};
 
 							// Send the result back...
