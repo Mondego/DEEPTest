@@ -22,6 +22,19 @@ namespace FlowTestAPI
 
 				if (poi.watchBefore)
 				{
+					WeavingCustomFields.InvokeMethodOfPublicCustomField(
+						destinationModule : module,
+						destinationTypeName: poi.parentObjectOfWatchpoint,
+						destinationMethodName: poi.methodOfInterest,
+
+						// TODO need to make this part of the flowtest runtime so poi can access it not like this
+						customFieldTypeName: "MainClass",
+						customFieldName: "mWovenMessagesHandler",
+						customFieldMethodToInvoke: "Helper",
+						customFieldType: typeof(FlowTestAwayTeam),
+						weavePositionIsStart: true
+					);
+
 					WeaveDebugStatementBeforeMethod(
 						targetMethod: poiMethod,
 						printDebugValue: "Some weaving happened before " + poi.methodOfInterest
@@ -30,6 +43,19 @@ namespace FlowTestAPI
 
 				if (poi.watchAfter)
 				{
+					WeavingCustomFields.InvokeMethodOfPublicCustomField(
+						destinationModule : module,
+						destinationTypeName: poi.parentObjectOfWatchpoint,
+						destinationMethodName: poi.methodOfInterest,
+
+						// TODO need to make this part of the flowtest runtime so poi can access it not like this
+						customFieldTypeName: "MainClass",
+						customFieldName: "mWovenMessagesHandler",
+						customFieldMethodToInvoke: "Helper",
+						customFieldType: typeof(FlowTestAwayTeam),
+						weavePositionIsStart: false
+					);
+
 					WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,
 						printDebugValue: "Some weaving happened after " + poi.methodOfInterest
@@ -61,7 +87,7 @@ namespace FlowTestAPI
 						typeof (Console).GetMethod ("WriteLine", new [] { typeof (string) })));
 			statementsToWeave.Add (writeValueToConsoleInstruction);
 
-			_WeaveListOfInstructionsAtMethodEntry (
+			WeaveListOfInstructionsAtMethodEntry (
 				methodToWeave : targetMethod,
 				listOfInstructionsToWeave : statementsToWeave
 			);
@@ -84,7 +110,7 @@ namespace FlowTestAPI
 						typeof (Console).GetMethod ("WriteLine", new [] { typeof (string) })));
 			statementsToWeave.Add (writeValueToConsoleInstruction);
 
-			_WeaveListOfInstructionsAtMethodExit (
+			WeaveListOfInstructionsAtMethodExit (
 				methodToWeave : targetMethod,
 				listOfInstructionsToWeave : statementsToWeave
 			);
@@ -92,7 +118,7 @@ namespace FlowTestAPI
 
 		/////////////////////////
 
-		public static void _WeaveListOfInstructionsAtMethodEntry(
+		public static void WeaveListOfInstructionsAtMethodEntry(
 			MethodDefinition methodToWeave,
 			List<Instruction> listOfInstructionsToWeave
 		)
@@ -105,7 +131,7 @@ namespace FlowTestAPI
 			}
 		}
 
-		public static void _WeaveListOfInstructionsAtMethodExit(
+		public static void WeaveListOfInstructionsAtMethodExit(
 			MethodDefinition methodToWeave,
 			List<Instruction> listOfInstructionsToWeave
 		)

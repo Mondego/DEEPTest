@@ -78,7 +78,7 @@ namespace FlowTestAPI
 						destinationType.Fields.Single(f => f.Name == customFieldName));
 				instructionsToWeave.Add(storeInitializedObjectIntoField);
 
-				WeavingAtLocation._WeaveListOfInstructionsAtMethodEntry(
+				WeavingAtLocation.WeaveListOfInstructionsAtMethodEntry(
 					methodToWeave: destinationMethod,
 					listOfInstructionsToWeave: instructionsToWeave
 				);
@@ -89,43 +89,75 @@ namespace FlowTestAPI
 			}
 		}
 
-		public static void InvokeMethodOfCustomField(
+		public static void InvokeMethodOfPublicCustomField(
 			ModuleDefinition destinationModule,
 			string destinationTypeName, 
 			string destinationMethodName,
 
+			string customFieldTypeName,
 			string customFieldName,
-			string invokingMethodName
+			string customFieldMethodToInvoke,
+			Type customFieldType,
+			bool weavePositionIsStart
 		)
 		{
 			try
 			{
-				TypeDefinition destinationType = destinationModule.Types.Single (t => t.Name == destinationTypeName);
+				TypeDefinition destinationType = destinationModule.Types.Single(t => t.Name == destinationTypeName);
 				MethodDefinition destinationMethod = destinationType.Methods.Single(m => m.Name == destinationMethodName);
 				ILProcessor destinationMethodProcessor = destinationMethod.Body.GetILProcessor();
 
-				Console.WriteLine("debugging weaving an invoke of {0}.{1}", customFieldName, invokingMethodName);
-				Console.WriteLine("...");
-				foreach (Instruction i in destinationMethodProcessor.Body.Instructions)
+				TypeDefinition customFieldParentType = destinationModule.Types.Single(t => t.Name == customFieldTypeName);
+				FieldDefinition customField = customFieldParentType.Fields.Single(fn => fn.Name == customFieldName);
+
+				List<Instruction> listOfInstructions = new List<Instruction>();
+
+				// Load the static object onto the stack
+				OpCode customFieldLoadOpCode;
+				if (customField.IsStatic)
 				{
-					Console.WriteLine(i.Operand);
+					customFieldLoadOpCode = OpCodes.Ldsfld;
 				}
-				Console.WriteLine("...");
+				else
+				{
+					customFieldLoadOpCode = OpCodes.Ldfld;
+				}
+				Instruction loadCustomFieldObject =
+					destinationMethodProcessor.Create(customFieldLoadOpCode, customField);
+				listOfInstructions.Add(loadCustomFieldObject);
+
+				// Basically, "this"
+				// Instruction loadSelfReference = destinationMethodProcessor.Create(OpCodes.Ldarg_0);
+				// listOfInstructions.Add(loadSelfReference);
+
+				// Call the method in question 
+				// TODO generalize eventually, ok atm
+				Instruction invokeMethodOnCustomFieldInstance =
+					destinationMethodProcessor.Create(OpCodes.Callvirt,
+						destinationModule.Import(
+							customFieldType.GetMethod(customFieldMethodToInvoke, new Type[] {})));
+				listOfInstructions.Add(invokeMethodOnCustomFieldInstance);
+
+				if (weavePositionIsStart)
+				{
+					WeavingAtLocation.WeaveListOfInstructionsAtMethodEntry(
+						methodToWeave: destinationMethod,
+						listOfInstructionsToWeave: listOfInstructions
+					);
+				}
+				else
+				{
+					WeavingAtLocation.WeaveListOfInstructionsAtMethodExit(
+						methodToWeave: destinationMethod,
+						listOfInstructionsToWeave: listOfInstructions
+					);
+				}
 			}
 
 			catch (Exception e)
 			{
 				Console.WriteLine("FlowTest custom field invoke handler caught exception " + e.Message);
 			}
-
-			/*Instruction loadStaticTestDriverHook = 
-				constructorInstructionProcessor.Create(OpCodes.Ldsfld, 
-					moduleMainClassType.Fields.Single(f => f.Name == testDriverHookFieldName));  
-			Instruction loadSelfReference = constructorInstructionProcessor.Create(OpCodes.Ldarg_0);
-			Instruction callRegistrationInstruction = 
-				constructorInstructionProcessor.Create(OpCodes.Callvirt, 
-					echoServerConstructor.Module.Import(
-						typeof (FlowTestAwayTeam).GetMethod ("EntangleWithLocalTestRuntime", new [] { typeof (object) })));*/
 		}
 	}
 }

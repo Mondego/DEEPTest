@@ -35,14 +35,14 @@ namespace FlowTestAPI
 			Console.WriteLine("Result: " + mRuntime.getLocalMessenger ().getRuntimeFlowByKey (this.GetHashCode ())); 
 		}
 
-		public string generatePayload()
+		public string generatePayload(object content = null)
 		{
 			FlowTestInstrumentationEvent poiInfo = new FlowTestInstrumentationEvent
 			{
 				flowParentType = parentObjectOfWatchpoint,
 				flowInstrumentationPath = methodOfInterest,
 				sourceFlowKey = this.GetHashCode(),
-				flowEventContent = null
+				flowEventContent = content
 			};
 
 			return JsonConvert.SerializeObject (poiInfo, Formatting.None);
