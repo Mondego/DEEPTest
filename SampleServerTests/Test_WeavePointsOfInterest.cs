@@ -26,7 +26,8 @@ namespace SampleServerTests
 			);
 
 			Console.WriteLine ("=== One Time Setup ===");
-			Console.WriteLine ("Source Component Path: " + runtime.getSourceComponentPath());
+			Console.WriteLine ("Source Component Path: " + runtime.getSourceComponentPath(
+			));
 			Console.WriteLine ("Weaving Into Component: " + runtime.getDestinationComponentPath());
 
 			// Weaving a point of interest
@@ -34,6 +35,7 @@ namespace SampleServerTests
 				parentObject: "ChatServer", 
 				methodToWatch: "SendMessage"
 			);
+			chatServerMsgSent.watchBefore = false;
 			runtime.WatchPoint (chatServerMsgSent);
 			runtime.Write ();
 
@@ -60,16 +62,19 @@ namespace SampleServerTests
 			client1.Start();
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");
 			Thread.Sleep (3000);
-			chatServerMsgSent.getTestResults ();
+			FlowTestInstrumentationEvent[] res1 = chatServerMsgSent.getTestResults();
+			Assert.AreEqual(1, res1.Length, "One message should have been sent");
 
 			client2.Start();
 			client1.SendMessageToComponentConsole("Client 1 - msg 2");
 			Thread.Sleep (3000);
-			chatServerMsgSent.getTestResults ();
+			FlowTestInstrumentationEvent[] res2 = chatServerMsgSent.getTestResults ();
+			Assert.AreEqual(2, res2.Length, "Two messages should have been sent - server doesn't know client 2 yet");
 
 			client2.SendMessageToComponentConsole("Client 2 - msg 1");
 			Thread.Sleep(3000);
-			chatServerMsgSent.getTestResults ();
+			FlowTestInstrumentationEvent[] res3 = chatServerMsgSent.getTestResults ();
+			Assert.AreEqual(4, res3.Length, "Four messages should have been sent, with 2 clients accounted for.");
 
 			client1.Stop();
 			client2.Stop();

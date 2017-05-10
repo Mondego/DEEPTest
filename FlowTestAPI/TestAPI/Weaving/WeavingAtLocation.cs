@@ -18,7 +18,11 @@ namespace FlowTestAPI
 				MethodDefinition poiMethod = poiParentType.Methods.Single(m => m.Name == poi.methodOfInterest);
 				ILProcessor instructionProcessor = poiMethod.Body.GetILProcessor();
 
-				string payload = poi.generatePayload();
+				/*Console.WriteLine("...");
+				foreach(Instruction ii in instructionProcessor.Body.Instructions) {
+					Console.WriteLine(ii);
+				}
+				Console.WriteLine("...");*/
 
 				if (poi.watchBefore)
 				{
@@ -30,8 +34,11 @@ namespace FlowTestAPI
 						// TODO need to make this part of the flowtest runtime so poi can access it not like this
 						customFieldTypeName: "MainClass",
 						customFieldName: "mWovenMessagesHandler",
-						customFieldMethodToInvoke: "Helper",
+						customFieldMethodToInvoke: "SendRunTimeEvent",
 						customFieldType: typeof(FlowTestAwayTeam),
+
+						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
+						invokedMethodArgs: new string[] { poi.generatePayloadString("before") }, // { poi.generatePayload("after") },
 						weavePositionIsStart: true
 					);
 
@@ -51,8 +58,11 @@ namespace FlowTestAPI
 						// TODO need to make this part of the flowtest runtime so poi can access it not like this
 						customFieldTypeName: "MainClass",
 						customFieldName: "mWovenMessagesHandler",
-						customFieldMethodToInvoke: "Helper",
+						customFieldMethodToInvoke: "SendRunTimeEvent",
 						customFieldType: typeof(FlowTestAwayTeam),
+
+						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
+						invokedMethodArgs: new string[] { poi.generatePayloadString("after") }, // { poi.generatePayload("after") },
 						weavePositionIsStart: false
 					);
 

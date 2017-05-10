@@ -37,14 +37,38 @@ namespace FlowTestAPI
 
 			AwayTeamConnection = new FlowTestRuntimeConnection (IPAddress.Any, defaultAwayTeamConnectionPort);
 			MothershipConnection = new FlowTestRuntimeConnection (IPAddress.Any, defaultMothershipConnectionPort);
-
-			Run ();
 		}
 
 		public void Helper()
 		{
 			Console.WriteLine("Sanity check on FlowTestAwayTeam");
 		}
+
+		public void SendRunTimeEvent(string serializedEvent)
+		{
+			TcpClient tcpc = new TcpClient("127.0.0.1", MothershipConnection.Port);
+			NetworkStream ns = tcpc.GetStream();
+			byte[] messageData = Encoding.ASCII.GetBytes(serializedEvent);
+			ns.Write(messageData, 0, messageData.Length);
+			ns.Close();
+			tcpc.Close();
+		}
+
+		public void SendRewrappedRunTimeEvent(string serializedEvent, object content = null)
+		{
+			if (content != null) {
+				FlowTestInstrumentationEvent unwrap = 
+					JsonConvert.DeserializeObject<FlowTestInstrumentationEvent>(serializedEvent);
+			
+				unwrap.flowEventContent = content;
+
+				serializedEvent = JsonConvert.SerializeObject(unwrap, Formatting.None);
+			}
+
+			SendRunTimeEvent(serializedEvent);
+		}
+
+		/* LEGACY
 
 		private void Run()
 		{
@@ -135,9 +159,6 @@ namespace FlowTestAPI
 				});
 		}
 
-		/////////////////////////////////////
-
-
 		public void EntangleWithLocalTestRuntime(object wovenComponent)
 		{
 			Console.WriteLine("Test Away Team running at <localhost:{0}> has landed on woven component {1}",
@@ -185,7 +206,7 @@ namespace FlowTestAPI
 			}
 
 			return currentValue;
-		}
+		}*/
 	}
 }
 

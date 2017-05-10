@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace FlowTestAPI
 {
@@ -30,22 +31,26 @@ namespace FlowTestAPI
 			mRuntime = ftr;
 		}
 
-		public void getTestResults()
+		public FlowTestInstrumentationEvent[] getTestResults()
 		{
-			Console.WriteLine("Result: " + mRuntime.getLocalMessenger ().getRuntimeFlowByKey (this.GetHashCode ())); 
+			Queue<FlowTestInstrumentationEvent> events = mRuntime.getLocalMessenger().getRuntimeFlowByKey(this.GetHashCode());
+			return events.ToArray();
 		}
 
-		public string generatePayload(object content = null)
+		public FlowTestInstrumentationEvent generatePayload (object content = null)
 		{
-			FlowTestInstrumentationEvent poiInfo = new FlowTestInstrumentationEvent
+			return new FlowTestInstrumentationEvent
 			{
 				flowParentType = parentObjectOfWatchpoint,
 				flowInstrumentationPath = methodOfInterest,
 				sourceFlowKey = this.GetHashCode(),
 				flowEventContent = content
 			};
+		}
 
-			return JsonConvert.SerializeObject (poiInfo, Formatting.None);
+		public string generatePayloadString (object content = null)
+		{
+			return JsonConvert.SerializeObject (generatePayload(content), Formatting.None);
 		}
 	}
 }

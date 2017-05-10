@@ -98,6 +98,10 @@ namespace FlowTestAPI
 			string customFieldName,
 			string customFieldMethodToInvoke,
 			Type customFieldType,
+
+			// TODO maybe create a class to encapsulate this more cleanly
+			Type[] invokedMethodArgTypes, 
+			object[] invokedMethodArgs,
 			bool weavePositionIsStart
 		)
 		{
@@ -111,6 +115,8 @@ namespace FlowTestAPI
 				FieldDefinition customField = customFieldParentType.Fields.Single(fn => fn.Name == customFieldName);
 
 				List<Instruction> listOfInstructions = new List<Instruction>();
+
+				//Console.WriteLine("debug 1");
 
 				// Load the static object onto the stack
 				OpCode customFieldLoadOpCode;
@@ -126,17 +132,25 @@ namespace FlowTestAPI
 					destinationMethodProcessor.Create(customFieldLoadOpCode, customField);
 				listOfInstructions.Add(loadCustomFieldObject);
 
-				// Basically, "this"
-				// Instruction loadSelfReference = destinationMethodProcessor.Create(OpCodes.Ldarg_0);
-				// listOfInstructions.Add(loadSelfReference);
+				//Console.WriteLine("debug 2");
+
+				foreach (object arg in invokedMethodArgs) {
+					// Issues here again
+					Instruction loadArg = destinationMethodProcessor.Create(OpCodes.Ldstr, arg.ToString());
+					listOfInstructions.Add(loadArg);
+				}
+
+				//Console.WriteLine("debug 3");
 
 				// Call the method in question 
 				// TODO generalize eventually, ok atm
 				Instruction invokeMethodOnCustomFieldInstance =
 					destinationMethodProcessor.Create(OpCodes.Callvirt,
 						destinationModule.Import(
-							customFieldType.GetMethod(customFieldMethodToInvoke, new Type[] {})));
+							customFieldType.GetMethod(customFieldMethodToInvoke, invokedMethodArgTypes)));
 				listOfInstructions.Add(invokeMethodOnCustomFieldInstance);
+
+				//Console.WriteLine("debug 4");
 
 				if (weavePositionIsStart)
 				{
@@ -152,12 +166,18 @@ namespace FlowTestAPI
 						listOfInstructionsToWeave: listOfInstructions
 					);
 				}
+
+				//Console.WriteLine("debug 5");
 			}
 
 			catch (Exception e)
 			{
-				Console.WriteLine("FlowTest custom field invoke handler caught exception " + e.Message);
+				Console.WriteLine("FlowTest custom field invoke handler caught exception " + e.Message + " " + e.StackTrace);
 			}
+
+			// Basically, "this"
+			// Instruction loadSelfReference = destinationMethodProcessor.Create(OpCodes.Ldarg_0);
+			// listOfInstructions.Add(loadSelfReference);
 		}
 	}
 }

@@ -61,6 +61,7 @@
     <Compile Include="TestAPI\Instrumentation\PointOfInterest\FlowTestPointOfInterest.cs" />
     <Compile Include="TestAPI\Instrumentation\PointOfInterest\FlowTestPointOfInterestHandlers.cs" />
     <Compile Include="TestAPI\Instrumentation\PropertyOfInterest\FlowTestPropertyOfInterest.cs" />
+    <Compile Include="TestAPI\Weaving\TypedArgumentPairs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
