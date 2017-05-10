@@ -1,6 +1,8 @@
 ﻿using System;
 using Mono.Cecil;
 using System.Linq;
+using Mono.Cecil.Cil;
+using System.Collections.Generic;
 
 namespace FlowTestAPI
 {
@@ -30,54 +32,100 @@ namespace FlowTestAPI
 			}
 		}
 
-		public static void InitializeField () {
-			/*MethodDefinition moduleEntryMethod = moduleMainClassType.Methods.Single(m => m.Name == "Main");
-			ILProcessor moduleEntryMethodProcessor = moduleEntryMethod.Body.GetILProcessor();
+		public static void InitializeCustomField (
+			ModuleDefinition destinationModule,
+			string destinationClassName,
+			string destinationMethodName,
+			string customFieldName,
+			FieldAttributes customFieldAttributes,
+			Type customFieldType,
+			Type[] customFieldConstructorArgTypes,
+			object[] customFieldConstructorArgs
+		)
+		{
+			try
+			{
+				TypeDefinition destinationType = destinationModule.Types.Single (t => t.Name == destinationClassName);
+				MethodDefinition destinationMethod = destinationType.Methods.Single(m => m.Name == destinationMethodName);
+				ILProcessor destinationMethodProcessor = destinationMethod.Body.GetILProcessor();
 
-			Instruction loadTestDriverPortNumber = moduleEntryMethodProcessor.Create(OpCodes.Ldc_I4, 60011);
-			Instruction loadTestDriverHookPortNumber = moduleEntryMethodProcessor.Create(OpCodes.Ldc_I4, 60012);
+				List<Instruction> instructionsToWeave = new List<Instruction>();
 
-			Instruction createTestDriverHookObjectOnStack = 
-				moduleEntryMethodProcessor.Create(OpCodes.Newobj, 
-					moduleEntryMethod.Module.Import(
-						typeof(FlowTestAwayTeam).GetConstructor(new [] { typeof(int), typeof(int) })));
+				foreach (object arg in customFieldConstructorArgs) {
+					// VERY BROKEN
+					Instruction loadArg = destinationMethodProcessor.Create(OpCodes.Ldc_I4, 0);
+					instructionsToWeave.Add(loadArg);
+				}
 
-			Instruction storeTestDriverHookObject =
-				moduleEntryMethodProcessor.Create(OpCodes.Stsfld,
-					moduleMainClassType.Fields.Single(f => f.Name == testDriverHookFieldName));
+				Instruction loadNewObjectConstructorInstruction =
+					destinationMethodProcessor.Create(OpCodes.Newobj,
+						destinationMethod.Module.Import(
+							customFieldType.GetConstructor(customFieldConstructorArgTypes)));
+				instructionsToWeave.Add(loadNewObjectConstructorInstruction);
 
-			moduleEntryMethodProcessor.InsertBefore(moduleEntryMethod.Body.Instructions.First(), loadTestDriverPortNumber);
-			moduleEntryMethodProcessor.InsertAfter(loadTestDriverPortNumber, loadTestDriverHookPortNumber);
-			moduleEntryMethodProcessor.InsertAfter(loadTestDriverHookPortNumber, createTestDriverHookObjectOnStack);
-			moduleEntryMethodProcessor.InsertAfter(createTestDriverHookObjectOnStack, storeTestDriverHookObject);*/
+				OpCode storageOpcode;
+				if (customFieldAttributes.HasFlag(Mono.Cecil.FieldAttributes.Static))
+				{
+					storageOpcode = OpCodes.Stsfld;
+				} 
+				else
+				{
+					storageOpcode = OpCodes.Stfld;		
+				}
 
+				Instruction storeInitializedObjectIntoField = 
+					destinationMethodProcessor.Create(storageOpcode,
+						destinationType.Fields.Single(f => f.Name == customFieldName));
+				instructionsToWeave.Add(storeInitializedObjectIntoField);
+
+				WeavingAtLocation._WeaveListOfInstructionsAtMethodEntry(
+					methodToWeave: destinationMethod,
+					listOfInstructionsToWeave: instructionsToWeave
+				);
+			}
+
+			catch (Exception e) {
+				Console.WriteLine("FlowTest custom field constructor handler caught exception " + e.Message);
+			}
 		}
 
-		public static void InvokeMethodOfCustomField()
-		{
-			/*
-			TypeDefinition echoServerKitchenSinkType = module.Types.Single(t => t.Name == "ChatServer");
-			MethodDefinition echoServerConstructor = echoServerKitchenSinkType.Methods.Single(m => m.Name == ".ctor");
-			ILProcessor constructorInstructionProcessor = echoServerConstructor.Body.GetILProcessor();
+		public static void InvokeMethodOfCustomField(
+			ModuleDefinition destinationModule,
+			string destinationTypeName, 
+			string destinationMethodName,
 
-			Instruction loadStaticTestDriverHook = 
+			string customFieldName,
+			string invokingMethodName
+		)
+		{
+			try
+			{
+				TypeDefinition destinationType = destinationModule.Types.Single (t => t.Name == destinationTypeName);
+				MethodDefinition destinationMethod = destinationType.Methods.Single(m => m.Name == destinationMethodName);
+				ILProcessor destinationMethodProcessor = destinationMethod.Body.GetILProcessor();
+
+				Console.WriteLine("debugging weaving an invoke of {0}.{1}", customFieldName, invokingMethodName);
+				Console.WriteLine("...");
+				foreach (Instruction i in destinationMethodProcessor.Body.Instructions)
+				{
+					Console.WriteLine(i.Operand);
+				}
+				Console.WriteLine("...");
+			}
+
+			catch (Exception e)
+			{
+				Console.WriteLine("FlowTest custom field invoke handler caught exception " + e.Message);
+			}
+
+			/*Instruction loadStaticTestDriverHook = 
 				constructorInstructionProcessor.Create(OpCodes.Ldsfld, 
 					moduleMainClassType.Fields.Single(f => f.Name == testDriverHookFieldName));  
 			Instruction loadSelfReference = constructorInstructionProcessor.Create(OpCodes.Ldarg_0);
 			Instruction callRegistrationInstruction = 
 				constructorInstructionProcessor.Create(OpCodes.Callvirt, 
 					echoServerConstructor.Module.Import(
-						typeof (FlowTestAwayTeam).GetMethod ("EntangleWithLocalTestRuntime", new [] { typeof (object) })));
-
-			constructorInstructionProcessor.InsertAfter(
-				echoServerConstructor.Body.Instructions.First(), 
-				loadStaticTestDriverHook);
-			constructorInstructionProcessor.InsertAfter(
-				loadStaticTestDriverHook,
-				loadSelfReference);
-			constructorInstructionProcessor.InsertAfter(
-				loadSelfReference,
-				callRegistrationInstruction);*/
+						typeof (FlowTestAwayTeam).GetMethod ("EntangleWithLocalTestRuntime", new [] { typeof (object) })));*/
 		}
 	}
 }

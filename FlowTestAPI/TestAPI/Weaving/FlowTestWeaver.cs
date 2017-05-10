@@ -35,12 +35,18 @@ namespace FlowTestAPI
 					destinationClassName: "MainClass"
 				);
 
-				// TODO Initialize the newly woven field so we can use it to communicate with
-				// the FlowTestRuntime
-				WeavingCustomFields.InitializeField();
+				// Initialize the newly woven field so we can use it to communicate with the FlowTestRuntime
+				WeavingCustomFields.InitializeCustomField (
+					destinationModule: mModule,
+					destinationClassName: "MainClass",
+					destinationMethodName: "Main",
 
-				// TODO Call the method that actually starts the messaging and PoI handling
-				WeavingCustomFields.InvokeMethodOfCustomField();
+					customFieldName: flowTestWovenRuntimeHelperFieldName,
+					customFieldAttributes: Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
+					customFieldType: typeof(FlowTestAwayTeam),
+					customFieldConstructorArgTypes: new Type[] { typeof(int), typeof(int) },
+					customFieldConstructorArgs: new object[] { 60011, 60012 }
+				);
 
 				// NOTE: Previously, an entire object was registered with the FlowTestAwayTeam and had to be 
 				// searched. Now, only specific fields are searched for; see FlowTestPropertyOfInterest for a demo

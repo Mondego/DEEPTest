@@ -41,53 +41,9 @@ namespace FlowTestAPI
 			Run ();
 		}
 
-		public void EntangleWithLocalTestRuntime(object wovenComponent)
+		public void Helper()
 		{
-			Console.WriteLine("Test Away Team running at <localhost:{0}> has landed on woven component {1}",
-				AwayTeamConnection.Port,
-				wovenComponent.GetType());
-		
-			// TODO holdover from old code, really not the best way to do this.
-			mEntanglements.Add(wovenComponent.GetHashCode(), wovenComponent);
-		}
-			
-		// TODO should we move this
-		private object searchForNestedValue(object targetObject, List<string> fieldsToSearchInOrder)
-		{
-			var currentSource = targetObject;
-			var currentValue = targetObject;
-			object returnValue = null;
-
-			foreach(string nestedProperty in fieldsToSearchInOrder)
-			{
-				Console.WriteLine("Looking for nested property {0} in object of type {1}",
-					nestedProperty, currentSource.GetType());
-
-				var currentField = currentSource.GetType().GetField(nestedProperty, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-
-				if (currentField == null)
-				{
-					var tryProperty = currentSource.GetType().GetProperty(nestedProperty, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-
-					if (tryProperty == null)
-					{
-						Console.WriteLine("Field {0} was null", nestedProperty);
-						return null;
-					} else
-					{
-						currentValue = tryProperty.GetValue(currentSource);
-					}
-				} 
-
-				else
-				{
-					currentValue = currentField.GetValue(currentSource);
-				}
-
-				currentSource = currentValue;
-			}
-
-			return currentValue;
+			Console.WriteLine("Sanity check on FlowTestAwayTeam");
 		}
 
 		private void Run()
@@ -177,6 +133,58 @@ namespace FlowTestAPI
 						AwayTeamTCPListener.Stop();
 					}
 				});
+		}
+
+		/////////////////////////////////////
+
+
+		public void EntangleWithLocalTestRuntime(object wovenComponent)
+		{
+			Console.WriteLine("Test Away Team running at <localhost:{0}> has landed on woven component {1}",
+				AwayTeamConnection.Port,
+				wovenComponent.GetType());
+		
+			// TODO holdover from old code, really not the best way to do this.
+			mEntanglements.Add(wovenComponent.GetHashCode(), wovenComponent);
+		}
+			
+		// TODO should we move this
+		private object searchForNestedValue(object targetObject, List<string> fieldsToSearchInOrder)
+		{
+			var currentSource = targetObject;
+			var currentValue = targetObject;
+			object returnValue = null;
+
+			foreach(string nestedProperty in fieldsToSearchInOrder)
+			{
+				Console.WriteLine("Looking for nested property {0} in object of type {1}",
+					nestedProperty, currentSource.GetType());
+
+				var currentField = currentSource.GetType().GetField(nestedProperty, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+				if (currentField == null)
+				{
+					var tryProperty = currentSource.GetType().GetProperty(nestedProperty, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+					if (tryProperty == null)
+					{
+						Console.WriteLine("Field {0} was null", nestedProperty);
+						return null;
+					} else
+					{
+						currentValue = tryProperty.GetValue(currentSource);
+					}
+				} 
+
+				else
+				{
+					currentValue = currentField.GetValue(currentSource);
+				}
+
+				currentSource = currentValue;
+			}
+
+			return currentValue;
 		}
 	}
 }
