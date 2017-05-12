@@ -8,7 +8,7 @@ using FlowTestAPI;
 
 namespace SampleServerTests
 {
-	[TestFixture]
+	//[TestFixture]
 	public class Test_WeavePointsOfInterest
 	{
 		FlowTestRuntime runtime;
@@ -17,7 +17,7 @@ namespace SampleServerTests
 		static string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
 		static string sourceComponentPath = workingTestDirectory + "/SampleServer.exe";
 
-		[OneTimeSetUp]
+		//[OneTimeSetUp]
 		public void SetUpFlowTest()
 		{
 			runtime = new FlowTestRuntime(
@@ -44,14 +44,14 @@ namespace SampleServerTests
 			Thread.Sleep(5000);
 		}
 
-		[OneTimeTearDown]
+		//[OneTimeTearDown]
 		public void TearDownFlowTest()
 		{
 			Console.WriteLine ("Tearing down Points of Interest FlowTest");
 			runtime.Stop ();
 		}
 
-		[Test]
+		//[Test]
 		public void Test_CountEchoServerMessagesSent()
 		{
 			string chatClientLocation = workingTestDirectory + "/SampleClient.exe";

@@ -53,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test_CaptureNestedProperty.cs" />
     <Compile Include="Test_WeavePointsOfInterest.cs" />
+    <Compile Include="Test_WeaveCustomSleepCode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -70,6 +71,10 @@
     <ProjectReference Include="..\SampleClient\SampleClient.csproj">
       <Project>{D4620913-9D2B-412D-8CF5-0DE8BDCA648F}</Project>
       <Name>SampleClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserDesignedWeaves\UserDesignedWeaves.csproj">
+      <Project>{9B33F0F7-9D33-465E-906C-49BF1903A68F}</Project>
+      <Name>UserDesignedWeaves</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

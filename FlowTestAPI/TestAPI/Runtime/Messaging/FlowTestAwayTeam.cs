@@ -58,14 +58,20 @@ namespace FlowTestAPI
 		{
 			if (content != null) {
 				FlowTestInstrumentationEvent unwrap = 
-					JsonConvert.DeserializeObject<FlowTestInstrumentationEvent>(serializedEvent);
+					JsonConvert.DeserializeObject<FlowTestInstrumentationEvent> (serializedEvent);
 			
 				unwrap.flowEventContent = content;
 
-				serializedEvent = JsonConvert.SerializeObject(unwrap, Formatting.None);
+				serializedEvent = JsonConvert.SerializeObject (unwrap, Formatting.None);
 			}
 
-			SendRunTimeEvent(serializedEvent);
+			SendRunTimeEvent (serializedEvent);
+		}
+
+		public void InvokeCustomType(string typeToCreate, string methodToInvoke)
+		{
+			//Console.WriteLine ("INVOKING: " + methodToInvoke);
+			//Activator.CreateInstance(Type.GetType(myStorageClassNameReadFromAppConfig);
 		}
 
 		/* LEGACY

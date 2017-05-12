@@ -26,6 +26,16 @@ namespace FlowTestAPI
 
 				if (poi.watchBefore)
 				{
+					// Temporary fix for thread.sleeps
+					if (poi.mCustomWeave != null)
+					{
+						WeaveThreadSleepAfterEachMatch(
+							targetMethod: poiMethod,
+							nMilliseconds: 4000,
+							matchOperand: "System.Console::WriteLine"
+						);
+					}
+
 					WeavingCustomFields.InvokeMethodOfPublicCustomField(
 						destinationModule : module,
 						destinationTypeName: poi.parentObjectOfWatchpoint,
@@ -103,6 +113,44 @@ namespace FlowTestAPI
 			);
 		}
 
+		//IL_0001: ldc.i4 N_MILLISECONDS
+		//IL_0006: call System.Void System.Threading.Thread::Sleep(System.Int32)
+		public static void WeaveThreadSleepAfterEachMatch(
+			MethodDefinition targetMethod,
+			int nMilliseconds,
+			string matchOperand
+		)
+		{
+			List<Instruction> instructionsToWeave = new List<Instruction> ();
+			ILProcessor instructionProcessor = targetMethod.Body.GetILProcessor();
+
+			Instruction loadMillisecondsInstruction = instructionProcessor.Create(OpCodes.Ldc_I4, nMilliseconds);
+			instructionsToWeave.Add (loadMillisecondsInstruction);
+
+			Instruction sleepInstruction = 
+				instructionProcessor.Create(OpCodes.Call, 
+					targetMethod.Module.Import(
+						typeof (System.Threading.Thread).GetMethod ("Sleep", new [] { typeof (int) })));
+			instructionsToWeave.Add (sleepInstruction);
+
+			List<Instruction> matchingOperandsInstructions = new List<Instruction> ();
+			foreach (Instruction i in targetMethod.Body.Instructions) {
+				if (i.Operand != null) {
+					if (((string)i.Operand.ToString ()).Contains (matchOperand)) {
+						matchingOperandsInstructions.Add (i);
+					}
+				}
+			}
+				
+			Instruction[] arrayOfInstructionsToWeave = instructionsToWeave.ToArray();
+			foreach (Instruction matchingInstruction in matchingOperandsInstructions) {
+				Instruction toWeaveBefore = matchingInstruction.Next;
+				foreach (Instruction toWeave in instructionsToWeave) {
+					instructionProcessor.InsertBefore (toWeaveBefore, toWeave);
+				}
+			}
+		}
+
 		public static void WeaveDebugStatementAfterMethod(
 			MethodDefinition targetMethod,
 			string printDebugValue
@@ -153,6 +201,27 @@ namespace FlowTestAPI
 			foreach (Instruction returnInstruction in returnInstructionsInTargetMehod) {
 				foreach (Instruction weaveInstruction in listOfInstructionsToWeave) {
 					instructionProcessor.InsertBefore (returnInstruction, weaveInstruction);
+				}
+			}
+		}
+
+		public static void WeaveAfterEveryOperandMatching(
+			MethodDefinition methodToWeave,
+			List<Instruction> listOfInstructionsToWeave,
+			string matchOperand
+		)
+		{
+			ILProcessor instructionProcessor = methodToWeave.Body.GetILProcessor();
+			List<Instruction> matchingInstructionsInTargetMethod = 
+				instructionProcessor.Body.Instructions.Where (i => i.Operand.ToString().Contains(matchOperand)).ToList ();
+
+			Instruction[] arrayOfInstructionsToWeave = listOfInstructionsToWeave.ToArray ();
+			foreach (Instruction matchingInstruction in matchingInstructionsInTargetMethod) {
+				Instruction currentInstructionToWeaveAfter = matchingInstruction;
+				for (int instInd = 0; instInd < arrayOfInstructionsToWeave.Length; instInd++)
+				{
+					instructionProcessor.InsertAfter (currentInstructionToWeaveAfter, arrayOfInstructionsToWeave[instInd]);
+					currentInstructionToWeaveAfter = currentInstructionToWeaveAfter.Next;
 				}
 			}
 		}
