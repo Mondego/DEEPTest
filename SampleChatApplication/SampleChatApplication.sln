@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleServer", "SampleServer\SampleServer.csproj", "{2641A6F0-3892-4FA9-9EB7-DB2D5C968F76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleClient", "SampleClient\SampleClient.csproj", "{ADCE25EC-88BF-4828-B6DC-1046B9049E93}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2641A6F0-3892-4FA9-9EB7-DB2D5C968F76}.Debug|x86.ActiveCfg = Debug|x86
+		{2641A6F0-3892-4FA9-9EB7-DB2D5C968F76}.Debug|x86.Build.0 = Debug|x86
+		{2641A6F0-3892-4FA9-9EB7-DB2D5C968F76}.Release|x86.ActiveCfg = Release|x86
+		{2641A6F0-3892-4FA9-9EB7-DB2D5C968F76}.Release|x86.Build.0 = Release|x86
+		{ADCE25EC-88BF-4828-B6DC-1046B9049E93}.Debug|x86.ActiveCfg = Debug|x86
+		{ADCE25EC-88BF-4828-B6DC-1046B9049E93}.Debug|x86.Build.0 = Debug|x86
+		{ADCE25EC-88BF-4828-B6DC-1046B9049E93}.Release|x86.ActiveCfg = Release|x86
+		{ADCE25EC-88BF-4828-B6DC-1046B9049E93}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal

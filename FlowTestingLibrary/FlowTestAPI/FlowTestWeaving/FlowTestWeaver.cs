@@ -25,6 +25,12 @@ namespace FlowTestAPI
 		private void weaveFlowTestAwayTeamHandler()
 		{
 			try {
+
+				WeavingExternalDependencies.importDependencies(
+					moduleToWeave: mModule, 
+					dependencyToImport: typeof(FlowTestAwayTeam)
+				);
+					
 				// Weavethe custom field of type FlowTestAwayTeam to the module
 				// entry point of the target component
 				WeavingCustomFields.WeaveCustomFieldIntoClass(
@@ -47,15 +53,11 @@ namespace FlowTestAPI
 					customFieldConstructorArgTypes: new Type[] { typeof(int), typeof(int) },
 					customFieldConstructorArgs: new object[] { 60011, 60012 }
 				);
-
-				// NOTE: Previously, an entire object was registered with the FlowTestAwayTeam and had to be 
-				// searched. Now, only specific fields are searched for; see FlowTestPropertyOfInterest for a demo
-				// of this sort of weaving.
 			}
 
 			catch (Exception e)
 			{
-				Console.WriteLine("FlowTestWeaver caught exception e: " + e.Message);
+				Console.WriteLine("FlowTestWeaver.FlowTestWeaver caught exception e: " + e.Message);
 			}
 		}
 

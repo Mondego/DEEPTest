@@ -1,8 +1,5 @@
 ﻿using System;
 
-// Maybe I need this
-using FlowTestAPI;
-
 namespace SampleServer
 {
 	class MainClass

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Net.Sockets;
 using System.Net;
-using System.Text;
-using FlowTestAPI;
+using System.Net.Sockets;
 using System.Collections.Generic;
-using System.Threading;
+using System.Text;
 
 namespace SampleServer
 {
@@ -14,7 +12,7 @@ namespace SampleServer
 		protected IPEndPoint utilityEndpoint;
 		protected bool running = false;
 		protected int mPort;
-		private int inner = 42;
+		//private int inner = 42;
 		private int nMessagesSent = 0;
 		private List<int> clientPorts;
 
@@ -70,4 +68,3 @@ namespace SampleServer
 		}
 	}
 }
-
