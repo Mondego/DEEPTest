@@ -35,14 +35,8 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\ThirdPartyLib\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
     <Reference Include="SampleServer">
       <HintPath>..\..\SampleChatApplication\SampleServer\bin\Debug\SampleServer.exe</HintPath>
-    </Reference>
-    <Reference Include="Mono">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="FlowTestAPI">
       <HintPath>..\..\FlowTestingLibrary\FlowTestAPI\bin\Debug\FlowTestAPI.dll</HintPath>
