@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{B406F0F9-E366-4B1B-A0B1-AE942E6DF480}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>FlowTest</RootNamespace>
     <AssemblyName>FlowTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -30,4 +30,31 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Instrumentation\" />
+    <Folder Include="Runtime\" />
+    <Folder Include="TestAPI\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Instrumentation\FlowTestInstrumentationEvent.cs" />
+    <Compile Include="Instrumentation\FlowTestPointOfInterest.cs" />
+    <Compile Include="Instrumentation\FlowTestPropertyOfInterest.cs" />
+    <Compile Include="Instrumentation\FlowTestWeaver.cs" />
+    <Compile Include="Instrumentation\WeavingAtLocation.cs" />
+    <Compile Include="Instrumentation\WeavingCustomFields.cs" />
+    <Compile Include="Runtime\FlowTestAwayTeam.cs" />
+    <Compile Include="Runtime\FlowTestRuntime.cs" />
+    <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
+    <Compile Include="Runtime\FlowTestRuntimeMothership.cs" />
+    <Compile Include="Runtime\TargetComponentRuntime.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\flowtest-api-cleaner\ThirdPartyLib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="Mono.Cecil, Version=0.9.5.12082, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <Package>monodevelop</Package>
+    </Reference>
+  </ItemGroup>
 </Project>
