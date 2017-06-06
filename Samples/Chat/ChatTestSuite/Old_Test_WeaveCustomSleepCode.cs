@@ -6,18 +6,19 @@ using NUnit.Framework;
 using FlowTest;
 
 
-namespace SampleServerTests
+namespace ChatTestSuite
 {
-	[TestFixture]
+	//[TestFixture]
 	public class Test_WeaveCustomSleepCode
 	{
+		/*
 		FlowTestRuntime runtime;
 		FlowTestPointOfInterest onChatServerReceiveMsg;
 
 		static string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
 		static string sourceComponentPath = workingTestDirectory + "/SampleServer.exe";
 
-		[OneTimeSetUp]
+		//[OneTimeSetUp]
 		public void SetUpFlowTest()
 		{
 			runtime = new FlowTestRuntime(
@@ -37,7 +38,7 @@ namespace SampleServerTests
 				methodCallToWeave: typeof(UserDesignedWeaves.StaticMethodsCustomSleepWeave)
 			);
 			onChatServerReceiveMsg.watchAfter = false;
-			runtime.WatchPoint (onChatServerReceiveMsg);*/
+			runtime.WatchPoint (onChatServerReceiveMsg);
 			runtime.Write ();
 
 			// Running a woven executable
@@ -45,14 +46,14 @@ namespace SampleServerTests
 			Thread.Sleep(5000);
 		}
 
-		[OneTimeTearDown]
+		//[OneTimeTearDown]
 		public void TearDownFlowTest()
 		{
 			Console.WriteLine ("Tearing down Custom Weaves FlowTest");
 			runtime.Stop ();
 		}
 
-		[Test]
+		//[Test]
 		public void Test_Sleep()
 		{
 			
@@ -65,7 +66,7 @@ namespace SampleServerTests
 
 			Thread.Sleep (3000);
 			client1.Stop();
-		}
+		}*/
 	}
 }
 

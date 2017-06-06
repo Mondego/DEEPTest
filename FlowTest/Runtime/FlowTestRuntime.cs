@@ -8,56 +8,32 @@ namespace FlowTest
 {
 	public class FlowTestRuntime
 	{
-		private FlowTestWeaver weaver;
+		private FlowTestWeavingOrchestration weavingHandler;
 		private FlowTestRuntimeMothership mothership;
-		private TargetComponentRuntime wovenComponent;
 
-		private string pathToSourceExecutable;
-		private string pathToWriteWovenExecutable;
+		private TargetComponentRuntime flowTestEntryPoint;
+		private string pathToFlowTestEntryPoint;
 
-		public FlowTestRuntime (string sourceExecutable, string destinationExecutable)
+		public FlowTestRuntime (string flowTestTargetExecutable)
 		{
 			// This initializes the messenger for all communication between the test runtime
-			// and the hook into the target component.
+			// and the hook into the target component(s)
 			mothership = new FlowTestRuntimeMothership ();
-			mothership.Run ();
+			//mothership.Run ();
 
-			// This initializes the weaving API, responsible for doing actual module read/writes
-			pathToSourceExecutable = sourceExecutable;
-			pathToWriteWovenExecutable = destinationExecutable;
-			weaver = new FlowTestWeaver (
-				sourceModulePath: pathToSourceExecutable,
-				destinationModulePath: pathToWriteWovenExecutable
-			);
+			// This is the path to whatever component will be run to start the test, woven
+			// or otherwise.
+			pathToFlowTestEntryPoint = flowTestTargetExecutable;
 
-			// For now, we don't want to hold on to previously woven executables
-			if (File.Exists(pathToWriteWovenExecutable)) {
-				Console.WriteLine("Deleting stale instrumented file {0}", pathToWriteWovenExecutable);
-				File.Delete(pathToWriteWovenExecutable);
-			}
+			// The weavingHandler is the runtime's API to weaving code, validating existing weaves,
+			// and any other instrumentation before runtime.
+			weavingHandler = new FlowTestWeavingOrchestration();
 		}
-
-		public string getSourceComponentPath()
-		{
-			return pathToSourceExecutable;
-		}
-
-		public string getDestinationComponentPath()
-		{
-			return pathToWriteWovenExecutable;
-		}
-
-		// Tracking Properties and Points of Interest
-		// TODO 
-		public void WatchProperty(FlowTestPropertyOfInterest poi)
-		{
-			string pathToProperty = poi.Property;
-		}
-
+			
 		public void WatchPoint(FlowTestPointOfInterest poi)
 		{
 			poi.setRuntime (this);
-			weaver.WeaveWatchpointAtPointOfInterest (poi);
+			weavingHandler.addWatchpoint(poi);
 		}
 
 		public FlowTestRuntimeMothership getLocalMessenger()
@@ -65,10 +41,9 @@ namespace FlowTest
 			return mothership;
 		}
 
-		// Weaving API
 		public void Write()
 		{
-			weaver.WriteInstrumentedCodeToFile ();
+			weavingHandler.Write();
 		}
 
 		// Doing things during the test
@@ -81,14 +56,14 @@ namespace FlowTest
 			}
 			string[] targetComponentArguments = args.ToArray();
 
-			wovenComponent = new TargetComponentRuntime (pathToWriteWovenExecutable, targetComponentArguments);
-			wovenComponent.Start();
+			flowTestEntryPoint = new TargetComponentRuntime (pathToFlowTestEntryPoint, targetComponentArguments);
+			flowTestEntryPoint.Start();
 		}
 
 		public void Stop()
 		{
 			mothership.Stop ();
-			wovenComponent.Stop();
+			flowTestEntryPoint.Stop();
 		}
 
 		public object GetPropertyOfInterest(string poiPath)

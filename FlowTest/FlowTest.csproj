@@ -47,6 +47,8 @@
     <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
     <Compile Include="Runtime\FlowTestRuntimeMothership.cs" />
     <Compile Include="Runtime\TargetComponentRuntime.cs" />
+    <Compile Include="TestAPI\TestDriver.cs" />
+    <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

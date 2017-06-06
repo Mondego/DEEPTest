@@ -4,11 +4,11 @@ using System.Threading;
 using NUnit.Framework;
 using FlowTest;
 
-namespace SampleServerTests
+namespace ChatTestSuite
 {
 	//[TestFixture]
 	public class Test_CaptureNestedProperty
-	{
+	{/*
 		FlowTestRuntime runtime;
 		TargetComponentRuntime wovenComponent;
 
@@ -96,7 +96,8 @@ namespace SampleServerTests
 		public void FormattingBetweenTests()
 		{
 			Console.WriteLine("====================");
-		}
+		}*
+		*/
 	}
 }
 

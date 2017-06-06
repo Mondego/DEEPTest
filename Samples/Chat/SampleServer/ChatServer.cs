@@ -38,8 +38,7 @@ namespace SampleServer
 
 		protected void ReceiveMessage( )
 		{
-			Console.WriteLine ("NOW: " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
-			Console.WriteLine ("NOW: " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+			//Console.WriteLine ("NOW: " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
 			byte[] messageBuffer = mListener.Receive(ref utilityEndpoint);
 			string received = Encoding.ASCII.GetString(messageBuffer, 0, messageBuffer.Length);
 			Console.WriteLine("[From Client {0}] {1}", utilityEndpoint.Port, received);

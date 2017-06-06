@@ -38,6 +38,7 @@
     <Compile Include="Old_Test_CaptureNestedProperty.cs" />
     <Compile Include="Old_Test_WeaveCustomSleepCode.cs" />
     <Compile Include="Old_Test_WeavePointsOfInterest.cs" />
+    <Compile Include="Test_Many_PoI_Weaves.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

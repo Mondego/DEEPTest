@@ -6,11 +6,12 @@ using NUnit.Framework;
 using FlowTest;
 
 
-namespace SampleServerTests
+namespace ChatTestSuite
 {
-	[TestFixture]
+	//[TestFixture]
 	public class Test_WeavePointsOfInterest
 	{
+		/*
 		FlowTestRuntime runtime;
 		FlowTestPointOfInterest chatServerMsgSent;
 
@@ -78,7 +79,7 @@ namespace SampleServerTests
 
 			client1.Stop();
 			client2.Stop();
-		}
+		}*/
 	}
 }
 

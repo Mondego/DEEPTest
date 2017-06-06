@@ -8,6 +8,7 @@ namespace FlowTest
 	// A method which we instrument before and/or after. 
 	public class FlowTestPointOfInterest
 	{
+		public string parentModuleOfWatchpoint { get; }
 		public string parentObjectOfWatchpoint { get; }
 		public string methodOfInterest { get; }
 		public bool watchBefore { get; set; }
@@ -16,11 +17,13 @@ namespace FlowTest
 		private FlowTestRuntime mRuntime;
 
 		public FlowTestPointOfInterest (
+			string parentModule,
 			string parentObject,
 			string methodToWatch,
 			Type methodCallToWeave = null
 		)
 		{
+			parentModuleOfWatchpoint = parentModule;
 			parentObjectOfWatchpoint = parentObject;
 			methodOfInterest = methodToWatch;
 			mCustomWeave = methodCallToWeave;
