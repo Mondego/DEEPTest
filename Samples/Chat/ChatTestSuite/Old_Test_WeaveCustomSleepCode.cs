@@ -3,8 +3,8 @@ using System.IO;
 using System.Threading;
 
 using NUnit.Framework;
+using FlowTest;
 
-using FlowTestAPI;
 
 namespace SampleServerTests
 {
