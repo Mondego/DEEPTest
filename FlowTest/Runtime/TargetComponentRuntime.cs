@@ -32,7 +32,7 @@ namespace FlowTest
 			process.Start();
 			process.BeginOutputReadLine();
 			ProcessStreamInterface = process.StandardInput;
-			Thread.Sleep (3000);
+			Thread.Sleep (1000);
 		}
 
 		public void SendMessageToComponentConsole(string msg)

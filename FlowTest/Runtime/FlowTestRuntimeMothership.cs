@@ -15,22 +15,19 @@ namespace FlowTest
 	public class FlowTestRuntimeMothership
 	{
 		private FlowTestRuntimeConnection MothershipEndpoint;
-		private FlowTestRuntimeConnection AwayTeamComponentEndpoint;
 		private TcpListener MothershipMessageListener;
 		private Dictionary<int, Queue<FlowTestInstrumentationEvent>> testRuntimeEvents;
 		private bool isListening = false;
 
-		// TODO - Shouldn't be hardcoded
 		private int defaultMothershipEndpointPort = 60011;
 		private int defaultAwayTeamEndpointPort = 60012;
 
 		// Default for now is we're just going to weave stuff into one target component per test runtime.
 	    // e.g., a mapping of one NUnit test suite to one FlowTestRuntime, and consequently one target
 		// component. No idea if this is accurate long-term but seems organized enough.
-		public FlowTestRuntimeMothership (int quantityTargetComponents = 1)
+		public FlowTestRuntimeMothership ()
 		{
 			MothershipEndpoint = new FlowTestRuntimeConnection (IPAddress.Any, defaultMothershipEndpointPort);
-			AwayTeamComponentEndpoint = new FlowTestRuntimeConnection (IPAddress.Any, defaultAwayTeamEndpointPort);
 			MothershipMessageListener = new TcpListener(MothershipEndpoint.Address, MothershipEndpoint.Port);
 			testRuntimeEvents = new Dictionary<int, Queue<FlowTestInstrumentationEvent>> ();
 		}

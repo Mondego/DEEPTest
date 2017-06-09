@@ -27,14 +27,14 @@ namespace FlowTest
 				if (poi.watchBefore)
 				{
 					// Temporary fix for thread.sleeps
-					if (poi.mCustomWeave != null)
+					/*if (poi.mCustomWeave != null)
 					{
 						WeaveThreadSleepAfterEachMatch(
 							targetMethod: poiMethod,
 							nMilliseconds: 4000,
 							matchOperand: "System.Console::WriteLine"
 						);
-					}
+					}*/
 
 					WeavingCustomFields.InvokeMethodOfPublicCustomField(
 						destinationModule : module,

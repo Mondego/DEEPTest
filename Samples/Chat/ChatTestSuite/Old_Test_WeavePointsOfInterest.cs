@@ -10,8 +10,8 @@ namespace ChatTestSuite
 {
 	//[TestFixture]
 	public class Test_WeavePointsOfInterest
-	{
-		/*
+	{/*
+		
 		FlowTestRuntime runtime;
 		FlowTestPointOfInterest chatServerMsgSent;
 
@@ -52,13 +52,15 @@ namespace ChatTestSuite
 			runtime.Stop ();
 		}
 
-		//[Test]
+		[Test]
 		public void Test_CountEchoServerMessagesSent()
 		{
 			string chatClientLocation = workingTestDirectory + "/SampleClient.exe";
 			string[] chatClientArguments = new string[] { "7777" };
 			TargetComponentRuntime client1 = new TargetComponentRuntime(chatClientLocation, chatClientArguments);
 			TargetComponentRuntime client2 = new TargetComponentRuntime(chatClientLocation, chatClientArguments);
+
+			Scenario.
 
 			client1.Start();
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");

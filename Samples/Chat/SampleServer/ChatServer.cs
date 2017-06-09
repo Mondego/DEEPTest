@@ -12,7 +12,6 @@ namespace SampleServer
 		protected IPEndPoint utilityEndpoint;
 		protected bool running = false;
 		protected int mPort;
-		//private int inner = 42;
 		private int nMessagesSent = 0;
 		private List<int> clientPorts;
 
@@ -38,7 +37,6 @@ namespace SampleServer
 
 		protected void ReceiveMessage( )
 		{
-			//Console.WriteLine ("NOW: " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
 			byte[] messageBuffer = mListener.Receive(ref utilityEndpoint);
 			string received = Encoding.ASCII.GetString(messageBuffer, 0, messageBuffer.Length);
 			Console.WriteLine("[From Client {0}] {1}", utilityEndpoint.Port, received);

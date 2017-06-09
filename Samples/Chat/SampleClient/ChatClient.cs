@@ -32,8 +32,11 @@ namespace SampleClient
 				while (running == true)
 				{
 					string message = Console.ReadLine();
-					Console.WriteLine("[Client {0}][Sending] {1}", mClientPort, message);
-					SendMessage(message);
+					if (message.Length > 0)
+					{
+						Console.WriteLine("[Client {0}][Sending] {1}", mClientPort, message);
+						SendMessage(message);
+					}
 				}
 			});
 

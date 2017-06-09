@@ -9,28 +9,45 @@ namespace ChatTestSuite
 	[TestFixture]
 	public class Test_Many_PoI_Weaves
 	{
-		// TestAPI could call this a test driver
 		FlowTestRuntime runtime;
+		FlowTestPointOfInterest pointOfMessageReceived, pointOfMessageSent;
 
 		static string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
 		static string samplesParentDirectory = Directory.GetParent(workingTestDirectory).Parent.Parent.Parent.FullName;
-		static string flowTestTargetComponentPath = samplesParentDirectory + "/Chat/SampleServer/bin/Debug/ChatServer.exe";
+		static string chatServerExecutablePath = samplesParentDirectory + "/Chat/SampleServer/bin/Debug/ChatServer.exe";
 
-		// TODO - TestAPI functionality for cleaner name handling maybe?
-		static string targetComponentLocation = Path.Combine(
-			Directory.GetParent(workingTestDirectory).Parent.Parent.FullName, 
-			"SampleServer/bin/Debug/ChatServer.exe");
+		static string chatClientExecutablePath = samplesParentDirectory + "/Chat/SampleClient/bin/Debug/ChatClient.exe";
 
 		[OneTimeSetUp]
 		public void FlowTestSetupManyPoints()
 		{
-			Console.WriteLine(samplesParentDirectory + "\n" + flowTestTargetComponentPath);
-			runtime = new FlowTestRuntime(flowTestTargetComponentPath);
+			// Initialize the runtime, which is the test driver for the flowtest
+			runtime = new FlowTestRuntime();
 
+			// Add the component to execute
+			runtime.addAssemblyToFlowTest(
+				pathToAssembly: chatServerExecutablePath,
+				nSecondsRequiredAfterLaunch: 5,
+				args: new string[] { "7777" }
+			);
 
+			// Points of interest where we want to weave some activity
+			pointOfMessageReceived = new FlowTestPointOfInterest (
+				parentModule: chatServerExecutablePath,
+				parentObject: "ChatServer",
+				methodToWatch: "ReceiveMessage"
+			);
+			runtime.AddWatchPoint(pointOfMessageReceived);
 
-			runtime.ExecuteWovenWithArguments("7777");
-			Thread.Sleep(5000);
+			pointOfMessageSent = new FlowTestPointOfInterest (
+				parentModule: chatServerExecutablePath,
+				parentObject: "ChatServer",
+				methodToWatch: "SendMessage"
+			);
+			runtime.AddWatchPoint(pointOfMessageSent);
+
+			runtime.Write();
+			runtime.Start();
 		}
 
 		[OneTimeTearDown]
@@ -42,14 +59,18 @@ namespace ChatTestSuite
 		[Test]
 		public void TestCase()
 		{
-			string chatClientLocation = samplesParentDirectory + "/Chat/SampleClient/bin/Debug/ChatClient.exe";
-			string[] chatClientArguments = new string[] { "7777" };
-			TargetComponentRuntime client1 = new TargetComponentRuntime(chatClientLocation, chatClientArguments);
-
+			TargetComponentRuntime client1 = 
+				new TargetComponentRuntime(
+					targetPath: chatClientExecutablePath,
+					targetArguments: new string[] { "7777" }
+				);
 			client1.Start();
+
+
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");
 
-			Thread.Sleep (3000);
+
+			Thread.Sleep(3000);
 			client1.Stop();
 		}
 	}

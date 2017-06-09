@@ -3,6 +3,7 @@ using System.Net;
 using System.IO;
 using System.Threading;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FlowTest
 {
@@ -10,30 +11,54 @@ namespace FlowTest
 	{
 		private FlowTestWeavingOrchestration weavingHandler;
 		private FlowTestRuntimeMothership mothership;
+		List<AssemblyToExecute> flowTestStartupOrder;
 
-		private TargetComponentRuntime flowTestEntryPoint;
-		private string pathToFlowTestEntryPoint;
-
-		public FlowTestRuntime (string flowTestTargetExecutable)
+		public FlowTestRuntime ()
 		{
 			// This initializes the messenger for all communication between the test runtime
 			// and the hook into the target component(s)
 			mothership = new FlowTestRuntimeMothership ();
-			//mothership.Run ();
-
-			// This is the path to whatever component will be run to start the test, woven
-			// or otherwise.
-			pathToFlowTestEntryPoint = flowTestTargetExecutable;
 
 			// The weavingHandler is the runtime's API to weaving code, validating existing weaves,
 			// and any other instrumentation before runtime.
 			weavingHandler = new FlowTestWeavingOrchestration();
+
+			// The flowTestStartupOrder list is all services that need to be started. It's a directed
+			// graph of sorts, though very simple at the moment. Designed for systems that have
+			// complex startup sequences and/or delays.
+			flowTestStartupOrder = new List<AssemblyToExecute>();
 		}
-			
-		public void WatchPoint(FlowTestPointOfInterest poi)
+
+		public void Start()
 		{
-			poi.setRuntime (this);
-			weavingHandler.addWatchpoint(poi);
+			foreach (AssemblyToExecute flowExecutionComponent in flowTestStartupOrder) {
+				flowExecutionComponent.Start();
+			}
+		}
+
+		// Configuration for the test runtime:
+		// At the moment this involves points of interest and assemblies to execute in order
+		public void addAssemblyToFlowTest(string pathToAssembly, int nSecondsRequiredAfterLaunch, string[] args)
+		{
+			flowTestStartupOrder.Add(
+				new AssemblyToExecute(
+					assemblyExecutionPath: pathToAssembly,
+					nSecondsForStartup: nSecondsRequiredAfterLaunch,
+					arguments: args
+				)
+			);
+		}
+
+		/*************************/
+			
+		public void AddWatchPoint(FlowTestPointOfInterest poi)
+		{
+			try {
+				poi.setRuntime (this);
+				weavingHandler.addWatchpoint(poi);
+			} catch (Exception e) {
+				Console.WriteLine("FlowTestRuntime.WatchPoint(poi) unexpected exception " + e.GetType() + " " + e.Message);		
+			}
 		}
 
 		public FlowTestRuntimeMothership getLocalMessenger()
@@ -43,32 +68,37 @@ namespace FlowTest
 
 		public void Write()
 		{
-			weavingHandler.Write();
-		}
-
-		// Doing things during the test
-
-		public void ExecuteWovenWithArguments(params string[] arguments)
-		{
-			List<string> args = new List<string>();
-			for (int i = 0; i < arguments.Length; i++) {
-				args.Add(arguments [i]);
+			try {
+				weavingHandler.Write();
+			} catch (Exception e) {
+				Console.WriteLine("FlowTestRuntime.Write() unexpected exception " + e.GetType() + " " + e.Message);		
 			}
-			string[] targetComponentArguments = args.ToArray();
-
-			flowTestEntryPoint = new TargetComponentRuntime (pathToFlowTestEntryPoint, targetComponentArguments);
-			flowTestEntryPoint.Start();
 		}
 
 		public void Stop()
 		{
-			mothership.Stop ();
-			flowTestEntryPoint.Stop();
-		}
+			try 
+			{
+				mothership.Stop ();
+				for (int componentIndex = flowTestStartupOrder.Count - 1; componentIndex >= 0; componentIndex--)
+				{
+					flowTestStartupOrder[componentIndex].Stop();
+				}
+			}
 
-		public object GetPropertyOfInterest(string poiPath)
-		{
-			return null;
+			catch (ArgumentException ae)
+			{
+				// Process not found
+			}
+
+			catch (InvalidOperationException ioe) 
+			{
+				// Process couldn't be stopped cause it probably terminated due to a weaving error
+			}
+
+			catch (Exception e) {
+				Console.WriteLine("FlowTestRuntime.Stop caught unexpected exception " + e.GetType() + " " + e.Message);
+			}
 		}
 	}
 }

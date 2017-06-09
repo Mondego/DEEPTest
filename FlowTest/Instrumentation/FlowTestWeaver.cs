@@ -11,23 +11,28 @@ namespace FlowTest
 		private string moduleReadPath;
 		private string moduleWritePath;
 
+		public FlowTestWeaver(string inPlaceWritePath)
+		{
+			moduleReadPath = inPlaceWritePath;
+			moduleWritePath = inPlaceWritePath;
+			mModule = ModuleDefinition.ReadModule(moduleReadPath);
+
+		}
+
 		public FlowTestWeaver(string sourceModulePath, string destinationModulePath)
 		{
 			moduleReadPath = sourceModulePath;
 			moduleWritePath = destinationModulePath;
 			mModule = ModuleDefinition.ReadModule(moduleReadPath);
-
-			weaveFlowTestAwayTeamHandler ();
 		}
 
 		private void weaveFlowTestAwayTeamHandler()
 		{
 			try {
 
-				/*WeavingExternalDependencies.importDependencies(
-					moduleToWeave: mModule, 
-					dependencyToImport: typeof(FlowTestAwayTeam)
-				);*/
+				// TODO
+				//mModule.Import(typeof(FlowTest));
+				/*mModule.Import(typeof(FlowTestAwayTeam));
 					
 				// Weavethe custom field of type FlowTestAwayTeam to the module
 				// entry point of the target component
@@ -50,7 +55,7 @@ namespace FlowTest
 					customFieldType: typeof(FlowTestAwayTeam),
 					customFieldConstructorArgTypes: new Type[] { typeof(int), typeof(int) },
 					customFieldConstructorArgs: new object[] { 60011, 60012 }
-				);
+				);*/
 			}
 
 			catch (Exception e)
@@ -61,13 +66,28 @@ namespace FlowTest
 
 		public void WriteInstrumentedCodeToFile()
 		{
-			mModule.Write (moduleWritePath);
+			try
+			{
+				mModule.Write (moduleWritePath);
+			}
+
+			catch (Exception e) {
+				Console.WriteLine("FlowTestWeaver.WriteInstrumentedCodeToFile() caught unexpected exception " + e.GetType() + " " + e.Message);
+			}
+
 		}
 
-		// Points of Interest
 		public void WeaveWatchpointAtPointOfInterest(FlowTestPointOfInterest point)
 		{
-			WeavingAtLocation.WeaveModuleAtTargetPointCall (mModule, point);
+			try
+			{
+				// TODO
+				//WeavingAtLocation.WeaveModuleAtTargetPointCall (mModule, point);
+			}
+
+			catch (Exception e) {
+				Console.WriteLine("FlowTestWeaver.WeaveWatchpointAtPointOfInterest(poi) caught unexpected " + e.GetType() + " " + e.Message);
+			}
 		}
 	}
 }

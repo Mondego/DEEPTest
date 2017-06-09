@@ -32,7 +32,7 @@ namespace ChatTestSuite
 			Console.WriteLine ("Weaving Into Component: " + runtime.getDestinationComponentPath());
 
 			// Weaving a point of interest
-			/*onChatServerReceiveMsg = new FlowTestPointOfInterest (
+			onChatServerReceiveMsg = new FlowTestPointOfInterest (
 				parentObject: "ChatServer", 
 				methodToWatch: "ReceiveMessage",
 				methodCallToWeave: typeof(UserDesignedWeaves.StaticMethodsCustomSleepWeave)

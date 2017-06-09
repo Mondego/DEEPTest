@@ -13,20 +13,17 @@ namespace FlowTest
 		public string methodOfInterest { get; }
 		public bool watchBefore { get; set; }
 		public bool watchAfter { get; set; }
-		public Type mCustomWeave { get; }
 		private FlowTestRuntime mRuntime;
 
 		public FlowTestPointOfInterest (
 			string parentModule,
 			string parentObject,
-			string methodToWatch,
-			Type methodCallToWeave = null
+			string methodToWatch
 		)
 		{
 			parentModuleOfWatchpoint = parentModule;
 			parentObjectOfWatchpoint = parentObject;
 			methodOfInterest = methodToWatch;
-			mCustomWeave = methodCallToWeave;
 
 			watchBefore = true;
 			watchAfter = true;
