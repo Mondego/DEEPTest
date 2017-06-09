@@ -35,9 +35,7 @@ namespace FlowTest
 				flowExecutionComponent.Start();
 			}
 		}
-
-		// Configuration for the test runtime:
-		// At the moment this involves points of interest and assemblies to execute in order
+			
 		public void addAssemblyToFlowTest(string pathToAssembly, int nSecondsRequiredAfterLaunch, string[] args)
 		{
 			flowTestStartupOrder.Add(
@@ -49,8 +47,6 @@ namespace FlowTest
 			);
 		}
 
-		/*************************/
-			
 		public void AddWatchPoint(FlowTestPointOfInterest poi)
 		{
 			try {
@@ -58,20 +54,6 @@ namespace FlowTest
 				weavingHandler.addWatchpoint(poi);
 			} catch (Exception e) {
 				Console.WriteLine("FlowTestRuntime.WatchPoint(poi) unexpected exception " + e.GetType() + " " + e.Message);		
-			}
-		}
-
-		public FlowTestRuntimeMothership getLocalMessenger()
-		{
-			return mothership;
-		}
-
-		public void Write()
-		{
-			try {
-				weavingHandler.Write();
-			} catch (Exception e) {
-				Console.WriteLine("FlowTestRuntime.Write() unexpected exception " + e.GetType() + " " + e.Message);		
 			}
 		}
 
@@ -98,6 +80,20 @@ namespace FlowTest
 
 			catch (Exception e) {
 				Console.WriteLine("FlowTestRuntime.Stop caught unexpected exception " + e.GetType() + " " + e.Message);
+			}
+		}
+
+		public FlowTestRuntimeMothership getLocalMessageHandler()
+		{
+			return mothership;
+		}
+
+		public void Write()
+		{
+			try {
+				weavingHandler.Write();
+			} catch (Exception e) {
+				Console.WriteLine("FlowTestRuntime.Write() unexpected exception " + e.GetType() + " " + e.Message);		
 			}
 		}
 	}

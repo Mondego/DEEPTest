@@ -36,7 +36,7 @@ namespace FlowTest
 
 		public FlowTestInstrumentationEvent[] getTestResults()
 		{
-			Queue<FlowTestInstrumentationEvent> events = mRuntime.getLocalMessenger().getRuntimeFlowByKey(this.GetHashCode());
+			Queue<FlowTestInstrumentationEvent> events = mRuntime.getLocalMessageHandler().getRuntimeFlowByKey(this.GetHashCode());
 			return events.ToArray();
 		}
 

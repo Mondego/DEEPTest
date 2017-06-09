@@ -29,10 +29,9 @@ namespace FlowTest
 		private void weaveFlowTestAwayTeamHandler()
 		{
 			try {
-
-				// TODO
+				// TODO This is sort of obsolete
 				//mModule.Import(typeof(FlowTest));
-				/*mModule.Import(typeof(FlowTestAwayTeam));
+				mModule.Import(typeof(FlowTestAwayTeam));
 					
 				// Weavethe custom field of type FlowTestAwayTeam to the module
 				// entry point of the target component
@@ -55,7 +54,7 @@ namespace FlowTest
 					customFieldType: typeof(FlowTestAwayTeam),
 					customFieldConstructorArgTypes: new Type[] { typeof(int), typeof(int) },
 					customFieldConstructorArgs: new object[] { 60011, 60012 }
-				);*/
+				);
 			}
 
 			catch (Exception e)
@@ -81,8 +80,7 @@ namespace FlowTest
 		{
 			try
 			{
-				// TODO
-				//WeavingAtLocation.WeaveModuleAtTargetPointCall (mModule, point);
+				WeavingAtLocation.WeaveModuleAtTargetPointCall (mModule, point);
 			}
 
 			catch (Exception e) {

@@ -49,6 +49,7 @@ namespace SampleServer
 			{
 				SendMessage(received, new IPEndPoint(IPAddress.Any, localClientPort));
 			}
+			//Console.WriteLine("test");
 		}
 
 		protected void SendMessage(string messageText, IPEndPoint destination)

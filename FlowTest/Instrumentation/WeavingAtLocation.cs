@@ -18,24 +18,15 @@ namespace FlowTest
 				MethodDefinition poiMethod = poiParentType.Methods.Single(m => m.Name == poi.methodOfInterest);
 				ILProcessor instructionProcessor = poiMethod.Body.GetILProcessor();
 
-				/*Console.WriteLine("...");
+				Console.WriteLine("...");
 				foreach(Instruction ii in instructionProcessor.Body.Instructions) {
 					Console.WriteLine(ii);
 				}
-				Console.WriteLine("...");*/
+				Console.WriteLine("...");
+
 
 				if (poi.watchBefore)
-				{
-					// Temporary fix for thread.sleeps
-					/*if (poi.mCustomWeave != null)
-					{
-						WeaveThreadSleepAfterEachMatch(
-							targetMethod: poiMethod,
-							nMilliseconds: 4000,
-							matchOperand: "System.Console::WriteLine"
-						);
-					}*/
-
+				{/*
 					WeavingCustomFields.InvokeMethodOfPublicCustomField(
 						destinationModule : module,
 						destinationTypeName: poi.parentObjectOfWatchpoint,
@@ -50,7 +41,7 @@ namespace FlowTest
 						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
 						invokedMethodArgs: new string[] { poi.generatePayloadString("before") }, // { poi.generatePayload("after") },
 						weavePositionIsStart: true
-					);
+					);*/
 
 					WeaveDebugStatementBeforeMethod(
 						targetMethod: poiMethod,
@@ -60,6 +51,9 @@ namespace FlowTest
 
 				if (poi.watchAfter)
 				{
+					// TODO this isn't registering
+
+					/*
 					WeavingCustomFields.InvokeMethodOfPublicCustomField(
 						destinationModule : module,
 						destinationTypeName: poi.parentObjectOfWatchpoint,
@@ -74,13 +68,19 @@ namespace FlowTest
 						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
 						invokedMethodArgs: new string[] { poi.generatePayloadString("after") }, // { poi.generatePayload("after") },
 						weavePositionIsStart: false
-					);
+					);*/
 
 					WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,
 						printDebugValue: "Some weaving happened after " + poi.methodOfInterest
 					);
 				}
+
+				Console.WriteLine("...");
+				foreach(Instruction ii in instructionProcessor.Body.Instructions) {
+					Console.WriteLine(ii);
+				}
+				Console.WriteLine("...");
 			}
 
 			catch (Exception e) {
@@ -195,10 +195,10 @@ namespace FlowTest
 		)
 		{
 			ILProcessor instructionProcessor = methodToWeave.Body.GetILProcessor();
-			List<Instruction> returnInstructionsInTargetMehod = 
+			List<Instruction> returnInstructionsInTargetMethod = 
 				instructionProcessor.Body.Instructions.Where (i => i.OpCode == OpCodes.Ret).ToList ();
 
-			foreach (Instruction returnInstruction in returnInstructionsInTargetMehod) {
+			foreach (Instruction returnInstruction in returnInstructionsInTargetMethod) {
 				foreach (Instruction weaveInstruction in listOfInstructionsToWeave) {
 					instructionProcessor.InsertBefore (returnInstruction, weaveInstruction);
 				}

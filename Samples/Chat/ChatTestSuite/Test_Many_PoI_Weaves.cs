@@ -32,12 +32,6 @@ namespace ChatTestSuite
 			);
 
 			// Points of interest where we want to weave some activity
-			pointOfMessageReceived = new FlowTestPointOfInterest (
-				parentModule: chatServerExecutablePath,
-				parentObject: "ChatServer",
-				methodToWatch: "ReceiveMessage"
-			);
-			runtime.AddWatchPoint(pointOfMessageReceived);
 
 			pointOfMessageSent = new FlowTestPointOfInterest (
 				parentModule: chatServerExecutablePath,
@@ -45,6 +39,13 @@ namespace ChatTestSuite
 				methodToWatch: "SendMessage"
 			);
 			runtime.AddWatchPoint(pointOfMessageSent);
+
+			pointOfMessageReceived = new FlowTestPointOfInterest (
+				parentModule: chatServerExecutablePath,
+				parentObject: "ChatServer",
+				methodToWatch: "ReceiveMessage"
+			);
+			runtime.AddWatchPoint(pointOfMessageReceived);
 
 			runtime.Write();
 			runtime.Start();
@@ -70,7 +71,7 @@ namespace ChatTestSuite
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");
 
 
-			Thread.Sleep(3000);
+			Thread.Sleep(10000);
 			client1.Stop();
 		}
 	}
