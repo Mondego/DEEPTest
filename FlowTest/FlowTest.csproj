@@ -47,14 +47,13 @@
     <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
     <Compile Include="Runtime\FlowTestRuntimeMothership.cs" />
     <Compile Include="Runtime\TargetComponentRuntime.cs" />
-    <Compile Include="TestAPI\TestDriver.cs" />
     <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
     <Compile Include="Runtime\AssemblyToExecute.cs" />
     <Compile Include="Runtime\FlowTestAdHocMessenger.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\flowtest-api-cleaner\ThirdPartyLib\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\ThirdPartyLib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="Mono.Cecil">
