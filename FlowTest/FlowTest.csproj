@@ -50,6 +50,7 @@
     <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
     <Compile Include="Runtime\AssemblyToExecute.cs" />
     <Compile Include="Runtime\FlowTestAdHocMessenger.cs" />
+    <Compile Include="Instrumentation\WeavingDebugTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System.Collections.Generic;
+using Mono.Cecil.Rocks;
 
 namespace FlowTest
 {
@@ -18,12 +19,7 @@ namespace FlowTest
 				MethodDefinition poiMethod = poiParentType.Methods.Single(m => m.Name == poi.methodOfInterest);
 				ILProcessor instructionProcessor = poiMethod.Body.GetILProcessor();
 
-				Console.WriteLine("...");
-				foreach(Instruction ii in instructionProcessor.Body.Instructions) {
-					Console.WriteLine(ii);
-				}
-				Console.WriteLine("...");
-
+				//WeavingDebugTools.ConsoleWriteEachCILInstruction(poiMethod);
 
 				if (poi.watchBefore)
 				{/*
@@ -76,11 +72,7 @@ namespace FlowTest
 					);
 				}
 
-				Console.WriteLine("...");
-				foreach(Instruction ii in instructionProcessor.Body.Instructions) {
-					Console.WriteLine(ii);
-				}
-				Console.WriteLine("...");
+				//WeavingDebugTools.ConsoleWriteEachCILInstruction(poiMethod);
 			}
 
 			catch (Exception e) {
@@ -194,15 +186,28 @@ namespace FlowTest
 			List<Instruction> listOfInstructionsToWeave
 		)
 		{
+			methodToWeave.Body.SimplifyMacros ();
+
 			ILProcessor instructionProcessor = methodToWeave.Body.GetILProcessor();
 			List<Instruction> returnInstructionsInTargetMethod = 
-				instructionProcessor.Body.Instructions.Where (i => i.OpCode == OpCodes.Ret).ToList ();
+				methodToWeave.Body.Instructions.Where (i => i.OpCode == OpCodes.Ret).ToList ();
 
 			foreach (Instruction returnInstruction in returnInstructionsInTargetMethod) {
-				foreach (Instruction weaveInstruction in listOfInstructionsToWeave) {
-					instructionProcessor.InsertBefore (returnInstruction, weaveInstruction);
+				returnInstruction.Operand = listOfInstructionsToWeave [0].Operand;
+				returnInstruction.OpCode = listOfInstructionsToWeave [0].OpCode;
+
+				Instruction toInsertAfter = returnInstruction;
+
+				for (int i = 1; i < listOfInstructionsToWeave.Count; i++) {
+					instructionProcessor.InsertAfter (toInsertAfter, listOfInstructionsToWeave [i]);
+					toInsertAfter = toInsertAfter.Next;
 				}
+
+				Instruction newRet = instructionProcessor.Create (OpCodes.Ret);
+				instructionProcessor.InsertAfter (toInsertAfter, newRet);
 			}
+
+			methodToWeave.Body.OptimizeMacros ();
 		}
 
 		public static void WeaveAfterEveryOperandMatching(
