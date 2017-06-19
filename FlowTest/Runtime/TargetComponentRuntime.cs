@@ -22,7 +22,9 @@ namespace FlowTest
 			{
 				if (e.Data.Length > 0)
 				{
-					Console.WriteLine("[Debug] " + e.Data);
+					Console.WriteLine("[PID {0} {1}] {2}", 
+						process.Id, new FileInfo(targetPath).Name,
+						e.Data);
 				}
 			};
 		}

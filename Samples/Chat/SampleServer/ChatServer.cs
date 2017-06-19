@@ -39,7 +39,7 @@ namespace SampleServer
 		{
 			byte[] messageBuffer = mListener.Receive(ref utilityEndpoint);
 			string received = Encoding.ASCII.GetString(messageBuffer, 0, messageBuffer.Length);
-			Console.WriteLine("[From Client {0}] {1}", utilityEndpoint.Port, received);
+			Console.WriteLine("[Server localhost:{0}][From Client localhost:{1}] {2}", mPort, utilityEndpoint.Port, received);
 
 			if (!clientPorts.Contains (utilityEndpoint.Port)) {
 				clientPorts.Add (utilityEndpoint.Port);

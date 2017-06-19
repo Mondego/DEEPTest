@@ -34,7 +34,7 @@ namespace SampleClient
 					string message = Console.ReadLine();
 					if (message.Length > 0)
 					{
-						Console.WriteLine("[Client {0}][Sending] {1}", mClientPort, message);
+						Console.WriteLine("[Client localhost:{0}][Sending] {1}", mClientPort, message);
 						SendMessage(message);
 					}
 				}

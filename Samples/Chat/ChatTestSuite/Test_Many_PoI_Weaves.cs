@@ -15,7 +15,6 @@ namespace ChatTestSuite
 		static string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
 		static string samplesParentDirectory = Directory.GetParent(workingTestDirectory).Parent.Parent.Parent.FullName;
 		static string chatServerExecutablePath = samplesParentDirectory + "/Chat/SampleServer/bin/Debug/ChatServer.exe";
-
 		static string chatClientExecutablePath = samplesParentDirectory + "/Chat/SampleClient/bin/Debug/ChatClient.exe";
 
 		[OneTimeSetUp]
@@ -32,7 +31,6 @@ namespace ChatTestSuite
 			);
 
 			// Points of interest where we want to weave some activity
-
 			pointOfMessageSent = new FlowTestPointOfInterest (
 				parentModule: chatServerExecutablePath,
 				parentObject: "ChatServer",

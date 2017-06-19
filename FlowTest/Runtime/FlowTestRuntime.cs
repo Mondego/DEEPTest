@@ -34,6 +34,7 @@ namespace FlowTest
 			foreach (AssemblyToExecute flowExecutionComponent in flowTestStartupOrder) {
 				flowExecutionComponent.Start();
 			}
+			mothership.Run ();
 		}
 			
 		public void addAssemblyToFlowTest(string pathToAssembly, int nSecondsRequiredAfterLaunch, string[] args)
