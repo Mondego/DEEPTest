@@ -33,7 +33,8 @@
   <ItemGroup>
     <Folder Include="Instrumentation\" />
     <Folder Include="Runtime\" />
-    <Folder Include="TestAPI\" />
+    <Folder Include="Instrumentation\Techniques\" />
+    <Folder Include="Test\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Instrumentation\FlowTestInstrumentationEvent.cs" />
@@ -51,6 +52,8 @@
     <Compile Include="Runtime\AssemblyToExecute.cs" />
     <Compile Include="Runtime\FlowTestAdHocMessenger.cs" />
     <Compile Include="Instrumentation\WeavingDebugTools.cs" />
+    <Compile Include="Instrumentation\Techniques\ITechnique.cs" />
+    <Compile Include="Instrumentation\Techniques\WeaveSleepsTechnique.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

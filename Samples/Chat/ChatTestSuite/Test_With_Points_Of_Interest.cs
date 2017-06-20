@@ -12,6 +12,8 @@ namespace ChatTestSuite
 		FlowTestRuntime runtime;
 		FlowTestPointOfInterest pointOfMessageReceived, pointOfMessageSent;
 
+		TargetComponentRuntime client1;
+
 		static string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
 		static string samplesParentDirectory = Directory.GetParent(workingTestDirectory).Parent.Parent.Parent.FullName;
 		static string chatServerExecutablePath = samplesParentDirectory + "/Chat/SampleServer/bin/Debug/ChatServer.exe";
@@ -20,8 +22,7 @@ namespace ChatTestSuite
 		[OneTimeSetUp]
 		public void FlowTestSetupManyPoints()
 		{
-			// Initialize the runtime, which is the test driver for the flowtest
-			runtime = new FlowTestRuntime();
+			
 
 			// Add the component to execute
 			runtime.addAssemblyToFlowTest(
@@ -58,11 +59,10 @@ namespace ChatTestSuite
 		[Test]
 		public void TestCase()
 		{
-			TargetComponentRuntime client1 = 
-				new TargetComponentRuntime(
-					targetPath: chatClientExecutablePath,
-					targetArguments: new string[] { "7777" }
-				);
+			client1 = new TargetComponentRuntime(
+				targetPath: chatClientExecutablePath,
+				targetArguments: new string[] { "7777" }
+			);
 			client1.Start();
 
 

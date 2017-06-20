@@ -10,8 +10,6 @@ namespace FlowTest
 {
 	public class WeavingAtLocation
 	{
-		// TODO Some of this behavior should probably happen at the FlowTestRuntime level, 
-		// and just pass in a payload to send off as needed.
 		public static void WeaveModuleAtTargetPointCall(ModuleDefinition module, FlowTestPointOfInterest poi)
 		{
 			try {
@@ -22,7 +20,7 @@ namespace FlowTest
 				//WeavingDebugTools.ConsoleWriteEachCILInstruction(poiMethod);
 
 				if (poi.watchBefore)
-				{/*
+				{
 					WeavingCustomFields.InvokeMethodOfPublicCustomField(
 						destinationModule : module,
 						destinationTypeName: poi.parentObjectOfWatchpoint,
@@ -37,7 +35,7 @@ namespace FlowTest
 						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
 						invokedMethodArgs: new string[] { poi.generatePayloadString("before") }, // { poi.generatePayload("after") },
 						weavePositionIsStart: true
-					);*/
+					);
 
 					WeaveDebugStatementBeforeMethod(
 						targetMethod: poiMethod,
@@ -47,9 +45,7 @@ namespace FlowTest
 
 				if (poi.watchAfter)
 				{
-					// TODO this isn't registering
-
-					/*
+					
 					WeavingCustomFields.InvokeMethodOfPublicCustomField(
 						destinationModule : module,
 						destinationTypeName: poi.parentObjectOfWatchpoint,
@@ -64,7 +60,7 @@ namespace FlowTest
 						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
 						invokedMethodArgs: new string[] { poi.generatePayloadString("after") }, // { poi.generatePayload("after") },
 						weavePositionIsStart: false
-					);*/
+					);
 
 					WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,
