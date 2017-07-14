@@ -19,7 +19,7 @@ namespace FlowTest
 				if (!weavesToOrchestrate.ContainsKey(point.parentModuleOfWatchpoint)) {
 					weavesToOrchestrate.Add(
 						point.parentModuleOfWatchpoint, 
-						new FlowTestWeaver(point.parentModuleOfWatchpoint, point.parentModuleOfWatchpoint)
+						new FlowTestWeaver(point.parentModuleOfWatchpoint)
 					);
 				}
 					

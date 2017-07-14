@@ -44,7 +44,7 @@ namespace FlowTest
 			Console.WriteLine("Sanity check on FlowTestAwayTeam");
 		}
 
-		public void SendRunTimeEvent(string serializedEvent)
+		public static void SendRunTimeEvent(string serializedEvent)
 		{
 			TcpClient tcpc = new TcpClient("127.0.0.1", MothershipConnection.Port);
 			NetworkStream ns = tcpc.GetStream();
@@ -54,7 +54,7 @@ namespace FlowTest
 			tcpc.Close();
 		}
 
-		public void SendRewrappedRunTimeEvent(string serializedEvent, object content = null)
+		public static void SendRewrappedRunTimeEvent(string serializedEvent, object content = null)
 		{
 			if (content != null) {
 				FlowTestInstrumentationEvent unwrap = 

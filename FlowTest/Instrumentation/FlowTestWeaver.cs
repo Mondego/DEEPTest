@@ -6,8 +6,7 @@ namespace FlowTest
 {
 	public class FlowTestWeaver
 	{
-		private ModuleDefinition mModule;
-		private string flowTestWovenRuntimeHelperFieldName = "mWovenMessagesHandler"; 
+		private ModuleDefinition mModule; 
 		private string moduleReadPath;
 		private string moduleWritePath;
 
@@ -16,51 +15,9 @@ namespace FlowTest
 			moduleReadPath = inPlaceWritePath;
 			moduleWritePath = inPlaceWritePath;
 			mModule = ModuleDefinition.ReadModule(moduleReadPath);
-
-		}
-
-		public FlowTestWeaver(string sourceModulePath, string destinationModulePath)
-		{
-			moduleReadPath = sourceModulePath;
-			moduleWritePath = destinationModulePath;
-			mModule = ModuleDefinition.ReadModule(moduleReadPath);
-		}
-
-		private void weaveFlowTestAwayTeamHandler()
-		{
-			try {
-				// TODO This is sort of obsolete
-				//mModule.Import(typeof(FlowTest));
-				mModule.Import(typeof(FlowTestAwayTeam));
-					
-				// Weavethe custom field of type FlowTestAwayTeam to the module
-				// entry point of the target component
-				WeavingCustomFields.WeaveCustomFieldIntoClass(
-					m: mModule,
-					customFieldName: flowTestWovenRuntimeHelperFieldName,
-					customFieldAttributes: Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
-					customFieldType: typeof(FlowTestAwayTeam),
-					destinationClassName: "MainClass"
-				);
-
-				// Initialize the newly woven field so we can use it to communicate with the FlowTestRuntime
-				WeavingCustomFields.InitializeCustomField (
-					destinationModule: mModule,
-					destinationClassName: "MainClass",
-					destinationMethodName: "Main",
-
-					customFieldName: flowTestWovenRuntimeHelperFieldName,
-					customFieldAttributes: Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
-					customFieldType: typeof(FlowTestAwayTeam),
-					customFieldConstructorArgTypes: new Type[] { typeof(int), typeof(int) },
-					customFieldConstructorArgs: new object[] { 60011, 60012 }
-				);
-			}
-
-			catch (Exception e)
-			{
-				Console.WriteLine("FlowTestWeaver.FlowTestWeaver caught exception e: " + e.Message);
-			}
+		
+			// Credit for methodology http://einaregilsson.com/module-initializers-in-csharp/
+			
 		}
 
 		public void WriteInstrumentedCodeToFile()

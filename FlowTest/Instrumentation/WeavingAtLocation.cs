@@ -13,11 +13,46 @@ namespace FlowTest
 		public static void WeaveModuleAtTargetPointCall(ModuleDefinition module, FlowTestPointOfInterest poi)
 		{
 			try {
-				TypeDefinition poiParentType = module.Types.Single(t => t.Name == poi.parentObjectOfWatchpoint);
-				MethodDefinition poiMethod = poiParentType.Methods.Single(m => m.Name == poi.methodOfInterest);
+				TypeDefinition destinationType = module.Types.Single(t => t.Name == poi.parentObjectOfWatchpoint);
+				MethodDefinition poiMethod = destinationType.Methods.Single(m => m.Name == poi.methodOfInterest);
 				ILProcessor instructionProcessor = poiMethod.Body.GetILProcessor();
+				string destinationFTplaceholder = WeavingDebugTools.GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint);
 
 				//WeavingDebugTools.ConsoleWriteEachCILInstruction(poiMethod);
+
+				// Weaving in field into this class
+				FieldDefinition ftRuntimeHook = 
+					destinationType.Fields.SingleOrDefault(fd => fd.FullName == WeavingDebugTools.GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint));
+				
+
+				if (ftRuntimeHook == null)
+				{
+					TypeReference FTAwayTeamType = module.Import(typeof(FlowTestAwayTeam).GetType());
+
+					FieldDefinition wovenFieldDefinition = new FieldDefinition (
+						destinationFTplaceholder,
+						Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
+						FTAwayTeamType
+					);
+
+					destinationType.Fields.Add(wovenFieldDefinition);
+		
+					foreach (MethodDefinition md in destinationType.Methods.Where(m => m.Name == ".ctor"))
+					{
+						Console.WriteLine("m: " + md);
+						/*WeavingCustomFields.InitializeCustomField (
+							destinationModule: module,
+							destinationClassName: poi.parentObjectOfWatchpoint,
+							destinationMethodName: ".ctor",
+
+							customFieldName: WeavingDebugTools.GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint),
+							customFieldAttributes: Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
+							customFieldType: typeof(FlowTestAwayTeam),
+							customFieldConstructorArgTypes: new Type[] { typeof(int), typeof(int) },
+							customFieldConstructorArgs: new object[] { 60011, 60012 }
+						);*/
+					}
+				}
 
 				if (poi.watchBefore)
 				{
@@ -46,7 +81,7 @@ namespace FlowTest
 				if (poi.watchAfter)
 				{
 					
-					WeavingCustomFields.InvokeMethodOfPublicCustomField(
+					/*WeavingCustomFields.InvokeMethodOfPublicCustomField(
 						destinationModule : module,
 						destinationTypeName: poi.parentObjectOfWatchpoint,
 						destinationMethodName: poi.methodOfInterest,
@@ -60,7 +95,7 @@ namespace FlowTest
 						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
 						invokedMethodArgs: new string[] { poi.generatePayloadString("after") }, // { poi.generatePayload("after") },
 						weavePositionIsStart: false
-					);
+					);*/
 
 					WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,

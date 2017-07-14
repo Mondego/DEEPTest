@@ -16,6 +16,11 @@ namespace FlowTest
 			}
 			Console.WriteLine ("^---- End Instructions in {0} ----^", methodToPrint.FullName);
 		}
+
+		public static string GetStandaloneFTFieldName(string TypeName)
+		{
+			return "_FT_" + TypeName;
+		}
 	}
 }
 

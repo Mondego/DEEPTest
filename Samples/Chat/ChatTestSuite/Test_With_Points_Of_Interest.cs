@@ -22,7 +22,8 @@ namespace ChatTestSuite
 		[OneTimeSetUp]
 		public void FlowTestSetupManyPoints()
 		{
-			
+			// Initialize the runtime, which is the test driver for the flowtest
+			runtime = new FlowTestRuntime();
 
 			// Add the component to execute
 			runtime.addAssemblyToFlowTest(
