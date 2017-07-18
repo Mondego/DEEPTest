@@ -20,6 +20,8 @@ namespace FlowTest
 				TypeDefinition destinationType = module.Types.Single(t => t.Name == poi.parentObjectOfWatchpoint);
 				MethodDefinition poiMethod = destinationType.Methods.Single(m => m.Name == poi.methodOfInterest);
 				ILProcessor instructionProcessor = poiMethod.Body.GetILProcessor();
+
+				/*
 				string destinationFTplaceholder = GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint);
 
 				//WeavingDebugTools.ConsoleWriteEachCILInstruction(poiMethod);
@@ -44,23 +46,23 @@ namespace FlowTest
 					foreach (MethodDefinition md in destinationType.Methods.Where(m => m.Name == ".ctor"))
 					{
 						Console.WriteLine("m: " + md);
-						/*WeavingCustomFields.InitializeCustomField (
+						InitializeCustomField (
 							destinationModule: module,
 							destinationClassName: poi.parentObjectOfWatchpoint,
 							destinationMethodName: ".ctor",
 
-							customFieldName: WeavingDebugTools.GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint),
+							customFieldName: GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint),
 							customFieldAttributes: Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
 							customFieldType: typeof(FlowTestAwayTeam),
 							customFieldConstructorArgTypes: new Type[] { typeof(int), typeof(int) },
 							customFieldConstructorArgs: new object[] { 60011, 60012 }
-						);*/
+						);
 					}
-				}
+				}*/
 
 				if (poi.watchBefore)
 				{
-					InvokeMethodOfPublicCustomField(
+					/*InvokeMethodOfPublicCustomField(
 						destinationModule : module,
 						destinationTypeName: poi.parentObjectOfWatchpoint,
 						destinationMethodName: poi.methodOfInterest,
@@ -74,6 +76,13 @@ namespace FlowTest
 						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
 						invokedMethodArgs: new string[] { poi.generatePayloadString("before") }, // { poi.generatePayload("after") },
 						weavePositionIsStart: true
+					);*/
+
+					weaveProxyMessage(
+						mDefinition: module,
+						targetMethod: poiMethod,
+						messageToWeave: "test watch before",
+						weavingMethod: new Action<MethodDefinition, List<Instruction>>(WeaveListOfInstructionsAtMethodEntry)
 					);
 
 					WeaveDebugStatementBeforeMethod(
@@ -84,8 +93,7 @@ namespace FlowTest
 
 				if (poi.watchAfter)
 				{
-					
-					/*WeavingCustomFields.InvokeMethodOfPublicCustomField(
+					/*InvokeMethodOfPublicCustomField(
 						destinationModule : module,
 						destinationTypeName: poi.parentObjectOfWatchpoint,
 						destinationMethodName: poi.methodOfInterest,
@@ -106,8 +114,6 @@ namespace FlowTest
 						printDebugValue: "Some weaving happened after " + poi.methodOfInterest
 					);
 				}
-
-				//WeavingDebugTools.ConsoleWriteEachCILInstruction(poiMethod);
 			}
 
 			catch (Exception e) {
@@ -116,6 +122,48 @@ namespace FlowTest
 				Console.WriteLine ("{0} {1}", e.InnerException, e.Message);
 			}
 		}
+		#endregion
+
+		#region FlowTestProxySingleton
+
+		public static void weaveProxyMessage(
+			ModuleDefinition mDefinition,
+			MethodDefinition targetMethod,
+			string messageToWeave,
+			Delegate weavingMethod)
+		{
+			List<Instruction> instructionsToWeave = new List<Instruction> ();
+			ILProcessor instructionProcessor = targetMethod.Body.GetILProcessor();
+
+			/*System.Reflection.MethodInfo instanceMethod = typeof(FlowTestProxySingleton).GetMethod("get_Instance");
+			System.Reflection.MethodInfo messageMethod = typeof(FlowTestProxySingleton).GetMethod("Message", new [] { typeof(string) });
+			var instanceImport = mDefinition.Import(instanceMethod).Resolve();
+			var messageImport = mDefinition.Import(messageMethod).Resolve();*/
+
+			// Step 1
+			// call FlowTest.FlowTestProxySingleton FlowTest.FlowTestProxySingleton::get_Instance()				
+			Instruction callSingletonInstanceInstruction = 
+				instructionProcessor.Create(OpCodes.Call,
+					mDefinition.Import(
+						typeof(FlowTestProxySingleton).GetMethod("get_Instance")));
+			instructionsToWeave.Add (callSingletonInstanceInstruction);
+
+			// Step 2
+			// ldstr [VALUE]
+			Instruction loadStringInstruction = instructionProcessor.Create(OpCodes.Ldstr, messageToWeave);
+			instructionsToWeave.Add (loadStringInstruction);
+
+			// Step 3
+			// callvirt System.Void FlowTest.FlowTestProxySingleton::Message(System.String)
+			Instruction invokeMethodOnCustomFieldInstance =
+				instructionProcessor.Create(OpCodes.Callvirt, 
+					mDefinition.Import(
+						typeof (FlowTestProxySingleton).GetMethod("Message", new [] { typeof(string) })));
+			instructionsToWeave.Add(invokeMethodOnCustomFieldInstance);
+
+			weavingMethod.DynamicInvoke(new object[] { targetMethod, instructionsToWeave});
+		}
+
 		#endregion
 
 		#region Fields
@@ -190,7 +238,7 @@ namespace FlowTest
 						destinationType.Fields.Single(f => f.Name == customFieldName));
 				instructionsToWeave.Add(storeInitializedObjectIntoField);
 
-				Weaving.WeaveListOfInstructionsAtMethodEntry(
+				WeaveListOfInstructionsAtMethodEntry(
 					methodToWeave: destinationMethod,
 					listOfInstructionsToWeave: instructionsToWeave
 				);
@@ -266,14 +314,14 @@ namespace FlowTest
 
 				if (weavePositionIsStart)
 				{
-					Weaving.WeaveListOfInstructionsAtMethodEntry(
+					WeaveListOfInstructionsAtMethodEntry(
 						methodToWeave: destinationMethod,
 						listOfInstructionsToWeave: listOfInstructions
 					);
 				}
 				else
 				{
-					Weaving.WeaveListOfInstructionsAtMethodExit(
+					WeaveListOfInstructionsAtMethodExit(
 						methodToWeave: destinationMethod,
 						listOfInstructionsToWeave: listOfInstructions
 					);
@@ -325,7 +373,7 @@ namespace FlowTest
 				}
 			}
 
-			Instruction[] arrayOfInstructionsToWeave = instructionsToWeave.ToArray();
+			//Instruction[] arrayOfInstructionsToWeave = instructionsToWeave.ToArray();
 			foreach (Instruction matchingInstruction in matchingOperandsInstructions) {
 				Instruction toWeaveBefore = matchingInstruction.Next;
 				foreach (Instruction toWeave in instructionsToWeave) {

@@ -15,12 +15,11 @@ namespace FlowTest
 	public class FlowTestEventAggregator
 	{
 		private FlowTestRuntimeConnection MothershipEndpoint;
-		private TcpListener MothershipMessageListener;
+		private TcpListener EventListener;
 		private Dictionary<int, Queue<FlowTestInstrumentationEvent>> testRuntimeEvents;
 		private bool isListening = false;
 
 		private int defaultMothershipEndpointPort = 60011;
-		private int defaultAwayTeamEndpointPort = 60012;
 
 		// Default for now is we're just going to weave stuff into one target component per test runtime.
 	    // e.g., a mapping of one NUnit test suite to one FlowTestRuntime, and consequently one target
@@ -28,7 +27,7 @@ namespace FlowTest
 		public FlowTestEventAggregator ()
 		{
 			MothershipEndpoint = new FlowTestRuntimeConnection (IPAddress.Any, defaultMothershipEndpointPort);
-			MothershipMessageListener = new TcpListener(MothershipEndpoint.Address, MothershipEndpoint.Port);
+			EventListener = new TcpListener(MothershipEndpoint.Address, MothershipEndpoint.Port);
 			testRuntimeEvents = new Dictionary<int, Queue<FlowTestInstrumentationEvent>> ();
 		}
 
@@ -47,32 +46,41 @@ namespace FlowTest
 
 			Task.Run (() => {
 				try {
-					MothershipMessageListener.Start ();
+					EventListener.Start ();
+					Console.WriteLine("Starting FlowTest event listener at localhost:{0}", defaultMothershipEndpointPort);
 					while (isListening) {
-						TcpClient tc = MothershipMessageListener.AcceptTcpClient ();
+						TcpClient tc = EventListener.AcceptTcpClient ();
 						NetworkStream ns = tc.GetStream ();
 						StreamReader sr = new StreamReader (ns);
 
 						string receivedJSON = sr.ReadToEnd ();
 						Console.WriteLine ("[DEBUG localhost:{0} received result]: {1}", MothershipEndpoint.Port, receivedJSON); 
 
-						FlowTestInstrumentationEvent eventFromWovenComponent =
-							JsonConvert.DeserializeObject<FlowTestInstrumentationEvent> (receivedJSON);
+						//FlowTestInstrumentationEvent eventFromWovenComponent =
+					//		JsonConvert.DeserializeObject<FlowTestInstrumentationEvent> (receivedJSON);
 
-						if (!testRuntimeEvents.ContainsKey (eventFromWovenComponent.sourceFlowKey)) {
+						/*if (!testRuntimeEvents.ContainsKey (eventFromWovenComponent.sourceFlowKey)) {
 							testRuntimeEvents.Add (
 								eventFromWovenComponent.sourceFlowKey,
 								new Queue<FlowTestInstrumentationEvent> ()
 							);
 						}
-						testRuntimeEvents [eventFromWovenComponent.sourceFlowKey].Enqueue (eventFromWovenComponent);
+						testRuntimeEvents [eventFromWovenComponent.sourceFlowKey].Enqueue (eventFromWovenComponent);*/
 
 						ns.Close ();
 						sr.Close ();
 						tc.Close ();
 					}
-				} catch (Exception e) {
-					Console.WriteLine ("Flow Test Mothership caught an exception: " + e.Message);
+				} 
+
+				catch (SocketException se)
+				{
+					// TODO this is going to happen when the test ends early.
+					Console.WriteLine("The FlowTest aggregator was stopped in a slightly ungraceful fashion.");
+				}
+
+				catch (Exception e) {
+					Console.WriteLine ("Flow Test Mothership caught an exception: " + e.Message + e.GetType());
 				}
 			});
 		}
@@ -80,7 +88,8 @@ namespace FlowTest
 		public void Stop()
 		{
 			isListening = false;
-			MothershipMessageListener.Stop ();
+			Console.WriteLine("Stopping FlowTest event listener at localhost:{0}", defaultMothershipEndpointPort);
+			EventListener.Stop ();
 		}
 	}
 }

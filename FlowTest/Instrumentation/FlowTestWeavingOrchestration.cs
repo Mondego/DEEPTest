@@ -23,7 +23,14 @@ namespace FlowTest
 				moduleWritePath = moduleDestinationPath;
 				mModule = ModuleDefinition.ReadModule(moduleReadPath);
 
-				// TODO here we add a custom field, maybe
+				if (mModule.EntryPoint != null)
+				{
+					Console.WriteLine("The entry point is OK");
+				}
+				else 
+				{
+					Console.WriteLine("The entry point is null");
+				}
 			}
 
 			public void Write()

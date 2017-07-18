@@ -31,7 +31,7 @@ namespace FlowTest
 
 		#region FlowTest setup 
 
-		public void addAssemblyToExecuteInFlowTest(string pathToAssembly, int nSecondsRequiredAfterLaunch, string[] args)
+		public void addAssemblyToFlowTest(string pathToAssembly, int nSecondsRequiredAfterLaunch, string[] args)
 		{
 			flowTestStartupOrder.Add(
 				new AssemblyToExecute(
@@ -72,10 +72,11 @@ namespace FlowTest
 
 		public void Start()
 		{
+			eventHandler.Run ();
+			Thread.Sleep(5000);
 			foreach (AssemblyToExecute flowExecutionComponent in flowTestStartupOrder) {
 				flowExecutionComponent.Start();
 			}
-			eventHandler.Run ();
 		}
 
 		public void Stop()

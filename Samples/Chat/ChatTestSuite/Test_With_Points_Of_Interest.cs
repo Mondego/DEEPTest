@@ -26,7 +26,7 @@ namespace ChatTestSuite
 			runtime = new FlowTestRuntime();
 
 			// Add the component to execute
-			runtime.addAssemblyToExecuteInFlowTest(
+			runtime.addAssemblyToFlowTest(
 				pathToAssembly: chatServerExecutablePath,
 				nSecondsRequiredAfterLaunch: 5,
 				args: new string[] { "7777" }
@@ -45,9 +45,9 @@ namespace ChatTestSuite
 				parentObject: "ChatServer",
 				methodToWatch: "ReceiveMessage"
 			);
-			runtime.AddPointOfInterest(pointOfMessageReceived);
+			//runtime.AddPointOfInterest(pointOfMessageReceived);
 
-			//runtime.Write();
+			runtime.Write();
 			runtime.Start();
 		}
 

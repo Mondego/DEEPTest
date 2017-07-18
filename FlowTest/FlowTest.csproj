@@ -48,6 +48,8 @@
     <Compile Include="Runtime\FlowTestInstrumentationEvent.cs" />
     <Compile Include="Instrumentation\Weaving.cs" />
     <Compile Include="Runtime\FlowTestEventAggregator.cs" />
+    <Compile Include="Runtime\FlowTestProxySingleton.cs" />
+    <Compile Include="Instrumentation\FlowTestTinyProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
