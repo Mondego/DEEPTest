@@ -5,12 +5,12 @@ using System.Threading;
 
 namespace FlowTest
 {
-	public class TargetComponentRuntime
+	public class ProcessWithIOHandler
 	{
 		private Process process;
 		private StreamWriter ProcessStreamInterface;
 
-		public TargetComponentRuntime (string targetPath, string[] targetArguments)
+		public ProcessWithIOHandler (string targetPath, string[] targetArguments)
 		{
 			process = new Process();
 			process.StartInfo.FileName = targetPath;

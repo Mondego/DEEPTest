@@ -7,12 +7,12 @@ using System.Threading;
 namespace ChatTestSuite
 {
 	[TestFixture]
-	public class Test_Many_PoI_Weaves
+	public class Test_Points_Of_Interest_Weaving
 	{
 		FlowTestRuntime runtime;
 		FlowTestPointOfInterest pointOfMessageReceived, pointOfMessageSent;
 
-		TargetComponentRuntime client1;
+		ProcessWithIOHandler client1;
 
 		static string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
 		static string samplesParentDirectory = Directory.GetParent(workingTestDirectory).Parent.Parent.Parent.FullName;
@@ -20,13 +20,13 @@ namespace ChatTestSuite
 		static string chatClientExecutablePath = samplesParentDirectory + "/Chat/SampleClient/bin/Debug/ChatClient.exe";
 
 		[OneTimeSetUp]
-		public void FlowTestSetupManyPoints()
+		public void ChatServerFlowTestSetup()
 		{
 			// Initialize the runtime, which is the test driver for the flowtest
 			runtime = new FlowTestRuntime();
 
 			// Add the component to execute
-			runtime.addAssemblyToFlowTest(
+			runtime.addAssemblyToExecuteInFlowTest(
 				pathToAssembly: chatServerExecutablePath,
 				nSecondsRequiredAfterLaunch: 5,
 				args: new string[] { "7777" }
@@ -38,16 +38,16 @@ namespace ChatTestSuite
 				parentObject: "ChatServer",
 				methodToWatch: "SendMessage"
 			);
-			runtime.AddWatchPoint(pointOfMessageSent);
+			runtime.AddPointOfInterest(pointOfMessageSent);
 
 			pointOfMessageReceived = new FlowTestPointOfInterest (
 				parentModule: chatServerExecutablePath,
 				parentObject: "ChatServer",
 				methodToWatch: "ReceiveMessage"
 			);
-			runtime.AddWatchPoint(pointOfMessageReceived);
+			runtime.AddPointOfInterest(pointOfMessageReceived);
 
-			runtime.Write();
+			//runtime.Write();
 			runtime.Start();
 		}
 
@@ -60,7 +60,7 @@ namespace ChatTestSuite
 		[Test]
 		public void TestCase()
 		{
-			client1 = new TargetComponentRuntime(
+			client1 = new ProcessWithIOHandler(
 				targetPath: chatClientExecutablePath,
 				targetArguments: new string[] { "7777" }
 			);

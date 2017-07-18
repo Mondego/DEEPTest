@@ -18,7 +18,6 @@ namespace FlowTest
 		public object GetPropertyFromRuntime (FlowTestRuntime test)
 		{
 			return null;
-			//return test.GetPropertyOfInterest (pathToPropertyOfInterest);
 		}
 	}
 }

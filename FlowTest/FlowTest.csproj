@@ -33,27 +33,21 @@
   <ItemGroup>
     <Folder Include="Instrumentation\" />
     <Folder Include="Runtime\" />
-    <Folder Include="Instrumentation\Techniques\" />
-    <Folder Include="Test\" />
+    <Folder Include="TestDesignUtilities\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Instrumentation\FlowTestInstrumentationEvent.cs" />
     <Compile Include="Instrumentation\FlowTestPointOfInterest.cs" />
     <Compile Include="Instrumentation\FlowTestPropertyOfInterest.cs" />
-    <Compile Include="Instrumentation\FlowTestWeaver.cs" />
-    <Compile Include="Instrumentation\WeavingAtLocation.cs" />
-    <Compile Include="Instrumentation\WeavingCustomFields.cs" />
     <Compile Include="Runtime\FlowTestAwayTeam.cs" />
     <Compile Include="Runtime\FlowTestRuntime.cs" />
     <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
-    <Compile Include="Runtime\FlowTestRuntimeMothership.cs" />
-    <Compile Include="Runtime\TargetComponentRuntime.cs" />
     <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
     <Compile Include="Runtime\AssemblyToExecute.cs" />
     <Compile Include="Runtime\FlowTestAdHocMessenger.cs" />
-    <Compile Include="Instrumentation\WeavingDebugTools.cs" />
-    <Compile Include="Instrumentation\Techniques\ITechnique.cs" />
-    <Compile Include="Instrumentation\Techniques\WeaveSleepsTechnique.cs" />
+    <Compile Include="TestDesignUtilities\ProcessWithIOHandler.cs" />
+    <Compile Include="Runtime\FlowTestInstrumentationEvent.cs" />
+    <Compile Include="Instrumentation\Weaving.cs" />
+    <Compile Include="Runtime\FlowTestEventAggregator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

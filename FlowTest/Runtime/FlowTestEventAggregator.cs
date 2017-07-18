@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace FlowTest
 {	
 	// Cheesy name, handles the nitty-gritty of endpoints, content messages, etc 
-	public class FlowTestRuntimeMothership
+	public class FlowTestEventAggregator
 	{
 		private FlowTestRuntimeConnection MothershipEndpoint;
 		private TcpListener MothershipMessageListener;
@@ -25,7 +25,7 @@ namespace FlowTest
 		// Default for now is we're just going to weave stuff into one target component per test runtime.
 	    // e.g., a mapping of one NUnit test suite to one FlowTestRuntime, and consequently one target
 		// component. No idea if this is accurate long-term but seems organized enough.
-		public FlowTestRuntimeMothership ()
+		public FlowTestEventAggregator ()
 		{
 			MothershipEndpoint = new FlowTestRuntimeConnection (IPAddress.Any, defaultMothershipEndpointPort);
 			MothershipMessageListener = new TcpListener(MothershipEndpoint.Address, MothershipEndpoint.Port);

@@ -36,7 +36,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test_With_Points_Of_Interest.cs" />
-    <Compile Include="Test_With_Properties_Of_Interest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

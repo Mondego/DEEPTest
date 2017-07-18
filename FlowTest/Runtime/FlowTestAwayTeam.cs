@@ -17,7 +17,7 @@ namespace FlowTest
 	{
 		private Dictionary<int, object> mEntanglements;
 		private FlowTestRuntimeConnection AwayTeamConnection;
-		private FlowTestRuntimeConnection MothershipConnection;
+		private static FlowTestRuntimeConnection MothershipConnection;
 		private TcpListener AwayTeamTCPListener;
 		private bool isListeningForRuntimeRequests = false;
 

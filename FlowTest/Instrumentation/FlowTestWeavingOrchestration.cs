@@ -1,33 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Mono.Cecil;
 
 namespace FlowTest
 {
 	public class FlowTestWeavingOrchestration
 	{
-		private Dictionary<string, FlowTestWeaver> weavesToOrchestrate;
+		private class ModuleToWeave
+		{
+			private ModuleDefinition mModule;
+			private string moduleReadPath;
+			private string moduleWritePath;
+
+			public ModuleToWeave(string inPlaceWeavingPath) : this (inPlaceWeavingPath, inPlaceWeavingPath)
+			{
+			}
+
+			public ModuleToWeave(string moduleSourcePath, string moduleDestinationPath)
+			{
+				moduleReadPath = moduleSourcePath;
+				moduleWritePath = moduleDestinationPath;
+				mModule = ModuleDefinition.ReadModule(moduleReadPath);
+
+				// TODO here we add a custom field, maybe
+			}
+
+			public void Write()
+			{
+				mModule.Write (moduleWritePath);
+			}
+
+			public void WeavePointOfInterest(FlowTestPointOfInterest point)
+			{
+				Weaving.WeavePointofInterest (mModule, point);
+			}
+		}
+
+		private Dictionary<string, ModuleToWeave> weavesToOrchestrate;
 
 		public FlowTestWeavingOrchestration ()
 		{
-			weavesToOrchestrate = new Dictionary<string, FlowTestWeaver>();
+			weavesToOrchestrate = new Dictionary<string, ModuleToWeave>();
 		}
 
-		public void addWatchpoint(FlowTestPointOfInterest point)
+		public void weavePointOfInterest(FlowTestPointOfInterest point)
 		{
 			try
 			{
 				if (!weavesToOrchestrate.ContainsKey(point.parentModuleOfWatchpoint)) {
 					weavesToOrchestrate.Add(
 						point.parentModuleOfWatchpoint, 
-						new FlowTestWeaver(point.parentModuleOfWatchpoint)
+						new ModuleToWeave(point.parentModuleOfWatchpoint)
 					);
 				}
 					
-				weavesToOrchestrate [point.parentModuleOfWatchpoint].WeaveWatchpointAtPointOfInterest(point);
+				weavesToOrchestrate [point.parentModuleOfWatchpoint].WeavePointOfInterest(point);
 			}
 
 			catch (Exception e) {
-				Console.WriteLine("FlowTestWeavingOrchestration.addWatchpoint(poi) caught unexpected {0} {1}",
+				Console.WriteLine("FlowTestWeavingOrchestration.weavePointOfInterest(poi) caught unexpected {0} {1}",
 					e.GetType(),
 					e.Message);
 			}
@@ -37,8 +69,8 @@ namespace FlowTest
 		{
 			try
 			{
-				foreach (FlowTestWeaver weaver in weavesToOrchestrate.Values) {
-					weaver.WriteInstrumentedCodeToFile();
+				foreach (ModuleToWeave weaver in weavesToOrchestrate.Values) {
+					weaver.Write();
 				}
 			}
 
