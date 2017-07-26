@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatTestSuite", "Samples\Ch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient", "Samples\Chat\SampleClient\ChatClient.csproj", "{5AD8D5FE-8FF7-4539-B650-E73A9A0E0A99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleChatServer", "Samples\Chat\SampleServer\SampleChatServer.csproj", "{4BA1BAF3-63F7-4D27-803B-EC6D02A32D22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatServer", "Samples\Chat\SampleServer\ChatServer.csproj", "{4BA1BAF3-63F7-4D27-803B-EC6D02A32D22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

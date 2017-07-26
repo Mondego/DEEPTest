@@ -22,15 +22,6 @@ namespace FlowTest
 				moduleReadPath = moduleSourcePath;
 				moduleWritePath = moduleDestinationPath;
 				mModule = ModuleDefinition.ReadModule(moduleReadPath);
-
-				if (mModule.EntryPoint != null)
-				{
-					Console.WriteLine("The entry point is OK");
-				}
-				else 
-				{
-					Console.WriteLine("The entry point is null");
-				}
 			}
 
 			public void Write()

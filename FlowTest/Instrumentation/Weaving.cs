@@ -21,63 +21,8 @@ namespace FlowTest
 				MethodDefinition poiMethod = destinationType.Methods.Single(m => m.Name == poi.methodOfInterest);
 				ILProcessor instructionProcessor = poiMethod.Body.GetILProcessor();
 
-				/*
-				string destinationFTplaceholder = GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint);
-
-				//WeavingDebugTools.ConsoleWriteEachCILInstruction(poiMethod);
-
-				// Weaving in field into this class
-				FieldDefinition ftRuntimeHook = 
-					destinationType.Fields.SingleOrDefault(fd => fd.FullName == GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint));
-				
-
-				if (ftRuntimeHook == null)
-				{
-					TypeReference FTAwayTeamType = module.Import(typeof(FlowTestAwayTeam).GetType());
-
-					FieldDefinition wovenFieldDefinition = new FieldDefinition (
-						destinationFTplaceholder,
-						Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
-						FTAwayTeamType
-					);
-
-					destinationType.Fields.Add(wovenFieldDefinition);
-		
-					foreach (MethodDefinition md in destinationType.Methods.Where(m => m.Name == ".ctor"))
-					{
-						Console.WriteLine("m: " + md);
-						InitializeCustomField (
-							destinationModule: module,
-							destinationClassName: poi.parentObjectOfWatchpoint,
-							destinationMethodName: ".ctor",
-
-							customFieldName: GetStandaloneFTFieldName(poi.parentObjectOfWatchpoint),
-							customFieldAttributes: Mono.Cecil.FieldAttributes.Static | Mono.Cecil.FieldAttributes.Public,
-							customFieldType: typeof(FlowTestAwayTeam),
-							customFieldConstructorArgTypes: new Type[] { typeof(int), typeof(int) },
-							customFieldConstructorArgs: new object[] { 60011, 60012 }
-						);
-					}
-				}*/
-
 				if (poi.watchBefore)
 				{
-					/*InvokeMethodOfPublicCustomField(
-						destinationModule : module,
-						destinationTypeName: poi.parentObjectOfWatchpoint,
-						destinationMethodName: poi.methodOfInterest,
-
-						// TODO need to make this part of the flowtest runtime so poi can access it not like this
-						customFieldTypeName: "MainClass",
-						customFieldName: "mWovenMessagesHandler",
-						customFieldMethodToInvoke: "SendRunTimeEvent",
-						customFieldType: typeof(FlowTestAwayTeam),
-
-						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
-						invokedMethodArgs: new string[] { poi.generatePayloadString("before") }, // { poi.generatePayload("after") },
-						weavePositionIsStart: true
-					);*/
-
 					weaveProxyMessage(
 						mDefinition: module,
 						targetMethod: poiMethod,
@@ -93,22 +38,6 @@ namespace FlowTest
 
 				if (poi.watchAfter)
 				{
-					/*InvokeMethodOfPublicCustomField(
-						destinationModule : module,
-						destinationTypeName: poi.parentObjectOfWatchpoint,
-						destinationMethodName: poi.methodOfInterest,
-
-						// TODO need to make this part of the flowtest runtime so poi can access it not like this
-						customFieldTypeName: "MainClass",
-						customFieldName: "mWovenMessagesHandler",
-						customFieldMethodToInvoke: "SendRunTimeEvent",
-						customFieldType: typeof(FlowTestAwayTeam),
-
-						invokedMethodArgTypes: new Type[] { typeof(string) },// new Type[] { typeof(FlowTestInstrumentationEvent) },
-						invokedMethodArgs: new string[] { poi.generatePayloadString("after") }, // { poi.generatePayload("after") },
-						weavePositionIsStart: false
-					);*/
-
 					WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,
 						printDebugValue: "Some weaving happened after " + poi.methodOfInterest
@@ -117,9 +46,9 @@ namespace FlowTest
 			}
 
 			catch (Exception e) {
-				Console.WriteLine ("FlowTest Weaver caught an exception while adding a point of interest.");
-				Console.WriteLine ("PoI: {0} => {1}", poi.parentObjectOfWatchpoint, poi.methodOfInterest);
-				Console.WriteLine ("{0} {1}", e.InnerException, e.Message);
+				Console.WriteLine ("| FlowTest Weaver caught an exception while adding a point of interest.");
+				Console.WriteLine ("| PoI: {0} => {1}", poi.parentObjectOfWatchpoint, poi.methodOfInterest);
+				Console.WriteLine ("| {0} {1}", e.InnerException, e.Message);
 			}
 		}
 		#endregion
@@ -135,14 +64,36 @@ namespace FlowTest
 			List<Instruction> instructionsToWeave = new List<Instruction> ();
 			ILProcessor instructionProcessor = targetMethod.Body.GetILProcessor();
 
+			WeaveInFlowTestBootstrap (
+				mModule: mDefinition
+			);
+
+
+			instructionsToWeave.Add (
+				instructionProcessor.Create (OpCodes.Ldstr, "test test test"));
+			instructionsToWeave.Add (
+				instructionProcessor.Create (OpCodes.Call,
+					mDefinition.Import (
+						FlowTestBootstrapType.Methods.Single (m => m.Name == "Load"))));
+			/*
+			 * https://stackoverflow.com/questions/30094655/invoke-a-method-from-another-assembly
+			MethodInfo mAssemblyLoadFile = typeof(System.Reflection.Assembly).GetMethod ("LoadFile", new [] { typeof(string) });
+			var moduleImportAssemblyLoadFile = mDefinition.Import (mAssemblyLoadFile).Resolve ();*/
+
+			// TODO does mDefinition already have this defined?
+
+			// Adds a static typedefinition FlowTestBootstrap
+			//Assembly a = Assembly.LoadFile(pathToTheDll);
+			// https://stackoverflow.com/questions/30094655/invoke-a-method-from-another-assembly
+
 			/*System.Reflection.MethodInfo instanceMethod = typeof(FlowTestProxySingleton).GetMethod("get_Instance");
 			System.Reflection.MethodInfo messageMethod = typeof(FlowTestProxySingleton).GetMethod("Message", new [] { typeof(string) });
 			var instanceImport = mDefinition.Import(instanceMethod).Resolve();
-			var messageImport = mDefinition.Import(messageMethod).Resolve();*/
+			var messageImport = mDefinition.Import(messageMethod).Resolve();
 
 			// Step 1
 			// call FlowTest.FlowTestProxySingleton FlowTest.FlowTestProxySingleton::get_Instance()				
-			Instruction callSingletonInstanceInstruction = 
+			/*Instruction callSingletonInstanceInstruction = 
 				instructionProcessor.Create(OpCodes.Call,
 					mDefinition.Import(
 						typeof(FlowTestProxySingleton).GetMethod("get_Instance")));
@@ -159,9 +110,65 @@ namespace FlowTest
 				instructionProcessor.Create(OpCodes.Callvirt, 
 					mDefinition.Import(
 						typeof (FlowTestProxySingleton).GetMethod("Message", new [] { typeof(string) })));
-			instructionsToWeave.Add(invokeMethodOnCustomFieldInstance);
+			instructionsToWeave.Add(invokeMethodOnCustomFieldInstance);*/
 
 			weavingMethod.DynamicInvoke(new object[] { targetMethod, instructionsToWeave});
+		}
+
+		public static void WeaveInFlowTestBootstrap(
+			ModuleDefinition mModule
+		)
+		{
+			TypeDefinition FlowTestBootstrapType = new TypeDefinition (
+				"SampleServer",
+				"FlowTestBootstrap",
+				Mono.Cecil.TypeAttributes.Public | Mono.Cecil.TypeAttributes.Abstract | Mono.Cecil.TypeAttributes.Sealed,
+				mModule.Import (typeof (object)));
+			mModule.Types.Add (FlowTestBootstrapType);
+
+			TypeReference stringType = mModule.TypeSystem.String.Resolve ();
+			stringType = mModule.Import (mModule.TypeSystem.String.Resolve ());
+			MethodDefinition loader = new MethodDefinition (
+				"Load",
+				MethodAttributes.Public | MethodAttributes.Static,
+				mModule.Import (typeof (void)));
+			loader.Parameters.Add (new ParameterDefinition("payload", ParameterAttributes.None, stringType));
+			FlowTestBootstrapType.Methods.Add (loader);
+
+			loader.Body.SimplifyMacros ();
+			loader.Body.Instructions.Add (
+				loader.Body.GetILProcessor ().Create (OpCodes.Ldarg_0));
+			loader.Body.Instructions.Add(
+				loader.Body.GetILProcessor().Create(OpCodes.Call,
+					mModule.Import(
+						typeof (Console).GetMethod ("WriteLine", new [] { typeof (string) }))));
+			loader.Body.Instructions.Add (
+				loader.Body.GetILProcessor ().Create (OpCodes.Ret));
+			loader.Body.OptimizeMacros ();
+
+			DebugPrintCILInstructionsInMethod (loader);
+
+			FieldDefinition fieldDef = new FieldDefinition (
+				"FlowTestApiAssembly",
+				FieldAttributes.Public | FieldAttributes.Static,
+				mModule.Import(typeof(System.Reflection.Assembly))
+			);
+			FlowTestBootstrapType.Fields.Add (fieldDef);
+
+			MethodDefinition FlowTestBootstrapStaticConstructor = new MethodDefinition(
+				".cctor",
+				MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+				mModule.Import(typeof(void)));
+			FlowTestBootstrapStaticConstructor.Body.Instructions.Add(
+				FlowTestBootstrapStaticConstructor.Body.GetILProcessor().Create(OpCodes.Ldstr, "static constructor"));
+			FlowTestBootstrapStaticConstructor.Body.Instructions.Add (
+				FlowTestBootstrapStaticConstructor.Body.GetILProcessor()
+				.Create (OpCodes.Call, 
+					mModule.Import (
+						typeof(Console).GetMethod ("WriteLine", new [] { typeof(string) })))
+			);
+			FlowTestBootstrapStaticConstructor.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+			FlowTestBootstrapType.Methods.Add(FlowTestBootstrapStaticConstructor);
 		}
 
 		#endregion
@@ -171,7 +178,7 @@ namespace FlowTest
 		public static void WeaveCustomFieldIntoClass (
 			ModuleDefinition m,
 			string customFieldName,
-			FieldAttributes customFieldAttributes,
+			Mono.Cecil.FieldAttributes customFieldAttributes,
 			Type customFieldType,
 			string destinationClassName
 		)
@@ -190,154 +197,6 @@ namespace FlowTest
 			catch (Exception e) {
 				Console.WriteLine("FlowTest custom field weaver caught exception " + e.Message);
 			}
-		}
-
-		public static void InitializeCustomField (
-			ModuleDefinition destinationModule,
-			string destinationClassName,
-			string destinationMethodName,
-			string customFieldName,
-			FieldAttributes customFieldAttributes,
-			Type customFieldType,
-			Type[] customFieldConstructorArgTypes,
-			object[] customFieldConstructorArgs
-		)
-		{
-			try
-			{
-				TypeDefinition destinationType = destinationModule.Types.Single (t => t.Name == destinationClassName);
-				MethodDefinition destinationMethod = destinationType.Methods.Single(m => m.Name == destinationMethodName);
-				ILProcessor destinationMethodProcessor = destinationMethod.Body.GetILProcessor();
-
-				List<Instruction> instructionsToWeave = new List<Instruction>();
-
-				foreach (object arg in customFieldConstructorArgs) {
-					// VERY BROKEN
-					Instruction loadArg = destinationMethodProcessor.Create(OpCodes.Ldc_I4, 0);
-					instructionsToWeave.Add(loadArg);
-				}
-
-				Instruction loadNewObjectConstructorInstruction =
-					destinationMethodProcessor.Create(OpCodes.Newobj,
-						destinationMethod.Module.Import(
-							customFieldType.GetConstructor(customFieldConstructorArgTypes)));
-				instructionsToWeave.Add(loadNewObjectConstructorInstruction);
-
-				OpCode storageOpcode;
-				if (customFieldAttributes.HasFlag(Mono.Cecil.FieldAttributes.Static))
-				{
-					storageOpcode = OpCodes.Stsfld;
-				} 
-				else
-				{
-					storageOpcode = OpCodes.Stfld;		
-				}
-
-				Instruction storeInitializedObjectIntoField = 
-					destinationMethodProcessor.Create(storageOpcode,
-						destinationType.Fields.Single(f => f.Name == customFieldName));
-				instructionsToWeave.Add(storeInitializedObjectIntoField);
-
-				WeaveListOfInstructionsAtMethodEntry(
-					methodToWeave: destinationMethod,
-					listOfInstructionsToWeave: instructionsToWeave
-				);
-			}
-
-			catch (Exception e) {
-				Console.WriteLine("FlowTest custom field constructor handler caught exception " + e.Message);
-			}
-		}
-
-		public static void InvokeMethodOfPublicCustomField(
-			ModuleDefinition destinationModule,
-			string destinationTypeName, 
-			string destinationMethodName,
-
-			string customFieldTypeName,
-			string customFieldName,
-			string customFieldMethodToInvoke,
-			Type customFieldType,
-
-			// TODO maybe create a class to encapsulate this more cleanly
-			Type[] invokedMethodArgTypes, 
-			object[] invokedMethodArgs,
-			bool weavePositionIsStart
-		)
-		{
-			try
-			{
-				TypeDefinition destinationType = destinationModule.Types.Single(t => t.Name == destinationTypeName);
-				MethodDefinition destinationMethod = destinationType.Methods.Single(m => m.Name == destinationMethodName);
-				ILProcessor destinationMethodProcessor = destinationMethod.Body.GetILProcessor();
-
-				TypeDefinition customFieldParentType = destinationModule.Types.Single(t => t.Name == customFieldTypeName);
-				FieldDefinition customField = customFieldParentType.Fields.Single(fn => fn.Name == customFieldName);
-
-				List<Instruction> listOfInstructions = new List<Instruction>();
-
-				//Console.WriteLine("debug 1");
-
-				// Load the static object onto the stack
-				OpCode customFieldLoadOpCode;
-				if (customField.IsStatic)
-				{
-					customFieldLoadOpCode = OpCodes.Ldsfld;
-				}
-				else
-				{
-					customFieldLoadOpCode = OpCodes.Ldfld;
-				}
-				Instruction loadCustomFieldObject =
-					destinationMethodProcessor.Create(customFieldLoadOpCode, customField);
-				listOfInstructions.Add(loadCustomFieldObject);
-
-				//Console.WriteLine("debug 2");
-
-				foreach (object arg in invokedMethodArgs) {
-					// Issues here again
-					Instruction loadArg = destinationMethodProcessor.Create(OpCodes.Ldstr, arg.ToString());
-					listOfInstructions.Add(loadArg);
-				}
-
-				//Console.WriteLine("debug 3");
-
-				// Call the method in question 
-				// TODO generalize eventually, ok atm
-				Instruction invokeMethodOnCustomFieldInstance =
-					destinationMethodProcessor.Create(OpCodes.Callvirt,
-						destinationModule.Import(
-							customFieldType.GetMethod(customFieldMethodToInvoke, invokedMethodArgTypes)));
-				listOfInstructions.Add(invokeMethodOnCustomFieldInstance);
-
-				//Console.WriteLine("debug 4");
-
-				if (weavePositionIsStart)
-				{
-					WeaveListOfInstructionsAtMethodEntry(
-						methodToWeave: destinationMethod,
-						listOfInstructionsToWeave: listOfInstructions
-					);
-				}
-				else
-				{
-					WeaveListOfInstructionsAtMethodExit(
-						methodToWeave: destinationMethod,
-						listOfInstructionsToWeave: listOfInstructions
-					);
-				}
-
-				//Console.WriteLine("debug 5");
-			}
-
-			catch (Exception e)
-			{
-				Console.WriteLine("FlowTest custom field invoke handler caught exception " + e.Message + " " + e.StackTrace);
-			}
-
-			// Basically, "this"
-			// Instruction loadSelfReference = destinationMethodProcessor.Create(OpCodes.Ldarg_0);
-			// listOfInstructions.Add(loadSelfReference);
 		}
 
 		#endregion
@@ -495,17 +354,11 @@ namespace FlowTest
 			);
 		}
 
-		public static string GetStandaloneFTFieldName(
-			string TypeName
-		)
-		{
-			return "_FT_" + TypeName;
-		}
-
-		public static void ConsoleWriteEachCILInstruction(
+		public static void DebugPrintCILInstructionsInMethod(
 			MethodDefinition methodToPrint
 		)
 		{
+		//	methodToPrint.Body.SimplifyMacros ();
 			Console.WriteLine ("v---- Instructions in {0} ----v", methodToPrint.FullName);
 			ILProcessor instructionProcessor = methodToPrint.Body.GetILProcessor();
 
@@ -513,6 +366,7 @@ namespace FlowTest
 				Console.WriteLine(ii);
 			}
 			Console.WriteLine ("^---- End Instructions in {0} ----^", methodToPrint.FullName);
+		//	methodToPrint.Body.OptimizeMacros ();
 		}
 
 		#endregion
