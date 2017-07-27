@@ -68,13 +68,14 @@ namespace FlowTest
 				mModule: mDefinition
 			);
 
+			TypeDefinition bootstrapType = mDefinition.Types.Single(m => m.Name == "FlowTestBootstrap");
 
 			instructionsToWeave.Add (
 				instructionProcessor.Create (OpCodes.Ldstr, "test test test"));
 			instructionsToWeave.Add (
 				instructionProcessor.Create (OpCodes.Call,
 					mDefinition.Import (
-						FlowTestBootstrapType.Methods.Single (m => m.Name == "Load"))));
+						bootstrapType.Methods.Single (m => m.Name == "Load"))));
 			/*
 			 * https://stackoverflow.com/questions/30094655/invoke-a-method-from-another-assembly
 			MethodInfo mAssemblyLoadFile = typeof(System.Reflection.Assembly).GetMethod ("LoadFile", new [] { typeof(string) });
@@ -148,6 +149,13 @@ namespace FlowTest
 
 			DebugPrintCILInstructionsInMethod (loader);
 
+			/*WeavingBuildingBlocks.WeavePublicStaticFieldHelper(
+				module: ,
+				typeName: ??,
+				filedName: ??,
+				typeOfField: ??
+			);*/
+
 			FieldDefinition fieldDef = new FieldDefinition (
 				"FlowTestApiAssembly",
 				FieldAttributes.Public | FieldAttributes.Static,
@@ -169,34 +177,6 @@ namespace FlowTest
 			);
 			FlowTestBootstrapStaticConstructor.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
 			FlowTestBootstrapType.Methods.Add(FlowTestBootstrapStaticConstructor);
-		}
-
-		#endregion
-
-		#region Fields
-
-		public static void WeaveCustomFieldIntoClass (
-			ModuleDefinition m,
-			string customFieldName,
-			Mono.Cecil.FieldAttributes customFieldAttributes,
-			Type customFieldType,
-			string destinationClassName
-		)
-		{
-			try
-			{
-				FieldDefinition wovenFieldDefinition =
-					new FieldDefinition (
-						customFieldName,
-						customFieldAttributes,
-						m.Import (customFieldType));
-
-				TypeDefinition destinationClassType = m.Types.Single (t => t.Name == destinationClassName);
-				destinationClassType.Fields.Add(wovenFieldDefinition);
-			}
-			catch (Exception e) {
-				Console.WriteLine("FlowTest custom field weaver caught exception " + e.Message);
-			}
 		}
 
 		#endregion
