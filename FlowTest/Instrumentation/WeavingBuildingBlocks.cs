@@ -7,7 +7,42 @@ namespace FlowTest
 {
 	public class WeavingBuildingBlocks
 	{
-		#region Fields
+		#region Type Definitions
+
+		public static void _AddTypeDefinitionToModule
+		(
+			ModuleDefinition moduleToWeave,
+			string nameOfTypeToWeave,
+			string destinationNamespace,
+			TypeAttributes typeAttributes
+		)
+		{
+			TypeDefinition weavingType = new TypeDefinition (
+				@namespace: destinationNamespace,
+				name: nameOfTypeToWeave,
+				attributes: typeAttributes,
+				baseType: moduleToWeave.Import (typeof (object)));
+			
+			moduleToWeave.Types.Add (weavingType);
+		}
+
+		public static void WeavePublicStaticTypeHelper(
+			ModuleDefinition module,
+			string typeName,
+			string weaveIntoNamespace
+		)
+		{
+			_AddTypeDefinitionToModule(
+				moduleToWeave: module,
+				nameOfTypeToWeave: typeName,
+				destinationNamespace: weaveIntoNamespace,
+				typeAttributes: Mono.Cecil.TypeAttributes.Public | Mono.Cecil.TypeAttributes.Abstract | Mono.Cecil.TypeAttributes.Sealed
+			);
+		}
+
+		#endregion
+
+		#region Field Definitions
 
 		public static void _AddFieldDefinitionToType
 		(

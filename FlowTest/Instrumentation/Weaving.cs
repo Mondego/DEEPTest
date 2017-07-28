@@ -65,7 +65,8 @@ namespace FlowTest
 			ILProcessor instructionProcessor = targetMethod.Body.GetILProcessor();
 
 			WeaveInFlowTestBootstrap (
-				mModule: mDefinition
+				mModule: mDefinition,
+				destinationNamespace: ""
 			);
 
 			TypeDefinition bootstrapType = mDefinition.Types.Single(m => m.Name == "FlowTestBootstrap");
@@ -83,49 +84,29 @@ namespace FlowTest
 
 			// TODO does mDefinition already have this defined?
 
-			// Adds a static typedefinition FlowTestBootstrap
 			//Assembly a = Assembly.LoadFile(pathToTheDll);
 			// https://stackoverflow.com/questions/30094655/invoke-a-method-from-another-assembly
 
 			/*System.Reflection.MethodInfo instanceMethod = typeof(FlowTestProxySingleton).GetMethod("get_Instance");
 			System.Reflection.MethodInfo messageMethod = typeof(FlowTestProxySingleton).GetMethod("Message", new [] { typeof(string) });
 			var instanceImport = mDefinition.Import(instanceMethod).Resolve();
-			var messageImport = mDefinition.Import(messageMethod).Resolve();
-
-			// Step 1
-			// call FlowTest.FlowTestProxySingleton FlowTest.FlowTestProxySingleton::get_Instance()				
-			/*Instruction callSingletonInstanceInstruction = 
-				instructionProcessor.Create(OpCodes.Call,
-					mDefinition.Import(
-						typeof(FlowTestProxySingleton).GetMethod("get_Instance")));
-			instructionsToWeave.Add (callSingletonInstanceInstruction);
-
-			// Step 2
-			// ldstr [VALUE]
-			Instruction loadStringInstruction = instructionProcessor.Create(OpCodes.Ldstr, messageToWeave);
-			instructionsToWeave.Add (loadStringInstruction);
-
-			// Step 3
-			// callvirt System.Void FlowTest.FlowTestProxySingleton::Message(System.String)
-			Instruction invokeMethodOnCustomFieldInstance =
-				instructionProcessor.Create(OpCodes.Callvirt, 
-					mDefinition.Import(
-						typeof (FlowTestProxySingleton).GetMethod("Message", new [] { typeof(string) })));
-			instructionsToWeave.Add(invokeMethodOnCustomFieldInstance);*/
+			var messageImport = mDefinition.Import(messageMethod).Resolve();*/
 
 			weavingMethod.DynamicInvoke(new object[] { targetMethod, instructionsToWeave});
 		}
 
 		public static void WeaveInFlowTestBootstrap(
-			ModuleDefinition mModule
+			ModuleDefinition mModule,
+			string destinationNamespace
 		)
 		{
-			TypeDefinition FlowTestBootstrapType = new TypeDefinition (
-				"SampleServer",
-				"FlowTestBootstrap",
-				Mono.Cecil.TypeAttributes.Public | Mono.Cecil.TypeAttributes.Abstract | Mono.Cecil.TypeAttributes.Sealed,
-				mModule.Import (typeof (object)));
-			mModule.Types.Add (FlowTestBootstrapType);
+			WeavingBuildingBlocks.WeavePublicStaticTypeHelper(
+				module: mModule,
+				typeName: "FlowTestBootstrap",
+				weaveIntoNamespace: ""
+			);
+
+			TypeDefinition FlowTestBootstrapType = mModule.Types.Single(m => m.Name == "FlowTestBootstrap");
 
 			TypeReference stringType = mModule.TypeSystem.String.Resolve ();
 			stringType = mModule.Import (mModule.TypeSystem.String.Resolve ());
@@ -147,21 +128,12 @@ namespace FlowTest
 				loader.Body.GetILProcessor ().Create (OpCodes.Ret));
 			loader.Body.OptimizeMacros ();
 
-			DebugPrintCILInstructionsInMethod (loader);
-
-			/*WeavingBuildingBlocks.WeavePublicStaticFieldHelper(
-				module: ,
-				typeName: ??,
-				filedName: ??,
-				typeOfField: ??
-			);*/
-
-			FieldDefinition fieldDef = new FieldDefinition (
-				"FlowTestApiAssembly",
-				FieldAttributes.Public | FieldAttributes.Static,
-				mModule.Import(typeof(System.Reflection.Assembly))
+			WeavingBuildingBlocks.WeavePublicStaticFieldHelper(
+				module: mModule,
+				typeName: "FlowTestBootstrap",
+				fieldName: "FlowTestApiAssembly",
+				typeOfField: typeof(System.Reflection.Assembly)
 			);
-			FlowTestBootstrapType.Fields.Add (fieldDef);
 
 			MethodDefinition FlowTestBootstrapStaticConstructor = new MethodDefinition(
 				".cctor",
