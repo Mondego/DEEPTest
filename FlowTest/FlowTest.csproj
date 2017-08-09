@@ -34,6 +34,7 @@
     <Folder Include="Instrumentation\" />
     <Folder Include="Runtime\" />
     <Folder Include="TestDesignUtilities\" />
+    <Folder Include="Instrumentation\Weaving\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Instrumentation\FlowTestPointOfInterest.cs" />
@@ -49,8 +50,10 @@
     <Compile Include="Instrumentation\Weaving.cs" />
     <Compile Include="Runtime\FlowTestEventAggregator.cs" />
     <Compile Include="Runtime\FlowTestProxySingleton.cs" />
-    <Compile Include="Instrumentation\FlowTestTinyProxy.cs" />
-    <Compile Include="Instrumentation\WeavingBuildingBlocks.cs" />
+    <Compile Include="Instrumentation\Weaving\WeavingPatterns.cs" />
+    <Compile Include="Instrumentation\Weaving\WeavingDebug.cs" />
+    <Compile Include="Instrumentation\Weaving\WeavingBuildingBlocks.cs" />
+    <Compile Include="Instrumentation\Weaving\WeavingFlowTestProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

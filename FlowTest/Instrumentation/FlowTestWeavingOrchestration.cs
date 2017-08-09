@@ -33,6 +33,11 @@ namespace FlowTest
 			{
 				Weaving.WeavePointofInterest (mModule, point);
 			}
+
+			public ModuleDefinition getModule()
+			{
+				return mModule;
+			}
 		}
 
 		private Dictionary<string, ModuleToWeave> weavesToOrchestrate;
@@ -50,6 +55,10 @@ namespace FlowTest
 					weavesToOrchestrate.Add(
 						point.parentModuleOfWatchpoint, 
 						new ModuleToWeave(point.parentModuleOfWatchpoint)
+					);
+
+					WeavingFlowTestProxy.WeaveSingletonForFlowTestProxy(
+						mModule: weavesToOrchestrate [point.parentModuleOfWatchpoint].getModule()
 					);
 				}
 					

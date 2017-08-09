@@ -56,6 +56,7 @@ namespace SampleServer
 			byte[] encodedMessage = Encoding.ASCII.GetBytes(messageText);
 			mListener.Client.SendTo(encodedMessage, destination);
 			nMessagesSent += 1;
+			TestSingleton.Instance.SendResult (messageText);
 		}
 
 		public void Stop()
