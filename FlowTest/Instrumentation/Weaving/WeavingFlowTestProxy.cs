@@ -13,7 +13,13 @@ namespace FlowTest
 			ModuleDefinition mModule
 		)
 		{
-			TypeDefinition FlowTestSingleton = WeavingPatterns.WeaveSingletonPattern (
+			TypeDefinition simpler = 
+				WeavingPatterns.WeaveThreadSafeStaticType(                     
+					module: mModule,
+				    typeName: "FlowTestProxy"
+			    );
+
+			/*TypeDefinition FlowTestSingleton = WeavingPatterns.WeaveSingletonPattern (
 				module: mModule,
 				typeName: "FlowTestProxySingleton"
 			);
@@ -22,7 +28,7 @@ namespace FlowTest
 				moduleDefinition: mModule,
 				typeDefinition: FlowTestSingleton,	                                    
 				nameOfMethod: "SendResult",      
-				methodAttributes: MethodAttributes.Public,             
+				methodAttributes: MethodAttributes.Public,        
 				returnTypeReferenceOfMethod: mModule.Import (typeof(void)),
 				methodParameters: WeavingBuildingBlocks.ParameterBuilder(
 					moduleDef: mModule,                                    
@@ -43,30 +49,7 @@ namespace FlowTest
 			resultAggregator.Body.Instructions.Add (
 				resultAggregator.Body.GetILProcessor ().Create (
 					OpCodes.Ret));
-			resultAggregator.Body.OptimizeMacros ();
-		}
-
-		public static TypeReference getFlowTestProxyTypeReference(
-			ModuleDefinition m
-		)
-		{
-			return new TypeReference(
-				@namespace: "",
-				name: "FlowTestProxySingleton",
-				module: m,
-				scope: m
-			);
-		}
-
-		public static MethodReference getAggregationMethodReference(
-			ModuleDefinition m
-		)
-		{
-			return new MethodReference(
-				name: "SendResult",
-				returnType: m.Import(typeof(void)),
-				declaringType: getFlowTestProxyTypeReference(m)
-			);
+			resultAggregator.Body.OptimizeMacros ();*/
 		}
 
 		public static void InvokeResultAggregatorBeforeMethod(
@@ -74,7 +57,8 @@ namespace FlowTest
 			string value
 		)
 		{
-			List<Instruction> proxyInvocationInstructions = new List<Instruction>();
+
+			/*List<Instruction> proxyInvocationInstructions = new List<Instruction>();
 			string aggregation = "[proxy before] " + value;
 
 			TypeReference tr = new TypeReference(
@@ -101,7 +85,7 @@ namespace FlowTest
 			WeavingBuildingBlocks.WeaveListOfInstructionsAtMethodEntry (
 				methodToWeave: method,
 				listOfInstructionsToWeave: proxyInvocationInstructions
-			);
+			);*/
 		}
 
 		public static void InvokeResultAggregatorAfterMethod(
@@ -110,33 +94,81 @@ namespace FlowTest
 		)
 		{
 			List<Instruction> proxyInvocationInstructions = new List<Instruction>();
-			string aggregation = "[proxy after] " + value;
 
-			TypeReference tr = new TypeReference(
-				@namespace: "",
-				name: "FlowTestProxySingleton",
-				module: method.Module,
-				scope: method.Module
+			proxyInvocationInstructions.Add(
+				method.Body.GetILProcessor().Create(
+					OpCodes.Call,
+					method.Module.Import(
+						new MethodReference(
+							name: "DoMessage",
+							returnType: method.Module.Import(typeof(void)),
+							declaringType: new TypeReference(
+								@namespace: "",
+								name: "FlowTestProxy",
+								module: method.Module,
+								scope: method.Module
+							)
+						)
+					)
+				)
 			);
 
-			MethodReference mm = new MethodReference(
-				name: "SendResult",
-				returnType: method.Module.Import(typeof(void)),
-				declaringType: tr
+			WeavingBuildingBlocks.WeaveListOfInstructionsAtMethodExit (
+				methodToWeave: method,
+				listOfInstructionsToWeave: proxyInvocationInstructions
 			);
-			method.Module.Import(mm).Resolve();
+				
+			/*
+			TypeDefinition testSingleton = method.Module.Types.Single(tt => tt.Name == "TestSingleton");
+			TypeDefinition proxySingleton = method.Module.Types.Single(t => t.Name == "FlowTestProxySingleton");
 
+			Console.WriteLine("+++++ FIELDS +++++");
+			foreach (FieldDefinition fd in testSingleton.Fields) {
+				Console.WriteLine(fd.FullName + " " + fd.Attributes);
+			}
+			foreach (FieldDefinition fd in proxySingleton.Fields) {
+				Console.WriteLine(fd.FullName + " " + fd.Attributes);
+			}
+
+			Console.WriteLine("+++++ PROPERTIES +++++");
+			foreach (PropertyDefinition pd in testSingleton.Properties) {
+				Console.WriteLine(pd.FullName + " " + pd.Attributes);
+			}
+			foreach (PropertyDefinition pd in proxySingleton.Properties) {
+				Console.WriteLine(pd.FullName + " " + pd.Attributes);
+			}
+
+			Console.WriteLine("+++++ METHODS +++++");
+			foreach (MethodDefinition md in testSingleton.Methods) {
+				Console.WriteLine(md.FullName + " " + md.Attributes);
+				foreach (Instruction i in md.Body.Instructions) {
+					Console.WriteLine(i);
+				}
+			}
+			foreach (MethodDefinition md in proxySingleton.Methods) {
+				Console.WriteLine(md.FullName + " " + md.Attributes);
+				foreach (Instruction i in md.Body.Instructions) {
+					Console.WriteLine(i);
+				}
+			}
+			Console.WriteLine("++++");
+
+			MethodDefinition sendResultMethod = proxySingleton.Methods.Single(m => m.Name == "SendResult");
+			MethodDefinition getInstanceMethod = proxySingleton.Methods.Single(m => m.Name == "get_Instance");
+
+			proxyInvocationInstructions.Add(
+				method.Body.GetILProcessor().Create(
+					OpCodes.Call,
+					(MethodReference)getInstanceMethod));
 			proxyInvocationInstructions.Add(
 				method.Body.GetILProcessor().Create(
 					OpCodes.Ldstr, aggregation));
 			proxyInvocationInstructions.Add(
 				method.Body.GetILProcessor().Create(
-					OpCodes.Callvirt, mm.Resolve()));
+					OpCodes.Callvirt,
+					(MethodReference)sendResultMethod));
 				
-			WeavingBuildingBlocks.WeaveListOfInstructionsAtMethodExit (
-				methodToWeave: method,
-				listOfInstructionsToWeave: proxyInvocationInstructions
-			);
+		*/
 		}
 	}
 }

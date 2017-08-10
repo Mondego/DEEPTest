@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using System.Linq;
 
 namespace FlowTest
 {
@@ -35,11 +36,11 @@ namespace FlowTest
 			TypeDefinition singletonType = WeavingBuildingBlocks._AddTypeDefinitionToModule(
 				moduleDefinition: module,
 				nameOfType: typeName,
-				destinationNamespace: "",
+				destinationNamespace: "SampleServer",
 				typeAttributes: Mono.Cecil.TypeAttributes.Public | Mono.Cecil.TypeAttributes.Sealed
 			);
 			TypeReference singletonTypeReference = new TypeReference(
-				@namespace: "",
+				@namespace: "SampleServer",
 				name: typeName,
 				module: module,
 				scope: module
@@ -131,19 +132,147 @@ namespace FlowTest
 
 			// GET_INSTANCE
 			getInstancePropertyMethod.Body.SimplifyMacros ();
-			getInstancePropertyMethod.Body.Instructions.Add (
-				getInstancePropertyMethod.Body.GetILProcessor ().Create (
-					OpCodes.Ldsfld, instanceRef));
-			// IL_0006: stloc.0
-			// IL_0007: br IL_000c
-			getInstancePropertyMethod.Body.Instructions.Add(
+
+			Instruction loadInstanceFld = 
+				getInstancePropertyMethod.Body.GetILProcessor().Create(  
+					OpCodes.Ldsfld, instanceRef);
+			Instruction storeInstanceFld = 
 				getInstancePropertyMethod.Body.GetILProcessor().Create(
-					OpCodes.Ret));
+				    OpCodes.Stloc_0);
+			Instruction loadInstance = 
+				getInstancePropertyMethod.Body.GetILProcessor().Create(                         
+					OpCodes.Ldloc_0);
+			Instruction branch =
+				getInstancePropertyMethod.Body.GetILProcessor().Create(
+					OpCodes.Br, loadInstance);
+			Instruction ret = 
+				getInstancePropertyMethod.Body.GetILProcessor().Create(
+				    OpCodes.Ret);
+			Instruction nop =
+				getInstancePropertyMethod.Body.GetILProcessor().Create(
+					OpCodes.Nop);
+			
+			getInstancePropertyMethod.Body.Instructions.Add(loadInstance);
+			getInstancePropertyMethod.Body.GetILProcessor().InsertAfter(loadInstance, ret);
+			getInstancePropertyMethod.Body.GetILProcessor().InsertBefore(loadInstance, branch);
+			getInstancePropertyMethod.Body.GetILProcessor().InsertBefore(branch, storeInstanceFld);
+			getInstancePropertyMethod.Body.GetILProcessor().InsertBefore(storeInstanceFld, loadInstanceFld);
+			getInstancePropertyMethod.Body.GetILProcessor().InsertBefore(loadInstanceFld, nop);
 			getInstancePropertyMethod.Body.OptimizeMacros ();
 
 			return singletonType;
 		}
 
+		public static TypeDefinition WeaveThreadSafeStaticType (
+			ModuleDefinition module,
+			string typeName
+		)
+		{
+			// FlowTestProxy type
+			TypeDefinition flowTestProxyType = WeavingBuildingBlocks._AddTypeDefinitionToModule(
+				moduleDefinition: module,
+				nameOfType: "FlowTestProxy",
+				destinationNamespace: "",
+				typeAttributes: TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed
+			);
+				
+			// Fields
+			FieldDefinition lockingField = WeavingBuildingBlocks._AddFieldDefinitionToType(
+				moduleDefinition: module,
+				typeDefinition: flowTestProxyType,
+				nameOfField: "locking",
+				attributesOfField: FieldAttributes.Private | FieldAttributes.Static,
+				typeReferenceOfField: module.Import(typeof(System.Object))
+			);
+
+			// Methods
+			MethodDefinition cctor = WeavingBuildingBlocks._AddMethodDefinitionToType (
+				moduleDefinition: module,
+				typeDefinition: flowTestProxyType,
+				nameOfMethod: ".cctor",
+				methodAttributes: MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig,
+				returnTypeReferenceOfMethod: module.Import(typeof(void)),
+				methodParameters: new List<ParameterDefinition>()
+			);
+			cctor.Body.SimplifyMacros();
+			cctor.Body.Instructions.Add(
+				cctor.Body.GetILProcessor().Create(
+					OpCodes.Newobj,
+					module.Import(typeof(System.Object).GetConstructor(new Type[] { }))));
+			cctor.Body.Instructions.Add(
+				cctor.Body.GetILProcessor().Create(
+					OpCodes.Stsfld,
+					(FieldReference)lockingField));
+			cctor.Body.Instructions.Add(
+				cctor.Body.GetILProcessor().Create(OpCodes.Ret));
+			cctor.Body.OptimizeMacros();
+
+			MethodDefinition onLockMethod = 
+				WeavingBuildingBlocks._AddMethodDefinitionToType(
+					moduleDefinition: module,
+					typeDefinition: flowTestProxyType,
+					nameOfMethod: "onLock",
+					methodAttributes: MethodAttributes.Public | MethodAttributes.Static,
+					returnTypeReferenceOfMethod: module.Import(typeof(void)),
+					methodParameters: new List<ParameterDefinition>()    
+				);
+			onLockMethod.Body.SimplifyMacros();
+			onLockMethod.Body.Instructions.Add(
+				onLockMethod.Body.GetILProcessor().Create(
+					OpCodes.Ret));
+			onLockMethod.Body.OptimizeMacros();
+
+			MethodDefinition DoMessage = 
+				WeavingBuildingBlocks._AddMethodDefinitionToType(
+					moduleDefinition: module,
+					typeDefinition: flowTestProxyType,
+					nameOfMethod: "DoMessage",
+					methodAttributes: MethodAttributes.Public | MethodAttributes.Static,
+					returnTypeReferenceOfMethod: module.Import(typeof(void)),
+					methodParameters: new List<ParameterDefinition>()
+				);
+
+			// public static void DoMessage(string msg)
+			// {
+			//   lock (theLock)
+			//   {
+			// 	   onLock();
+			//   }
+		    // }
+			ILProcessor dmil = DoMessage.Body.GetILProcessor();
+			DoMessage.Body.SimplifyMacros();
+			DoMessage.Body.Instructions.Add(dmil.Create(
+				OpCodes.Ldstr, "pilot"));
+			DoMessage.Body.Instructions.Add(dmil.Create(
+				OpCodes.Call,
+				module.Import(typeof(Console).GetMethod("WriteLine", new [] { typeof(string) }))));
+				
+			/*
+			+IL_0001: ldsfld System.Object SampleServer.TestThreadsafe::theLock
+			+IL_0006: stloc.0
+			+IL_0007: ldc.i4.0
+			+IL_0008: stloc.1
+			+IL_0009: ldloc.0
+			+IL_000a: ldloca.s V_1
+			+IL_000c: call System.Void System.Threading.Monitor::Enter(System.Object,System.Boolean&)
+			+IL_0011: nop
+			+IL_0012: call System.Void SampleServer.TestThreadsafe::onLock()
+			+IL_0017: nop
+			+IL_0018: leave IL_0027
+			+IL_001d: ldloc.1
+			+IL_001e: brfalse.s IL_0026
+			+IL_0020: ldloc.0
+			+IL_0021: call System.Void System.Threading.Monitor::Exit(System.Object)
+			+IL_0026: endfinally
+			+IL_0027: ret*/
+			DoMessage.Body.Instructions.Add(dmil.Create(OpCodes.Ret));
+			DoMessage.Body.OptimizeMacros();
+
+			///////////////
+			//foreach (MethodDefinition mi in module.Types.Single(t => t.Name == "TestThreadsafe").Methods) {
+			// foreach (MethodDefinition mi in flowTestProxyType.Methods) {
+
+			return flowTestProxyType;
+		}
 	}
 }
-

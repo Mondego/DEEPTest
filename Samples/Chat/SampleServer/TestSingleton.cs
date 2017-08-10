@@ -6,14 +6,16 @@ namespace SampleServer
 	{
 		private static readonly TestSingleton instance = new TestSingleton();
 
-		static TestSingleton () {}
-		private TestSingleton () {}
-
-		public static TestSingleton Instance { get { return instance; }}
-
-		public void SendResult(string message)
+		static TestSingleton() {}
+		private TestSingleton()
 		{
-			Console.WriteLine ("This is the non-woven result " + message);
+		}
+
+		public static TestSingleton Instance { get { return instance; } }
+
+		public void Message(string arg)
+		{
+			Console.WriteLine("Messenger for test singleton, hard-coded " + arg);
 		}
 	}
 }

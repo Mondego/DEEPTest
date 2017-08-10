@@ -36,15 +36,17 @@ namespace FlowTest
 
 				if (poi.watchAfter)
 				{
-					/*WeavingFlowTestProxy.InvokeResultAggregatorAfterMethod(
+					WeavingFlowTestProxy.InvokeResultAggregatorAfterMethod(
 						method: poiMethod,
-						value: "poi.watchafter"
-					);*/
-
+						value: "poi.watchafter not hard-coded"
+					);
+						
 					WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,
 						printDebugValue: "Some weaving happened after " + poi.methodOfInterest
 					);
+
+					WeavingDebug.PrintCILInstructionsInMethod(poiMethod);
 				}
 			}
 
@@ -54,56 +56,6 @@ namespace FlowTest
 				Console.WriteLine ("| {0} {1}", e.InnerException, e.Message);
 			}
 		}
-		#endregion
-
-		#region FlowTestProxySingleton
-
-
-
-		#endregion
-
-		#region Low-level weaving
-
-		//IL_0001: ldc.i4 N_MILLISECONDS
-		//IL_0006: call System.Void System.Threading.Thread::Sleep(System.Int32)
-		public static void WeaveThreadSleepAfterEachMatch(
-			MethodDefinition targetMethod,
-			int nMilliseconds,
-			string matchOperand
-		)
-		{
-			List<Instruction> instructionsToWeave = new List<Instruction> ();
-			ILProcessor instructionProcessor = targetMethod.Body.GetILProcessor();
-
-			Instruction loadMillisecondsInstruction = instructionProcessor.Create(OpCodes.Ldc_I4, nMilliseconds);
-			instructionsToWeave.Add (loadMillisecondsInstruction);
-
-			Instruction sleepInstruction = 
-				instructionProcessor.Create(OpCodes.Call, 
-					targetMethod.Module.Import(
-						typeof (System.Threading.Thread).GetMethod ("Sleep", new [] { typeof (int) })));
-			instructionsToWeave.Add (sleepInstruction);
-
-			List<Instruction> matchingOperandsInstructions = new List<Instruction> ();
-			foreach (Instruction i in targetMethod.Body.Instructions) {
-				if (i.Operand != null) {
-					if (((string)i.Operand.ToString ()).Contains (matchOperand)) {
-						matchingOperandsInstructions.Add (i);
-					}
-				}
-			}
-
-			//Instruction[] arrayOfInstructionsToWeave = instructionsToWeave.ToArray();
-			foreach (Instruction matchingInstruction in matchingOperandsInstructions) {
-				Instruction toWeaveBefore = matchingInstruction.Next;
-				foreach (Instruction toWeave in instructionsToWeave) {
-					instructionProcessor.InsertBefore (toWeaveBefore, toWeave);
-				}
-			}
-		}
-
-
-
 		#endregion
 	
 		#region Nifty tools for debugging the weaver

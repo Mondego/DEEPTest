@@ -4,6 +4,10 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Text;
 
+
+using System.Reflection;
+using System.Linq;
+
 namespace SampleServer
 {
 	public class ChatServer
@@ -56,7 +60,9 @@ namespace SampleServer
 			byte[] encodedMessage = Encoding.ASCII.GetBytes(messageText);
 			mListener.Client.SendTo(encodedMessage, destination);
 			nMessagesSent += 1;
-			TestSingleton.Instance.SendResult (messageText);
+
+			TestSingleton.Instance.Message("hardcoded singleton");
+			TestThreadsafe.DoMessage("hardcoded static class");
 		}
 
 		public void Stop()
