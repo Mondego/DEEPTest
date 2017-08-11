@@ -54,6 +54,7 @@
     <Compile Include="Instrumentation\Weaving\WeavingDebug.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingBuildingBlocks.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingFlowTestProxy.cs" />
+    <Compile Include="Instrumentation\Weaving\WeavingTemplates.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -75,5 +76,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FlowTestTemplates\FlowTestTemplates.csproj">
+      <Project>{39327D4A-1D90-42FE-A388-50355D13EB74}</Project>
+      <Name>FlowTestTemplates</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

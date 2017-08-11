@@ -123,8 +123,7 @@ namespace FlowTest
 			TypeDefinition typeDefinition,
 			string nameOfMethod,
 			MethodAttributes methodAttributes,
-			TypeReference returnTypeReferenceOfMethod,
-			List<ParameterDefinition> methodParameters
+			TypeReference returnTypeReferenceOfMethod
 		)
 		{
 			#if DEBUG
@@ -139,14 +138,6 @@ namespace FlowTest
 					methodAttributes,
 					returnTypeReferenceOfMethod
 				);
-
-				if (methodParameters != null && methodParameters.Count > 0)
-				{
-					foreach (ParameterDefinition param in methodParameters)
-					{
-						methodDefinition.Parameters.Add(param);
-					}
-				}
 					
 				typeDefinition.Methods.Add(methodDefinition);
 
@@ -163,92 +154,30 @@ namespace FlowTest
 			}
 		}
 
-		public static MethodDefinition MethodStaticConstructorWeavingHelper
+		public static ParameterDefinition _AddParameterToMethodDefinition
 		(
-			ModuleDefinition moduleDef,
-			TypeDefinition typeDef,
-			List<ParameterDefinition> parameters
+			MethodDefinition methodDef,
+			string parameterName,
+			Type paramType
 		)
 		{
-			return _AddMethodDefinitionToType(
-				moduleDefinition: moduleDef,
-				typeDefinition: typeDef,
-				nameOfMethod: ".cctor",
-				methodAttributes: MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig,
-				returnTypeReferenceOfMethod: moduleDef.Import(typeof(void)),
-				methodParameters: parameters
-			);
-		}
-
-		public static MethodDefinition MethodConstructorWeavingHelper
-		(
-			ModuleDefinition moduleDef,
-			TypeDefinition typeDef,
-			List<ParameterDefinition> parameters
-		)
-		{
-			return _AddMethodDefinitionToType(
-				moduleDefinition: moduleDef,
-				typeDefinition: typeDef,
-				nameOfMethod: ".ctor",
-				methodAttributes: MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig,
-				returnTypeReferenceOfMethod: moduleDef.Import(typeof(void)),
-				methodParameters: parameters
-			);
-		}
-
-		public static MethodDefinition MethodPublicStaticWeavingHelper
-		(
-			ModuleDefinition moduleDef,
-			TypeDefinition typeDef,
-			string @name,
-			TypeReference returnType,
-			List<ParameterDefinition> parameters
-		)
-		{
-			return _AddMethodDefinitionToType(
-				moduleDefinition: moduleDef,
-				typeDefinition: typeDef,
-				nameOfMethod: @name,
-				methodAttributes: MethodAttributes.Static | MethodAttributes.Public,
-				returnTypeReferenceOfMethod: returnType,
-				methodParameters: parameters
-			);
-		}
-			
-		public static List<ParameterDefinition> ParameterBuilder(
-			ModuleDefinition moduleDef,
-			string[] parameterNames, 
-			Type[] parameterTypes
-		)
-		{
+			// TODO another version of this with a perameterattributes argument
 			try
 			{
-				List<ParameterDefinition> parameters = new List<ParameterDefinition>();
+				ParameterDefinition param = new ParameterDefinition(
+					name: parameterName,
+					attributes: ParameterAttributes.None,
+					parameterType: methodDef.Module.Import(paramType)
+				);
 
-				if (parameterNames.Length != parameterTypes.Length)
-				{
-					throw new System.ArgumentException(
-						"ParameterBuilder array of parameter types should not have a different length than array of parameter names",
-						"parameterTypes"
-					);
-				}
+				methodDef.Parameters.Add(param);
 
-				for (int p = 0; p < parameterNames.Length; p++)
-				{
-					parameters.Add(new ParameterDefinition(
-						name: parameterNames[p],
-						attributes: ParameterAttributes.None,
-						parameterType: moduleDef.Import(parameterTypes[p])
-					));
-				}
-
-				return parameters;
+				return param;
 			}
 
 			catch (Exception ex) 
 			{
-				Console.WriteLine("Exception in WeavingBuildingBlocks.ParameterBuilder {0} {1}",
+				Console.WriteLine("Exception in WeavingBuildingBlocks._AddParameterToMethodDefinition {0} {1}",
 					ex.InnerException,
 					ex.Message);
 
@@ -304,8 +233,7 @@ namespace FlowTest
 				typeDefinition: propertyDef.DeclaringType,
 				nameOfMethod: "get_" + propertyDef.Name,
 				methodAttributes: MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName,
-				returnTypeReferenceOfMethod: propertyDef.PropertyType,
-				methodParameters: new List<ParameterDefinition>()
+				returnTypeReferenceOfMethod: propertyDef.PropertyType
 			);
 		}
 

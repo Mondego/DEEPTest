@@ -11,6 +11,7 @@ namespace FlowTest
 		)
 		{
 			Console.WriteLine ("v---- Instructions in {0} ----v", methodToPrint.FullName);
+			Console.WriteLine("v---- Has {0} variables ", methodToPrint.Body.Variables.Count);
 			ILProcessor instructionProcessor = methodToPrint.Body.GetILProcessor();
 
 			foreach(Instruction ii in instructionProcessor.Body.Instructions) {

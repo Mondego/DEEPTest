@@ -23,10 +23,10 @@ namespace FlowTest
 
 				if (poi.watchBefore)
 				{
-					/*WeavingFlowTestProxy.InvokeResultAggregatorBeforeMethod(
+					WeavingFlowTestProxy.InvokeResultAggregatorBeforeMethod(
 						method: poiMethod,
-						value: "poi.watchbefore"
-					);*/
+						value: "poi.watchbefore -> woven with threadsafe static"
+					);
 
 					WeaveDebugStatementBeforeMethod(
 						targetMethod: poiMethod,
@@ -38,15 +38,13 @@ namespace FlowTest
 				{
 					WeavingFlowTestProxy.InvokeResultAggregatorAfterMethod(
 						method: poiMethod,
-						value: "poi.watchafter not hard-coded"
+						value: "poi.watchafter -> woven with threadsafe static"
 					);
 						
 					WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,
 						printDebugValue: "Some weaving happened after " + poi.methodOfInterest
 					);
-
-					WeavingDebug.PrintCILInstructionsInMethod(poiMethod);
 				}
 			}
 

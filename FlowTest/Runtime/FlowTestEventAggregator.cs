@@ -76,7 +76,6 @@ namespace FlowTest
 				catch (SocketException se)
 				{
 					// TODO this is going to happen when the test ends early.
-					Console.WriteLine("The FlowTest aggregator was stopped in a slightly ungraceful fashion.");
 				}
 
 				catch (Exception e) {
@@ -88,6 +87,7 @@ namespace FlowTest
 		public void Stop()
 		{
 			isListening = false;
+			Thread.Sleep(1000);
 			Console.WriteLine("Stopping FlowTest event listener at localhost:{0}", defaultMothershipEndpointPort);
 			EventListener.Stop ();
 		}
