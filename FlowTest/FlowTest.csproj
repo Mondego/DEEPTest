@@ -44,7 +44,6 @@
     <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
     <Compile Include="Runtime\AssemblyToExecute.cs" />
     <Compile Include="TestDesignUtilities\ProcessWithIOHandler.cs" />
-    <Compile Include="Instrumentation\Weaving.cs" />
     <Compile Include="Runtime\FlowTestEventAggregator.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingDebug.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingBuildingBlocks.cs" />

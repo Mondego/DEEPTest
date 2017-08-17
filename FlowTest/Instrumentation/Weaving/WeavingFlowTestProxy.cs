@@ -26,44 +26,40 @@ namespace FlowTest
 					);
 
 				// Fields
-				FieldDefinition lockingField = 
-					WeavingBuildingBlocks._AddFieldDefinitionToType( 
-						typeDefinition: flowTestProxyType,    
-						nameOfField: "locking",            
-						attributesOfField: FieldAttributes.Private | FieldAttributes.Static,                           
-						typeReferenceOfField: module.Import(typeof(System.Object))
-					);
+				WeavingBuildingBlocks._AddFieldDefinitionToType( 
+					typeDefinition: flowTestProxyType,    
+					nameOfField: "locking",            
+					attributesOfField: FieldAttributes.Private | FieldAttributes.Static,                           
+					typeReferenceOfField: module.Import(typeof(System.Object))
+				);
 
-				FieldDefinition hostNameField = 
-					WeavingBuildingBlocks._AddFieldDefinitionToType(
-						typeDefinition: flowTestProxyType,
-						nameOfField: "eventDestinationHostname",
-						attributesOfField: FieldAttributes.Private | FieldAttributes.Static,
-						typeReferenceOfField: module.Import(typeof(string))                            
-					);
+				WeavingBuildingBlocks._AddFieldDefinitionToType(
+					typeDefinition: flowTestProxyType,
+					nameOfField: "eventDestinationHostname",
+					attributesOfField: FieldAttributes.Private | FieldAttributes.Static,
+					typeReferenceOfField: module.Import(typeof(string))                            
+				);
 
-				FieldDefinition portField = 
-					WeavingBuildingBlocks._AddFieldDefinitionToType(
-						typeDefinition: flowTestProxyType,
-						nameOfField: "eventDestinationPort",
-						attributesOfField: FieldAttributes.Private | FieldAttributes.Static,
-					    typeReferenceOfField: module.Import(typeof(int))
-					);
+				WeavingBuildingBlocks._AddFieldDefinitionToType(
+					typeDefinition: flowTestProxyType,
+					nameOfField: "eventDestinationPort",
+					attributesOfField: FieldAttributes.Private | FieldAttributes.Static,
+					typeReferenceOfField: module.Import(typeof(int))
+				);
 
-				MethodDefinition cctor = proxyCctor(
+				proxyCctor(
 					flowTestProxyType
 				);
 					
-				MethodDefinition sendEvent = proxySendEvent(
-					flowTestProxyType
-				);
-				////
-
-				MethodDefinition onLock = proxyOnLock(
+				proxySendEvent(
 					flowTestProxyType
 				);
 
-				MethodDefinition requestLock = proxyRequestLock(
+				proxyOnLock(
+					flowTestProxyType
+				);
+
+				proxyRequestLock(
 					flowTestProxyType
 				);
 
@@ -378,6 +374,8 @@ namespace FlowTest
 
 		#endregion
 
+		#region event sender
+
 		public static List<Instruction> pointOfInterestEventSetup(
 			MethodDefinition method,
 			string eventKey,
@@ -404,8 +402,6 @@ namespace FlowTest
 
 			return invocationInstructions;
 		}
-
-		#region event sender
 
 		public static void InvokeResultAggregatorBeforeMethod(
 			MethodDefinition method,
@@ -435,6 +431,7 @@ namespace FlowTest
 			);
 		}
 		#endregion
+	
 	}
 }
 

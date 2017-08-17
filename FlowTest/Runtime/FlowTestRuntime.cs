@@ -51,10 +51,15 @@ namespace FlowTest
 				Console.WriteLine("FlowTestRuntime.WatchPoint(poi) unexpected exception " + e.GetType() + " " + e.Message);		
 			}
 		}
-
-		public FlowTestEventAggregator getLocalMessageHandler()
+			
+		public FlowTestEventAggregator getEventHandler()
 		{
 			return eventHandler;
+		}
+
+		public FlowTestWeavingOrchestration getWeavingHandler()
+		{
+			return weavingHandler;
 		}
 
 		public void Write()

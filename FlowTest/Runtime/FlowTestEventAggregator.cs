@@ -18,7 +18,7 @@ namespace FlowTest
 	{
 		private FlowTestRuntimeConnection MothershipEndpoint;
 		private TcpListener EventListener;
-		private Dictionary<int, Queue<string>> testRuntimeEvents;
+		private Dictionary<int, Queue<NameValueCollection>> testRuntimeEvents;
 		private bool isListening = false;
 
 		private int defaultMothershipEndpointPort = 60011;
@@ -30,16 +30,26 @@ namespace FlowTest
 		{
 			MothershipEndpoint = new FlowTestRuntimeConnection (IPAddress.Any, defaultMothershipEndpointPort);
 			EventListener = new TcpListener(MothershipEndpoint.Address, MothershipEndpoint.Port);
-			testRuntimeEvents = new Dictionary<int, Queue<string>> ();
+			testRuntimeEvents = new Dictionary<int, Queue<NameValueCollection>> ();
 		}
 
-		public Queue<string> getAggregationByKey(int flowKey)
+		public Queue<NameValueCollection> getAggregationByKey(int flowKey)
 		{
 			if (testRuntimeEvents.ContainsKey (flowKey)) {
 				return testRuntimeEvents [flowKey];
 			} else {
 				return null;
 			}
+		}
+
+		public NameValueCollection getNextQueuedEventByKey(int flowKey)
+		{
+			if (testRuntimeEvents.ContainsKey (flowKey) && testRuntimeEvents[flowKey].Count > 0)
+			{
+				return testRuntimeEvents[flowKey].Dequeue();
+			}
+
+			return null;
 		}
 
 		public void Run ()
@@ -57,20 +67,21 @@ namespace FlowTest
 						StreamReader sr = new StreamReader (ns);
 
 						string receivedKeyValueEvent = sr.ReadToEnd ();
-						//Console.WriteLine ("[DEBUG localhost:{0} received result]: {1}", MothershipEndpoint.Port, receivedJSON); 
+
 						NameValueCollection eventProperties = HttpUtility.ParseQueryString(receivedKeyValueEvent);
 						foreach (string key in eventProperties.Keys)
 						{
-							Console.WriteLine("EVENT [key: {0}, value: {1}]", key, eventProperties[key]);
+							// Console.WriteLine("EVENT [key: {0}, value: {1}]", key, eventProperties[key]);
 						}
 
-						/*if (!testRuntimeEvents.ContainsKey (eventFromWovenComponent.sourceFlowKey)) {
+
+						if (!testRuntimeEvents.ContainsKey (Int32.Parse(eventProperties["key"]))) {
 							testRuntimeEvents.Add (
-								eventFromWovenComponent.sourceFlowKey,
-								new Queue<FlowTestInstrumentationEvent> ()
+								Int32.Parse(eventProperties["key"]),
+								new Queue<NameValueCollection>()
 							);
 						}
-						testRuntimeEvents [eventFromWovenComponent.sourceFlowKey].Enqueue (eventFromWovenComponent);*/
+						testRuntimeEvents [Int32.Parse(eventProperties["key"])].Enqueue (eventProperties);
 
 						ns.Close ();
 						sr.Close ();

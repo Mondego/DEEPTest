@@ -16,6 +16,15 @@ namespace FlowTest
 			mapOfReadPathsToWritePaths = new Dictionary<string, string>();
 		}
 
+		public ModuleDefinition getPoiModule(FlowTestPointOfInterest poi)
+		{
+			if (mapOfReadPathsToModuleDefinitions.ContainsKey(poi.parentModuleOfWatchpoint)) {
+				return mapOfReadPathsToModuleDefinitions[poi.parentModuleOfWatchpoint];
+			}
+
+			return null;
+		}
+
 		public void weavePointOfInterest(
 			FlowTestPointOfInterest point
 		)
@@ -37,10 +46,7 @@ namespace FlowTest
 					BootstrapEventAggregation(targetModule);
 				}
 
-				Weaving.WeavePointofInterest (
-					module: mapOfReadPathsToModuleDefinitions[poiModuleName],
-					poi: point
-				);
+				point.weaveIntoModule(mapOfReadPathsToModuleDefinitions[poiModuleName]);
 			}
 
 			catch (Exception e) {

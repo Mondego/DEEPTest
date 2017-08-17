@@ -45,7 +45,14 @@ namespace ChatTestSuite
 				parentType: "ChatServer",
 				methodToWatch: "ReceiveMessage"
 			);
-			//runtime.AddPointOfInterest(pointOfMessageReceived);
+			pointOfMessageReceived.willSendEvents(false);
+			runtime.AddPointOfInterest(pointOfMessageReceived);
+
+			pointOfMessageSent.aLaCarteSystemCallBefore(
+				systemType: typeof(System.Threading.Thread),
+				methodName: "Sleep",
+				parameters: new object[] { 2000 }
+			);
 
 			runtime.Write();
 			runtime.Start();
@@ -66,10 +73,7 @@ namespace ChatTestSuite
 			);
 			client1.Start();
 
-
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");
-
-
 
 			Thread.Sleep(3000);
 			client1.Stop();
