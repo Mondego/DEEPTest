@@ -4,10 +4,6 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Text;
 
-
-using System.Reflection;
-using System.Linq;
-
 namespace SampleServer
 {
 	public class ChatServer

@@ -10,14 +10,13 @@ namespace FlowTest
 {
 	public class Weaving
 	{
-		#region Points of interest
 		public static void WeavePointofInterest(
 			ModuleDefinition module, 
 			FlowTestPointOfInterest poi
 		)
 		{
 			try {
-				TypeDefinition destinationType = module.Types.Single(t => t.Name == poi.parentObjectOfWatchpoint);
+				TypeDefinition destinationType = module.Types.Single(t => t.Name == poi.parentTypeOfWatchpoint);
 				MethodDefinition poiMethod = destinationType.Methods.Single(m => m.Name == poi.methodOfInterest);
 				ILProcessor instructionProcessor = poiMethod.Body.GetILProcessor();
 
@@ -25,10 +24,11 @@ namespace FlowTest
 				{
 					WeavingFlowTestProxy.InvokeResultAggregatorBeforeMethod(
 						method: poiMethod,
-						value: "poi.watchbefore -> woven with threadsafe static"
+						key: poi.GetHashCode().ToString(),
+						value: poi.generatePayload(content: "before")
 					);
 
-					WeaveDebugStatementBeforeMethod(
+					WeavingDebug.WeaveDebugStatementBeforeMethod(
 						targetMethod: poiMethod,
 						printDebugValue: "Some weaving happened before " + poi.methodOfInterest
 					);
@@ -38,10 +38,11 @@ namespace FlowTest
 				{
 					WeavingFlowTestProxy.InvokeResultAggregatorAfterMethod(
 						method: poiMethod,
-						value: "poi.watchafter -> woven with threadsafe static"
+						key: poi.GetHashCode().ToString(),
+						value: poi.generatePayload(content: "after")
 					);
 						
-					WeaveDebugStatementAfterMethod(
+					WeavingDebug.WeaveDebugStatementAfterMethod(
 						targetMethod: poiMethod,
 						printDebugValue: "Some weaving happened after " + poi.methodOfInterest
 					);
@@ -50,61 +51,10 @@ namespace FlowTest
 
 			catch (Exception e) {
 				Console.WriteLine ("| FlowTest Weaver caught an exception while adding a point of interest.");
-				Console.WriteLine ("| PoI: {0} => {1}", poi.parentObjectOfWatchpoint, poi.methodOfInterest);
+				Console.WriteLine ("| PoI: {0} => {1}", poi.parentTypeOfWatchpoint, poi.methodOfInterest);
 				Console.WriteLine ("| {0} {1}", e.InnerException, e.Message);
 			}
 		}
-		#endregion
-	
-		#region Nifty tools for debugging the weaver
-
-		public static void WeaveDebugStatementBeforeMethod(
-			MethodDefinition targetMethod,
-			string printDebugValue
-		)
-		{
-			List<Instruction> statementsToWeave = new List<Instruction> ();
-			ILProcessor instructionProcessor = targetMethod.Body.GetILProcessor();
-
-			Instruction loadStringInstruction = instructionProcessor.Create(OpCodes.Ldstr, printDebugValue);
-			statementsToWeave.Add (loadStringInstruction);
-
-			Instruction writeValueToConsoleInstruction = 
-				instructionProcessor.Create(OpCodes.Call, 
-					targetMethod.Module.Import(
-						typeof (Console).GetMethod ("WriteLine", new [] { typeof (string) })));
-			statementsToWeave.Add (writeValueToConsoleInstruction);
-
-			WeavingBuildingBlocks.WeaveListOfInstructionsAtMethodEntry (
-				methodToWeave : targetMethod,
-				listOfInstructionsToWeave : statementsToWeave
-			);
-		}
-
-		public static void WeaveDebugStatementAfterMethod(
-			MethodDefinition targetMethod,
-			string printDebugValue
-		)
-		{
-			List<Instruction> statementsToWeave = new List<Instruction> ();
-			ILProcessor instructionProcessor = targetMethod.Body.GetILProcessor();
-
-			Instruction loadStringInstruction = instructionProcessor.Create(OpCodes.Ldstr, printDebugValue);
-			statementsToWeave.Add (loadStringInstruction);
-
-			Instruction writeValueToConsoleInstruction = 
-				instructionProcessor.Create(OpCodes.Call, 
-					targetMethod.Module.Import(
-						typeof (Console).GetMethod ("WriteLine", new [] { typeof (string) })));
-			statementsToWeave.Add (writeValueToConsoleInstruction);
-
-			WeavingBuildingBlocks.WeaveListOfInstructionsAtMethodExit (
-				methodToWeave : targetMethod,
-				listOfInstructionsToWeave : statementsToWeave
-			);
-		}
-
-		#endregion
 	}
 }
 

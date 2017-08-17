@@ -11,18 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient", "Samples\Chat\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatServer", "Samples\Chat\SampleServer\ChatServer.csproj", "{4BA1BAF3-63F7-4D27-803B-EC6D02A32D22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowTestTemplates", "FlowTestTemplates\FlowTestTemplates.csproj", "{39327D4A-1D90-42FE-A388-50355D13EB74}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{39327D4A-1D90-42FE-A388-50355D13EB74}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{39327D4A-1D90-42FE-A388-50355D13EB74}.Debug|x86.Build.0 = Debug|Any CPU
-		{39327D4A-1D90-42FE-A388-50355D13EB74}.Release|x86.ActiveCfg = Release|Any CPU
-		{39327D4A-1D90-42FE-A388-50355D13EB74}.Release|x86.Build.0 = Release|Any CPU
 		{3A8C87E0-E70A-435E-B7EC-5C99A6F060D4}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{3A8C87E0-E70A-435E-B7EC-5C99A6F060D4}.Debug|x86.Build.0 = Debug|Any CPU
 		{3A8C87E0-E70A-435E-B7EC-5C99A6F060D4}.Release|x86.ActiveCfg = Release|Any CPU

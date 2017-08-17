@@ -64,7 +64,6 @@ namespace FlowTest
 
 		public static FieldDefinition _AddFieldDefinitionToType
 		(
-			ModuleDefinition moduleDefinition,
 			TypeDefinition typeDefinition,
 			string nameOfField,
 			FieldAttributes attributesOfField,
@@ -73,7 +72,7 @@ namespace FlowTest
 		{
 			#if DEBUG
 			Console.WriteLine("Adding FieldDefinition {0} into TypeDefinition {1} in {2}", 
-				nameOfField, typeDefinition.Name, moduleDefinition.Name);
+				nameOfField, typeDefinition.Name, typeDefinition.Module.Name);
 			#endif
 
 			try {
@@ -105,7 +104,6 @@ namespace FlowTest
 		)
 		{
 			return _AddFieldDefinitionToType (
-				moduleDefinition: module,
 				typeDefinition: typeContainingField,
 				nameOfField: fieldName,
 				attributesOfField: FieldAttributes.Public | FieldAttributes.Static,
@@ -119,7 +117,6 @@ namespace FlowTest
 
 		public static MethodDefinition _AddMethodDefinitionToType
 		(
-			ModuleDefinition moduleDefinition,
 			TypeDefinition typeDefinition,
 			string nameOfMethod,
 			MethodAttributes methodAttributes,
@@ -128,7 +125,7 @@ namespace FlowTest
 		{
 			#if DEBUG
 			Console.WriteLine("Adding MethodDefinition {0} into TypeDefinition {1} in {2}", 
-				nameOfMethod, typeDefinition.Name, moduleDefinition.Name);
+				nameOfMethod, typeDefinition.Name, typeDefinition.Module.Name);
 			#endif
 
 			try
@@ -185,6 +182,29 @@ namespace FlowTest
 			}
 		}
 
+		public static MethodDefinition CopyMethodSignature(
+			MethodDefinition copyMethod,
+			TypeDefinition pasteIntoType
+		)
+		{
+			MethodDefinition paste = _AddMethodDefinitionToType(
+				typeDefinition: pasteIntoType,
+				nameOfMethod: copyMethod.Name,
+				methodAttributes: copyMethod.Attributes,
+				returnTypeReferenceOfMethod: pasteIntoType.Module.Import(copyMethod.ReturnType)
+			);
+
+			foreach (ParameterDefinition param in copyMethod.Parameters) {
+				paste.Parameters.Add(new ParameterDefinition(
+					name: param.Name,
+					attributes: param.Attributes,
+					parameterType: paste.Module.Import(param.ParameterType)
+				));
+			}
+
+			return paste;
+		}
+
 		#endregion
 
 		#region PropertyDefinitions
@@ -229,7 +249,6 @@ namespace FlowTest
 		)
 		{
 			return _AddMethodDefinitionToType(
-				moduleDefinition: propertyDef.Module,
 				typeDefinition: propertyDef.DeclaringType,
 				nameOfMethod: "get_" + propertyDef.Name,
 				methodAttributes: MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName,
@@ -303,6 +322,10 @@ namespace FlowTest
 				}
 			}
 		}
+
+		#endregion
+
+		#region Instruction Helpers
 
 		#endregion
 	}

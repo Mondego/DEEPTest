@@ -7,77 +7,76 @@ namespace FlowTest
 {
 	public class FlowTestWeavingOrchestration
 	{
-		private class ModuleToWeave
-		{
-			private ModuleDefinition mModule;
-			private string moduleReadPath;
-			private string moduleWritePath;
-
-			public ModuleToWeave(string inPlaceWeavingPath) : this (inPlaceWeavingPath, inPlaceWeavingPath)
-			{
-			}
-
-			public ModuleToWeave(string moduleSourcePath, string moduleDestinationPath)
-			{
-				moduleReadPath = moduleSourcePath;
-				moduleWritePath = moduleDestinationPath;
-				mModule = ModuleDefinition.ReadModule(moduleReadPath);
-			}
-
-			public void Write()
-			{
-				mModule.Write (moduleWritePath);
-			}
-
-			public void WeavePointOfInterest(FlowTestPointOfInterest point)
-			{
-				Weaving.WeavePointofInterest (mModule, point);
-			}
-
-			public ModuleDefinition getModule()
-			{
-				return mModule;
-			}
-		}
-
-		private Dictionary<string, ModuleToWeave> weavesToOrchestrate;
+		private Dictionary<string, ModuleDefinition> mapOfReadPathsToModuleDefinitions;
+		private Dictionary<string, string> mapOfReadPathsToWritePaths;
 
 		public FlowTestWeavingOrchestration ()
 		{
-			weavesToOrchestrate = new Dictionary<string, ModuleToWeave>();
+			mapOfReadPathsToModuleDefinitions = new Dictionary<string, ModuleDefinition>();
+			mapOfReadPathsToWritePaths = new Dictionary<string, string>();
 		}
 
-		public void weavePointOfInterest(FlowTestPointOfInterest point)
+		public void weavePointOfInterest(
+			FlowTestPointOfInterest point
+		)
 		{
 			try
 			{
-				if (!weavesToOrchestrate.ContainsKey(point.parentModuleOfWatchpoint)) {
-					weavesToOrchestrate.Add(
-						point.parentModuleOfWatchpoint, 
-						new ModuleToWeave(point.parentModuleOfWatchpoint)
+				string poiModuleName = point.parentModuleOfWatchpoint; 
+
+				if (!mapOfReadPathsToModuleDefinitions.ContainsKey(poiModuleName)) {
+					ModuleDefinition targetModule = ModuleDefinition.ReadModule(poiModuleName);
+
+					mapOfReadPathsToModuleDefinitions.Add(
+						key: point.parentModuleOfWatchpoint,
+						value: targetModule
 					);
 
-					WeavingFlowTestProxy.WeaveSingletonForFlowTestProxy(
-						mModule: weavesToOrchestrate [point.parentModuleOfWatchpoint].getModule()
-					);
+					mapOfReadPathsToWritePaths[poiModuleName] = poiModuleName;
+
+					BootstrapEventAggregation(targetModule);
 				}
-					
-				weavesToOrchestrate [point.parentModuleOfWatchpoint].WeavePointOfInterest(point);
+
+				Weaving.WeavePointofInterest (
+					module: mapOfReadPathsToModuleDefinitions[poiModuleName],
+					poi: point
+				);
 			}
 
 			catch (Exception e) {
-				Console.WriteLine("FlowTestWeavingOrchestration.weavePointOfInterest(poi) caught unexpected {0} {1}",
+				Console.WriteLine("FlowTestWeavingOrchestration.weavePointOfInterest(poi) caught unexpected [{0}] [{1}]",
 					e.GetType(),
 					e.Message);
+				Console.WriteLine("STACK: " + e.StackTrace);
+				Console.WriteLine("INNER " + e.InnerException);
 			}
 		}
 
-		public void Write()
+		private void BootstrapEventAggregation(
+			ModuleDefinition m
+		)
+		{
+			// Load Templates
+			/*WeavingFlowTestProxy.WeaveTemplateLoader(
+				module: m
+			);*/
+
+			// Load Bootstrap
+			WeavingFlowTestProxy.WeaveThreadSafeFlowTestProxyType (
+				module: m,
+				typeName: "FlowTestProxy"
+			);
+		}
+
+		public void Write(
+		)
 		{
 			try
 			{
-				foreach (ModuleToWeave weaver in weavesToOrchestrate.Values) {
-					weaver.Write();
+				foreach (string moduleReadPath in mapOfReadPathsToModuleDefinitions.Keys) {
+					string moduleWritePath = mapOfReadPathsToWritePaths[moduleReadPath];
+					ModuleDefinition moduleToWrite = mapOfReadPathsToModuleDefinitions[moduleReadPath];
+					moduleToWrite.Write (moduleWritePath);
 				}
 			}
 

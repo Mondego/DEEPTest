@@ -2,6 +2,8 @@
 
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Net.Http;
 
 namespace FlowTest
 {
@@ -9,7 +11,7 @@ namespace FlowTest
 	public class FlowTestPointOfInterest
 	{
 		public string parentModuleOfWatchpoint { get; }
-		public string parentObjectOfWatchpoint { get; }
+		public string parentTypeOfWatchpoint { get; }
 		public string methodOfInterest { get; }
 		public bool watchBefore { get; set; }
 		public bool watchAfter { get; set; }
@@ -17,12 +19,12 @@ namespace FlowTest
 
 		public FlowTestPointOfInterest (
 			string parentModule,
-			string parentObject,
+			string parentType,
 			string methodToWatch
 		)
 		{
 			parentModuleOfWatchpoint = parentModule;
-			parentObjectOfWatchpoint = parentObject;
+			parentTypeOfWatchpoint = parentType;
 			methodOfInterest = methodToWatch;
 
 			watchBefore = true;
@@ -34,26 +36,23 @@ namespace FlowTest
 			mRuntime = ftr;
 		}
 
-		public FlowTestInstrumentationEvent[] getTestResults()
+		public string[] getTestResults()
 		{
-			Queue<FlowTestInstrumentationEvent> events = mRuntime.getLocalMessageHandler().getRuntimeFlowByKey(this.GetHashCode());
+			Queue<string> events = mRuntime.getLocalMessageHandler().getAggregationByKey(this.GetHashCode());
 			return events.ToArray();
 		}
 
-		public FlowTestInstrumentationEvent generatePayload (object content = null)
+		public string generatePayload(string content = "")
 		{
-			return new FlowTestInstrumentationEvent
-			{
-				flowParentType = parentObjectOfWatchpoint,
-				flowInstrumentationPath = methodOfInterest,
-				sourceFlowKey = this.GetHashCode(),
-				flowEventContent = content
-			};
-		}
+			List<KeyValuePair<string, string>> eventContents = new List<KeyValuePair<string, string>>();
 
-		public string generatePayloadString (object content = null)
-		{
-			return JsonConvert.SerializeObject (generatePayload(content), Formatting.None);
+			eventContents.Add(new KeyValuePair<string, string>("key", this.GetHashCode().ToString()));
+			eventContents.Add(new KeyValuePair<string, string>("parentModuleName", parentModuleOfWatchpoint));
+			eventContents.Add(new KeyValuePair<string, string>("parentTypeName", parentTypeOfWatchpoint));
+			eventContents.Add(new KeyValuePair<string, string>("point", methodOfInterest));
+			eventContents.Add(new KeyValuePair<string, string>("value", content));
+
+			return new FormUrlEncodedContent(eventContents).ReadAsStringAsync().Result;
 		}
 	}
 }

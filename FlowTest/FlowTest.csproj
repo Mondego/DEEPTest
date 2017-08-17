@@ -39,22 +39,16 @@
   <ItemGroup>
     <Compile Include="Instrumentation\FlowTestPointOfInterest.cs" />
     <Compile Include="Instrumentation\FlowTestPropertyOfInterest.cs" />
-    <Compile Include="Runtime\FlowTestAwayTeam.cs" />
     <Compile Include="Runtime\FlowTestRuntime.cs" />
     <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
     <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
     <Compile Include="Runtime\AssemblyToExecute.cs" />
-    <Compile Include="Runtime\FlowTestAdHocMessenger.cs" />
     <Compile Include="TestDesignUtilities\ProcessWithIOHandler.cs" />
-    <Compile Include="Runtime\FlowTestInstrumentationEvent.cs" />
     <Compile Include="Instrumentation\Weaving.cs" />
     <Compile Include="Runtime\FlowTestEventAggregator.cs" />
-    <Compile Include="Runtime\FlowTestProxySingleton.cs" />
-    <Compile Include="Instrumentation\Weaving\WeavingPatterns.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingDebug.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingBuildingBlocks.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingFlowTestProxy.cs" />
-    <Compile Include="Instrumentation\Weaving\WeavingTemplates.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -73,14 +67,10 @@
     <Reference Include="Mono.Cecil.Rocks">
       <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FlowTestTemplates\FlowTestTemplates.csproj">
-      <Project>{39327D4A-1D90-42FE-A388-50355D13EB74}</Project>
-      <Name>FlowTestTemplates</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

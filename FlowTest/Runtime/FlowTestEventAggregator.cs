@@ -8,6 +8,8 @@ using System.IO;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace FlowTest
 {	
@@ -16,7 +18,7 @@ namespace FlowTest
 	{
 		private FlowTestRuntimeConnection MothershipEndpoint;
 		private TcpListener EventListener;
-		private Dictionary<int, Queue<FlowTestInstrumentationEvent>> testRuntimeEvents;
+		private Dictionary<int, Queue<string>> testRuntimeEvents;
 		private bool isListening = false;
 
 		private int defaultMothershipEndpointPort = 60011;
@@ -28,10 +30,10 @@ namespace FlowTest
 		{
 			MothershipEndpoint = new FlowTestRuntimeConnection (IPAddress.Any, defaultMothershipEndpointPort);
 			EventListener = new TcpListener(MothershipEndpoint.Address, MothershipEndpoint.Port);
-			testRuntimeEvents = new Dictionary<int, Queue<FlowTestInstrumentationEvent>> ();
+			testRuntimeEvents = new Dictionary<int, Queue<string>> ();
 		}
 
-		public Queue<FlowTestInstrumentationEvent> getRuntimeFlowByKey(int flowKey)
+		public Queue<string> getAggregationByKey(int flowKey)
 		{
 			if (testRuntimeEvents.ContainsKey (flowKey)) {
 				return testRuntimeEvents [flowKey];
@@ -42,6 +44,7 @@ namespace FlowTest
 
 		public void Run ()
 		{
+			Console.WriteLine("Starting event aggregator");
 			isListening = true;
 
 			Task.Run (() => {
@@ -53,11 +56,13 @@ namespace FlowTest
 						NetworkStream ns = tc.GetStream ();
 						StreamReader sr = new StreamReader (ns);
 
-						string receivedJSON = sr.ReadToEnd ();
-						Console.WriteLine ("[DEBUG localhost:{0} received result]: {1}", MothershipEndpoint.Port, receivedJSON); 
-
-						//FlowTestInstrumentationEvent eventFromWovenComponent =
-					//		JsonConvert.DeserializeObject<FlowTestInstrumentationEvent> (receivedJSON);
+						string receivedKeyValueEvent = sr.ReadToEnd ();
+						//Console.WriteLine ("[DEBUG localhost:{0} received result]: {1}", MothershipEndpoint.Port, receivedJSON); 
+						NameValueCollection eventProperties = HttpUtility.ParseQueryString(receivedKeyValueEvent);
+						foreach (string key in eventProperties.Keys)
+						{
+							Console.WriteLine("EVENT [key: {0}, value: {1}]", key, eventProperties[key]);
+						}
 
 						/*if (!testRuntimeEvents.ContainsKey (eventFromWovenComponent.sourceFlowKey)) {
 							testRuntimeEvents.Add (
