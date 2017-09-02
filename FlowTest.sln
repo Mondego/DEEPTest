@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient", "Samples\Chat\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatServer", "Samples\Chat\SampleServer\ChatServer.csproj", "{4BA1BAF3-63F7-4D27-803B-EC6D02A32D22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSimTestSuiteBackupProject", "OpenSimTestSuiteBackupProject\OpenSimTestSuiteBackupProject.csproj", "{A4A49D9D-0651-430A-A109-1A2E8E67B7C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -29,6 +31,10 @@ Global
 		{5AD8D5FE-8FF7-4539-B650-E73A9A0E0A99}.Debug|x86.Build.0 = Debug|x86
 		{5AD8D5FE-8FF7-4539-B650-E73A9A0E0A99}.Release|x86.ActiveCfg = Release|x86
 		{5AD8D5FE-8FF7-4539-B650-E73A9A0E0A99}.Release|x86.Build.0 = Release|x86
+		{A4A49D9D-0651-430A-A109-1A2E8E67B7C6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A4A49D9D-0651-430A-A109-1A2E8E67B7C6}.Debug|x86.Build.0 = Debug|Any CPU
+		{A4A49D9D-0651-430A-A109-1A2E8E67B7C6}.Release|x86.ActiveCfg = Release|Any CPU
+		{A4A49D9D-0651-430A-A109-1A2E8E67B7C6}.Release|x86.Build.0 = Release|Any CPU
 		{B406F0F9-E366-4B1B-A0B1-AE942E6DF480}.Debug|x86.ActiveCfg = Debug|x86
 		{B406F0F9-E366-4B1B-A0B1-AE942E6DF480}.Debug|x86.Build.0 = Debug|x86
 		{B406F0F9-E366-4B1B-A0B1-AE942E6DF480}.Release|x86.ActiveCfg = Release|x86

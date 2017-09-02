@@ -33,7 +33,6 @@
   <ItemGroup>
     <Folder Include="Instrumentation\" />
     <Folder Include="Runtime\" />
-    <Folder Include="TestDesignUtilities\" />
     <Folder Include="Instrumentation\Weaving\" />
   </ItemGroup>
   <ItemGroup>
@@ -43,11 +42,11 @@
     <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
     <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
     <Compile Include="Runtime\AssemblyToExecute.cs" />
-    <Compile Include="TestDesignUtilities\ProcessWithIOHandler.cs" />
     <Compile Include="Runtime\FlowTestEventAggregator.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingDebug.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingBuildingBlocks.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingFlowTestProxy.cs" />
+    <Compile Include="Runtime\ProcessWithIOHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

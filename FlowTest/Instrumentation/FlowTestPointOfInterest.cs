@@ -133,7 +133,6 @@ namespace FlowTest
 				MethodDefinition poiMethod = destinationType.Methods.Single(m => m.Name == methodOfInterest);
 				ILProcessor proc = poiMethod.Body.GetILProcessor();
 
-				Console.WriteLine("???");
 				List<Instruction> instructions = new List<Instruction>();
 				List<Type> args = new List<Type>();
 			
@@ -155,8 +154,6 @@ namespace FlowTest
 				instructions.Add(proc.Create(
 					OpCodes.Call,
 					module.Import(systemType.GetMethod(methodName, args.ToArray()))));
-
-				Console.WriteLine("???");
 
 				WeavingBuildingBlocks.WeaveListOfInstructionsAtMethodEntry(
 					methodToWeave: poiMethod,

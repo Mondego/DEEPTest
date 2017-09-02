@@ -12,3 +12,4 @@ artifacts/
 *.sln.ide
 *.VisualState.xml
 *TestResult.xml
+flowtest.app.config

@@ -31,13 +31,19 @@ namespace FlowTest
 
 		#region FlowTest setup 
 
-		public void addAssemblyToFlowTest(string pathToAssembly, int nSecondsRequiredAfterLaunch, string[] args)
+		public void addAssemblyToFlowTest(
+			string pathToAssembly, 
+			int nSecondsRequiredAfterLaunch, 
+			string args,
+			string workingDirectory = null
+		)
 		{
 			flowTestStartupOrder.Add(
 				new AssemblyToExecute(
 					assemblyExecutionPath: pathToAssembly,
 					nSecondsForStartup: nSecondsRequiredAfterLaunch,
-					arguments: args
+					arguments: args,
+					workingDir: workingDirectory
 				)
 			);
 		}

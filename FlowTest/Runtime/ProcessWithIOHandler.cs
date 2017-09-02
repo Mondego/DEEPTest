@@ -10,21 +10,25 @@ namespace FlowTest
 		private Process process;
 		private StreamWriter ProcessStreamInterface;
 
-		public ProcessWithIOHandler (string targetPath, string[] targetArguments)
+		public ProcessWithIOHandler (string targetPath, string arguments, string workingdir = null)
 		{
 			process = new Process();
 			process.StartInfo.FileName = targetPath;
-			process.StartInfo.Arguments = string.Join(" ", targetArguments);
+			process.StartInfo.Arguments = arguments;
 			process.StartInfo.UseShellExecute = false;
 			process.StartInfo.RedirectStandardOutput = true;
 			process.StartInfo.RedirectStandardInput = true;
+			if (workingdir != null) {
+				process.StartInfo.WorkingDirectory = workingdir;
+			}
+
 			process.OutputDataReceived += delegate(object sender, DataReceivedEventArgs e)
 			{
 				if (e.Data.Length > 0)
 				{
 					Console.WriteLine("[PID {0} {1}] {2}", 
 						process.Id, new FileInfo(targetPath).Name,
-						e.Data);
+						e.Data.ToString().Trim());
 				}
 			};
 		}

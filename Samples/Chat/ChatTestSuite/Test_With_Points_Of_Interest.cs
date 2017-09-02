@@ -29,7 +29,7 @@ namespace ChatTestSuite
 			runtime.addAssemblyToFlowTest(
 				pathToAssembly: chatServerExecutablePath,
 				nSecondsRequiredAfterLaunch: 5,
-				args: new string[] { "7777" }
+				args: "7777"
 			);
 
 			// Points of interest where we want to weave some activity
@@ -69,11 +69,13 @@ namespace ChatTestSuite
 		{
 			client1 = new ProcessWithIOHandler(
 				targetPath: chatClientExecutablePath,
-				targetArguments: new string[] { "7777" }
+				arguments: "7777"
 			);
 			client1.Start();
 
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");
+
+			runtime.
 
 			Thread.Sleep(3000);
 			client1.Stop();

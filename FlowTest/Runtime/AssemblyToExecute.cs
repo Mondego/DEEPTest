@@ -8,15 +8,15 @@ namespace FlowTest
 		public int nSecondsRequiredForAssemblyStartup { get; }
 		public string executionPath { get; }
 
-		private string[] executionArguments;
+		private string executionArguments;
 		private ProcessWithIOHandler mAssemblyComponent;
 
-		public AssemblyToExecute (string assemblyExecutionPath, int nSecondsForStartup, string[] arguments)
+		public AssemblyToExecute (string assemblyExecutionPath, int nSecondsForStartup, string arguments, string workingDir)
 		{
 			nSecondsRequiredForAssemblyStartup = nSecondsForStartup;
 			executionPath = assemblyExecutionPath;
 			executionArguments = arguments;
-			mAssemblyComponent = new ProcessWithIOHandler (executionPath, executionArguments);
+			mAssemblyComponent = new ProcessWithIOHandler (executionPath, arguments, workingDir);
 		}
 
 		public void Start()
