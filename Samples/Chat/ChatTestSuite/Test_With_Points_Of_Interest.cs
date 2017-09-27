@@ -75,7 +75,7 @@ namespace ChatTestSuite
 
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");
 
-			runtime.
+			//runtime.
 
 			Thread.Sleep(3000);
 			client1.Stop();
