@@ -37,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Instrumentation\FlowTestPointOfInterest.cs" />
-    <Compile Include="Instrumentation\FlowTestPropertyOfInterest.cs" />
     <Compile Include="Runtime\FlowTestRuntime.cs" />
     <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
     <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />

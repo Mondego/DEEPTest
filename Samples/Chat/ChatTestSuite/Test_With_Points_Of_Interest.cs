@@ -22,6 +22,8 @@ namespace ChatTestSuite
 		[OneTimeSetUp]
 		public void ChatServerFlowTestSetup()
 		{
+			Console.WriteLine(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
 			// Initialize the runtime, which is the test driver for the flowtest
 			runtime = new FlowTestRuntime();
 
