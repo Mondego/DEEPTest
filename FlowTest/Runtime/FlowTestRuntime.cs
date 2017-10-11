@@ -1,124 +1,76 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.IO;
-using System.Threading;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System;
 
 namespace FlowTest
 {
 	public class FlowTestRuntime
 	{
-		private FlowTestWeavingOrchestration weavingHandler;
-		private FlowTestEventAggregator eventHandler;
-		List<AssemblyToExecute> flowTestStartupOrder;
+        private FlowTestWeavingOrchestration weavingHandler = new FlowTestWeavingOrchestration();
+        private FlowTestEventAggregator eventHandler = new FlowTestEventAggregator();
+        private FlowTestStartupExecutables executableHandler = new FlowTestStartupExecutables();
 
-		public FlowTestRuntime ()
-		{
-			// This initializes the messenger for all communication between the test runtime
-			// and the hook into the target component(s)
-			eventHandler = new FlowTestEventAggregator ();
+        public FlowTestWeavingOrchestration Weaver { get { return weavingHandler; } }
+        public FlowTestEventAggregator Events { get { return eventHandler; } }
+        public  FlowTestStartupExecutables Execution { get { return executableHandler; } }
 
-			// The weavingHandler is the runtime's API to weaving code, validating existing weaves,
-			// and any other instrumentation before runtime.
-			weavingHandler = new FlowTestWeavingOrchestration();
+        public FlowTestRuntime () {}
 
-			// The flowTestStartupOrder list is all services that need to be started. It's a directed
-			// graph of sorts, though very simple at the moment. Designed for systems that have
-			// complex startup sequences and/or delays.
-			flowTestStartupOrder = new List<AssemblyToExecute>();
-		}
+        #region Instrumentation and Weaving
 
-		#region FlowTest setup 
+        public void AddPointOfInterest(FlowTestPointOfInterest poi)
+        {
+            poi.setRuntime (this);
+            weavingHandler.weavePointOfInterest(poi);
+        }
 
-		public void addAssemblyToFlowTest(
-			string pathToAssembly, 
-			int nSecondsRequiredAfterLaunch, 
-			string args,
+        public void Write()
+        {
+            weavingHandler.Write();
+        }
+
+        #endregion
+
+        #region Execution
+
+		public void addExecutableToFlowTestStartup(
+			string pathToExecutable,
+			string arguments,
+            int nSecondsOnLaunch, 
 			string workingDirectory = null
 		)
 		{
-			flowTestStartupOrder.Add(
-				new AssemblyToExecute(
-					assemblyExecutionPath: pathToAssembly,
-					nSecondsForStartup: nSecondsRequiredAfterLaunch,
-					arguments: args,
-					workingDir: workingDirectory
-				)
-			);
+            executableHandler.addExecutableToLaunch(
+                path: pathToExecutable,
+                args: arguments,
+                nSecondsDelay: nSecondsOnLaunch,
+                workingDirectory: workingDirectory
+            );
 		}
 
-		public void AddPointOfInterest(FlowTestPointOfInterest poi)
-		{
-			try {
-				poi.setRuntime (this);
-				weavingHandler.weavePointOfInterest(poi);
-			} catch (Exception e) {
-				Console.WriteLine("FlowTestRuntime.WatchPoint(poi) unexpected exception " + e.GetType() + " " + e.Message);		
-			}
-		}
-			
-		public FlowTestEventAggregator getEventHandler()
-		{
-			return eventHandler;
-		}
+        public void Start()
+        {
+            eventHandler.Start ();
+            executableHandler.Start();
+        }
 
-		public FlowTestWeavingOrchestration getWeavingHandler()
-		{
-			return weavingHandler;
-		}
+        public void Stop()
+        {
+            eventHandler.Stop();
+            executableHandler.Stop();
+        }
 
-		public void Write()
-		{
-			try {
-				weavingHandler.Write();
-			} catch (Exception e) {
-				Console.WriteLine("FlowTestRuntime.Write() unexpected exception " + e.GetType() + " " + e.Message);		
-			}
-		}
+        public List<string> getExecutableLog(string exePath)
+        {
+            return executableHandler.getStdOutEventsFromProcess(exePath);
+        }
 
-		#endregion
+        #endregion
 
-		#region Starting and stopping FlowTest
+        #region Testing, Regressions, Asserts
 
-		public void Start()
-		{
-			eventHandler.Run ();
-			Thread.Sleep(5000);
-			foreach (AssemblyToExecute flowExecutionComponent in flowTestStartupOrder) {
-				flowExecutionComponent.Start();
-			}
-		}
-
-		public void Stop()
-		{
-			try 
-			{
-				eventHandler.Stop ();
-				for (int componentIndex = flowTestStartupOrder.Count - 1; componentIndex >= 0; componentIndex--)
-				{
-					flowTestStartupOrder[componentIndex].Stop();
-				}
-			}
-
-			catch (ArgumentException ae)
-			{
-				// Process not found
-				Console.WriteLine("FlowTestRuntime.Stop caught unexpected exception " + ae.GetType() + " " + ae.Message);
-			}
-
-			catch (InvalidOperationException ioe) 
-			{
-				// Process couldn't be stopped cause it probably terminated due to a weaving error
-				Console.WriteLine("FlowTestRuntime.Stop caught unexpected exception " + ioe.GetType() + " " + ioe.Message);
-			}
-
-			catch (Exception e) {
-				Console.WriteLine("FlowTestRuntime.Stop caught unexpected exception " + e.GetType() + " " + e.Message);
-			}
-		}
-
-		#endregion
+        #endregion
 	}
 }
 

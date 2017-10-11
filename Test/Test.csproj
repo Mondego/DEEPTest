@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A4A49D9D-0651-430A-A109-1A2E8E67B7C6}</ProjectGuid>
+    <ProjectGuid>{A82BE5B6-E075-4450-AF9A-1DD697836EC0}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>OpenSimTestSuiteBackupProject</RootNamespace>
-    <AssemblyName>OpenSimTestSuiteBackupProject</AssemblyName>
+    <RootNamespace>Test</RootNamespace>
+    <AssemblyName>Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,15 +32,10 @@
     <Reference Include="nunit.framework">
       <HintPath>..\ThirdPartyLib\nunit\bin\net-4.0\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="CookComputing.XmlRpcV2">
-      <HintPath>..\packages\xmlrpcnet.3.0.0.266\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test_Login_XMLRPC.cs" />
-    <Compile Include="Test_Login_pCampBot.cs" />
+    <Compile Include="FlowTestHelloWorldTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -48,11 +43,5 @@
       <Project>{B406F0F9-E366-4B1B-A0B1-AE942E6DF480}</Project>
       <Name>FlowTest</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="flowtest.app.config" />
-    <None Include="flowtest.app.config.example" />
-    <None Include="app.config" />
   </ItemGroup>
 </Project>

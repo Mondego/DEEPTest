@@ -12,7 +12,7 @@ namespace ChatTestSuite
 		FlowTestRuntime runtime;
 		FlowTestPointOfInterest pointOfMessageReceived, pointOfMessageSent;
 
-		ProcessWithIOHandler client1;
+		ProcessExecutionWithRedirectedIO client1;
 
 		static string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
 		static string samplesParentDirectory = Directory.GetParent(workingTestDirectory).Parent.Parent.Parent.FullName;
@@ -28,10 +28,10 @@ namespace ChatTestSuite
 			runtime = new FlowTestRuntime();
 
 			// Add the component to execute
-			runtime.addAssemblyToFlowTest(
-				pathToAssembly: chatServerExecutablePath,
-				nSecondsRequiredAfterLaunch: 5,
-				args: "7777"
+            runtime.addExecutableToFlowTestStartup(
+				pathToExecutable: chatServerExecutablePath,
+				nSecondsOnLaunch: 5,
+				arguments: "7777"
 			);
 
 			// Points of interest where we want to weave some activity
@@ -69,15 +69,13 @@ namespace ChatTestSuite
 		[Test]
 		public void TestCase()
 		{
-			client1 = new ProcessWithIOHandler(
+			client1 = new ProcessExecutionWithRedirectedIO(
 				targetPath: chatClientExecutablePath,
 				arguments: "7777"
 			);
 			client1.Start();
 
 			client1.SendMessageToComponentConsole("Client 1 - msg 1");
-
-			//runtime.
 
 			Thread.Sleep(3000);
 			client1.Stop();

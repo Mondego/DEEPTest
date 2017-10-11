@@ -6,30 +6,23 @@ using System.Threading;
 using System.Text;
 using System.IO;
 using System.Collections.Generic;
-
-using Newtonsoft.Json;
 using System.Collections.Specialized;
 using System.Web;
 
 namespace FlowTest
 {	
-	// Cheesy name, handles the nitty-gritty of endpoints, content messages, etc 
 	public class FlowTestEventAggregator
 	{
-		private FlowTestRuntimeConnection MothershipEndpoint;
-		private TcpListener EventListener;
+        private FlowTestRuntimeConnection EventHandlerEndpoint;
+		private TcpListener listener;
 		private Dictionary<int, Queue<NameValueCollection>> testRuntimeEvents;
-		private bool isListening = false;
+        private volatile bool alive = false;
 
-		private int defaultMothershipEndpointPort = 60011;
-
-		// Default for now is we're just going to weave stuff into one target component per test runtime.
-	    // e.g., a mapping of one NUnit test suite to one FlowTestRuntime, and consequently one target
-		// component. No idea if this is accurate long-term but seems organized enough.
-		public FlowTestEventAggregator ()
-		{
-			MothershipEndpoint = new FlowTestRuntimeConnection (IPAddress.Any, defaultMothershipEndpointPort);
-			EventListener = new TcpListener(MothershipEndpoint.Address, MothershipEndpoint.Port);
+        public FlowTestEventAggregator ()
+        {
+            //Console.WriteLine("Initializing FlowTest event listener at localhost:{0}", port);
+			EventHandlerEndpoint = new FlowTestRuntimeConnection (IPAddress.Any, 60011);
+			listener = new TcpListener(EventHandlerEndpoint.Address, EventHandlerEndpoint.Port);
 			testRuntimeEvents = new Dictionary<int, Queue<NameValueCollection>> ();
 		}
 
@@ -52,60 +45,58 @@ namespace FlowTest
 			return null;
 		}
 
-		public void Run ()
-		{
-			Console.WriteLine("Starting event aggregator");
-			isListening = true;
+		public void Start ()
+        {
+            Console.WriteLine("Starting event handler");
 
-			Task.Run (() => {
-				try {
-					EventListener.Start ();
-					Console.WriteLine("Starting FlowTest event listener at localhost:{0}", defaultMothershipEndpointPort);
-					while (isListening) {
-						TcpClient tc = EventListener.AcceptTcpClient ();
-						NetworkStream ns = tc.GetStream ();
-						StreamReader sr = new StreamReader (ns);
+            Task.Run(() => {
+                listener.Start();
+                alive = true;
 
-						string receivedKeyValueEvent = sr.ReadToEnd ();
+                try {
+                    while (alive) {
+                        TcpClient tc = listener.AcceptTcpClient();
+                        NetworkStream ns = tc.GetStream ();
+                        StreamReader sr = new StreamReader (ns);
+                        string data = sr.ReadToEnd();
 
-						NameValueCollection eventProperties = HttpUtility.ParseQueryString(receivedKeyValueEvent);
-						foreach (string key in eventProperties.Keys)
-						{
-							// Console.WriteLine("EVENT [key: {0}, value: {1}]", key, eventProperties[key]);
-						}
+                        NameValueCollection eventProperties = HttpUtility.ParseQueryString(data);
+                        foreach (string key in eventProperties.Keys)
+                        {
+                            Console.WriteLine("EVENT [key: {0}, value: {1}]", key, eventProperties[key]);
+                        }
 
+                        if (!testRuntimeEvents.ContainsKey (Int32.Parse(eventProperties["key"]))) {
+                            testRuntimeEvents.Add (
+                                Int32.Parse(eventProperties["key"]),
+                                new Queue<NameValueCollection>()
+                            );
+                        }
+                        testRuntimeEvents [Int32.Parse(eventProperties["key"])].Enqueue (eventProperties);
 
-						if (!testRuntimeEvents.ContainsKey (Int32.Parse(eventProperties["key"]))) {
-							testRuntimeEvents.Add (
-								Int32.Parse(eventProperties["key"]),
-								new Queue<NameValueCollection>()
-							);
-						}
-						testRuntimeEvents [Int32.Parse(eventProperties["key"])].Enqueue (eventProperties);
-
-						ns.Close ();
-						sr.Close ();
-						tc.Close ();
-					}
-				} 
-
-				catch (SocketException se)
-				{
-					// TODO this is going to happen when the test ends early.
-				}
-
-				catch (Exception e) {
-					Console.WriteLine ("Flow Test Mothership caught an exception: " + e.Message + e.GetType());
-				}
-			});
-		}
-
+                        ns.Close ();
+                        sr.Close ();
+                        tc.Close();
+                    }
+                } catch (Exception e) {
+                    Console.WriteLine("FlowTestEventAggregator {0} {1}", e.GetType(), e.Message);
+                }
+            });
+        }
+        
 		public void Stop()
 		{
-			isListening = false;
-			Thread.Sleep(1000);
-			Console.WriteLine("Stopping FlowTest event listener at localhost:{0}", defaultMothershipEndpointPort);
-			EventListener.Stop ();
+            try
+            {
+                Console.WriteLine("Stopping event handler");
+			    alive = false;
+                listener.Server.Close();
+                listener.Stop();
+            }
+
+            catch (Exception e) {
+                Console.WriteLine("FlowTestRuntime.Stop caught unexpected exception " + e.GetType() + " " + e.Message);
+            }
 		}
 	}
 }

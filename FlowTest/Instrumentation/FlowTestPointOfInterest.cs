@@ -51,13 +51,13 @@ namespace FlowTest
 
 		public NameValueCollection[] getTestResults()
 		{
-			Queue<NameValueCollection> events = mRuntime.getEventHandler().getAggregationByKey(this.GetHashCode());
+            Queue<NameValueCollection> events = mRuntime.Events.getAggregationByKey(this.GetHashCode());
 			return events.ToArray();
 		}
 
 		public NameValueCollection getNextEventResult()
 		{
-			return mRuntime.getEventHandler().getNextQueuedEventByKey(this.GetHashCode());
+            return mRuntime.Events.getNextQueuedEventByKey(this.GetHashCode());
 		}
 
 		public string generatePayload(string content = "")
@@ -128,7 +128,7 @@ namespace FlowTest
 		{
 			try 
 			{
-				ModuleDefinition module = mRuntime.getWeavingHandler().getPoiModule(this);
+                ModuleDefinition module = mRuntime.Weaver.getPoiModule(this);
 				TypeDefinition destinationType = module.Types.Single(t => t.Name == parentTypeOfWatchpoint);
 				MethodDefinition poiMethod = destinationType.Methods.Single(m => m.Name == methodOfInterest);
 				ILProcessor proc = poiMethod.Body.GetILProcessor();

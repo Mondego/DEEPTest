@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-
-<appSettings>
-  <add key="standalone" value="path/to/standalone/opensim/bin" />
-  <add key="grid" value="path/to/grid/opensim/bin" />
-  <add key="YOUR_CUSTOM_CONFIGURATION_HERE" value="path/to/bin" />
-</appSettings>

@@ -34,40 +34,44 @@
     <Folder Include="Instrumentation\" />
     <Folder Include="Runtime\" />
     <Folder Include="Instrumentation\Weaving\" />
+    <Folder Include="Execution\" />
+    <Folder Include="TestMechanics\" />
+    <Folder Include="API\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Instrumentation\FlowTestPointOfInterest.cs" />
     <Compile Include="Runtime\FlowTestRuntime.cs" />
     <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
     <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
-    <Compile Include="Runtime\AssemblyToExecute.cs" />
     <Compile Include="Runtime\FlowTestEventAggregator.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingDebug.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingBuildingBlocks.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingFlowTestProxy.cs" />
-    <Compile Include="Runtime\ProcessWithIOHandler.cs" />
+    <Compile Include="Execution\ProcessExecutionWithRedirectedIO.cs" />
+    <Compile Include="Execution\LaunchConfiguration.cs" />
+    <Compile Include="Execution\FlowTestStartupExecutables.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\ThirdPartyLib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Net.Http" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Reference Include="Mono.Cecil.Inject">
+      <HintPath>..\ThirdPartyLib\Mono.Cecil.Inject.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\ThirdPartyLib\cecil-0.9.6\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\ThirdPartyLib\cecil-0.9.6\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\ThirdPartyLib\cecil-0.9.6\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\ThirdPartyLib\cecil-0.9.6\Mono.Cecil.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

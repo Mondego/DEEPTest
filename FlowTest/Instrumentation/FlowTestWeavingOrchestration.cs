@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
+using System.IO;
 
 namespace FlowTest
 {
@@ -62,11 +63,6 @@ namespace FlowTest
 			ModuleDefinition m
 		)
 		{
-			// Load Templates
-			/*WeavingFlowTestProxy.WeaveTemplateLoader(
-				module: m
-			);*/
-
 			// Load Bootstrap
 			WeavingFlowTestProxy.WeaveThreadSafeFlowTestProxyType (
 				module: m,
@@ -74,8 +70,7 @@ namespace FlowTest
 			);
 		}
 
-		public void Write(
-		)
+		public void Write()
 		{
 			try
 			{
