@@ -10,7 +10,7 @@ namespace ChatTestSuite
 	public class Test_Points_Of_Interest_Weaving
 	{
 		FlowTestRuntime runtime;
-		FlowTestPointOfInterest pointOfMessageReceived, pointOfMessageSent;
+		WeavePoint pointOfMessageReceived, pointOfMessageSent;
 
 		ProcessExecutionWithRedirectedIO client1;
 
@@ -28,42 +28,35 @@ namespace ChatTestSuite
 			runtime = new FlowTestRuntime();
 
 			// Add the component to execute
-            runtime.addExecutableToFlowTestStartup(
-				pathToExecutable: chatServerExecutablePath,
-				nSecondsOnLaunch: 5,
-				arguments: "7777"
-			);
+            runtime.Instrumentation.addExecutable(
+                exeSourcePath: chatServerExecutablePath,
+                argumentString: "7777",
+                nSecondsDelay: 5
+            );
 
 			// Points of interest where we want to weave some activity
-			pointOfMessageSent = new FlowTestPointOfInterest (
+			pointOfMessageSent = new WeavePoint (
 				parentModule: chatServerExecutablePath,
 				parentType: "ChatServer",
 				methodToWatch: "SendMessage"
 			);
-			runtime.AddPointOfInterest(pointOfMessageSent);
+            runtime.Instrumentation.addWeavePoint(pointOfMessageSent);
 
-			pointOfMessageReceived = new FlowTestPointOfInterest (
+			pointOfMessageReceived = new WeavePoint (
 				parentModule: chatServerExecutablePath,
 				parentType: "ChatServer",
 				methodToWatch: "ReceiveMessage"
 			);
-			pointOfMessageReceived.willSendEvents(false);
-			runtime.AddPointOfInterest(pointOfMessageReceived);
+            runtime.Instrumentation.addWeavePoint(pointOfMessageReceived);
 
-			pointOfMessageSent.aLaCarteSystemCallBefore(
-				systemType: typeof(System.Threading.Thread),
-				methodName: "Sleep",
-				parameters: new object[] { 2000 }
-			);
-
-			runtime.Write();
-			runtime.Start();
+            runtime.Instrumentation.write();
+			runtime.start();
 		}
 
 		[OneTimeTearDown]
 		public void GenericTearDown()
 		{
-			runtime.Stop();
+			runtime.stopAndCleanup();
 		}
 
 		[Test]

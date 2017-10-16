@@ -32,24 +32,23 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Instrumentation\" />
-    <Folder Include="Runtime\" />
     <Folder Include="Instrumentation\Weaving\" />
     <Folder Include="Execution\" />
     <Folder Include="TestMechanics\" />
     <Folder Include="API\" />
+    <Folder Include="Instrumentation\AddOns\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Instrumentation\FlowTestPointOfInterest.cs" />
-    <Compile Include="Runtime\FlowTestRuntime.cs" />
-    <Compile Include="Runtime\FlowTestRuntimeConnection.cs" />
-    <Compile Include="Instrumentation\FlowTestWeavingOrchestration.cs" />
-    <Compile Include="Runtime\FlowTestEventAggregator.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingDebug.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingBuildingBlocks.cs" />
     <Compile Include="Instrumentation\Weaving\WeavingFlowTestProxy.cs" />
     <Compile Include="Execution\ProcessExecutionWithRedirectedIO.cs" />
     <Compile Include="Execution\LaunchConfiguration.cs" />
-    <Compile Include="Execution\FlowTestStartupExecutables.cs" />
+    <Compile Include="Instrumentation\AddOns\FlowTesetInstrumentationHooks.cs" />
+    <Compile Include="Instrumentation\WeavePoint.cs" />
+    <Compile Include="Execution\FlowTestRuntime.cs" />
+    <Compile Include="Instrumentation\FlowTestModuleOrchestration.cs" />
+    <Compile Include="Execution\FlowTestEventAggregator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

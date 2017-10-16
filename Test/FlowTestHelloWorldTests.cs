@@ -1,17 +1,18 @@
-﻿
+﻿using System;
 using System.IO;
 
 using NUnit.Framework;
 
 using FlowTest;
 
+
 namespace Test
 {
     [TestFixture]
-    public class FlowTestHelloWorldTests
+    public class FlowTestHelloWorldExecutableTests
     {
         [Test]
-        public void FlowTestAssemblyWriterCanExecuteFromMemory()
+        public void HelloWorldWithNoWeavePoints()
         {
             // Simple HelloWorld.exe file for testing
             string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
@@ -23,18 +24,62 @@ namespace Test
 
             // FlowTestRunTime: execute HelloWorld without modifications
             FlowTestRuntime runtime = new FlowTestRuntime();
-            runtime.addExecutableToFlowTestStartup(
-                pathToExecutable: helloWorldExecutablePath,
-                nSecondsOnLaunch: 0,
-                arguments: "1"
+            runtime.Instrumentation.addExecutable(
+                exeSourcePath: helloWorldExecutablePath,
+                argumentString: "1"
             );
-            runtime.Start();
+            runtime.start();
 
-            // Assert against runtime
+            Assert.AreEqual(
+                expected: 1, 
+                actual: runtime.getExecutableLog(helloWorldExecutablePath).Count, 
+                message: "This execution should have yielded only one output");
+            Assert.AreEqual(
+                expected: "Hello World!", 
+                actual: runtime.getExecutableLog(helloWorldExecutablePath)[0], 
+                message: "The hello world example should have yielded a single statement: Hello World!");
 
+            runtime.stopAndCleanup();
+        }
+
+        [Test]
+        public void HelloWorldWithCustomWritePath()
+        {
+            // Simple HelloWorld.exe file for testing
+            string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
+            string helloWorldWorkingDir = 
+                Directory.GetParent(workingTestDirectory).Parent.Parent.FullName + "/Samples/HelloWorld/bin/Debug/";
+            string sourceExePath = helloWorldWorkingDir + "HelloWorld.exe";
+            string destinationExePath = helloWorldWorkingDir + "WovenHelloWorld.exe";
+
+            Assert.True(File.Exists(sourceExePath), sourceExePath + " not found");
+
+            // FlowTestRunTime: execute HelloWorld from a different write path
+            FlowTestRuntime runtime = new FlowTestRuntime();
+            runtime.Instrumentation.addExecutable(
+                exeSourcePath: sourceExePath,
+                exeWritePath: destinationExePath,
+                argumentString: "1"
+            );
+
+            // Weaving 
+            WeavePoint wp = new WeavePoint(
+                parentModule: sourceExePath,
+                parentType: "SayHelloWorld",
+                methodToWatch: "Hello"
+            );
+            runtime.Instrumentation.addWeavePoint(
+                point: wp,
+                moduleWritePath: destinationExePath
+            );
+            runtime.Instrumentation.write();
+
+            Assert.True(File.Exists(destinationExePath), destinationExePath + " not found");
+            runtime.start();
 
             // Shutdown
-            runtime.Stop();
+            runtime.stopAndCleanup();
+            Assert.False(File.Exists(destinationExePath), destinationExePath + " should have been cleaned up");
         }
     }
 }
