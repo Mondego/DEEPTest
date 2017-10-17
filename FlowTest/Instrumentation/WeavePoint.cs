@@ -16,15 +16,18 @@ namespace FlowTest
 	{
 		public string moduleReadPath { get; }
 		public string parentTypeOfWatchpoint { get; }
+        public string parentNamespaceOfWatchpoint { get; }
 		public string methodOfInterest { get; }
 
 		public WeavePoint (
 			string parentModule,
+            string parentNamespace,
 			string parentType,
 			string methodToWatch
 		)
 		{
 			moduleReadPath = parentModule;
+            parentNamespaceOfWatchpoint = parentNamespace;
 			parentTypeOfWatchpoint = parentType;
 			methodOfInterest = methodToWatch;
 		}

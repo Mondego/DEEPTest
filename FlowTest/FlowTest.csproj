@@ -32,23 +32,21 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Instrumentation\" />
-    <Folder Include="Instrumentation\Weaving\" />
     <Folder Include="Execution\" />
-    <Folder Include="TestMechanics\" />
     <Folder Include="API\" />
-    <Folder Include="Instrumentation\AddOns\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Instrumentation\Weaving\WeavingDebug.cs" />
-    <Compile Include="Instrumentation\Weaving\WeavingBuildingBlocks.cs" />
-    <Compile Include="Instrumentation\Weaving\WeavingFlowTestProxy.cs" />
     <Compile Include="Execution\ProcessExecutionWithRedirectedIO.cs" />
     <Compile Include="Execution\LaunchConfiguration.cs" />
-    <Compile Include="Instrumentation\AddOns\FlowTesetInstrumentationHooks.cs" />
     <Compile Include="Instrumentation\WeavePoint.cs" />
     <Compile Include="Execution\FlowTestRuntime.cs" />
     <Compile Include="Instrumentation\FlowTestModuleOrchestration.cs" />
     <Compile Include="Execution\FlowTestEventAggregator.cs" />
+    <Compile Include="Instrumentation\WeavingBuildingBlocks.cs" />
+    <Compile Include="Instrumentation\WeavingDebug.cs" />
+    <Compile Include="Instrumentation\WeavingFlowTestProxy.cs" />
+    <Compile Include="Instrumentation\WeavingPrebuiltInstrumentation.cs" />
+    <Compile Include="Instrumentation\InstrumentationHookHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

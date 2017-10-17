@@ -1,6 +1,7 @@
 *.exe
 [Oo]bj/
 [Bb]in/
+[Ss]taging/
 .nuget/
 _ReSharper.*
 packages/

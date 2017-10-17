@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3A8C87E0-E70A-435E-B7EC-5C99A6F060D4}</ProjectGuid>
+    <ProjectGuid>{136B04BF-4102-4A5E-A359-405E32F4AD16}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ChatTestSuite</RootNamespace>
-    <AssemblyName>ChatTestSuite</AssemblyName>
+    <RootNamespace>FlowTestInstrumentation</RootNamespace>
+    <AssemblyName>FlowTestInstrumentation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -29,19 +29,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\..\ThirdPartyLib\nunit\bin\net-4.0\nunit.framework.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test_With_Points_Of_Interest.cs" />
+    <Compile Include="InstrumentationHooks.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\FlowTest\FlowTest.csproj">
-      <Project>{B406F0F9-E366-4B1B-A0B1-AE942E6DF480}</Project>
-      <Name>FlowTest</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

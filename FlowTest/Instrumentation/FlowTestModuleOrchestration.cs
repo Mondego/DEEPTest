@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Mono.Cecil;
 using System.Collections;
+using System.Reflection;
 
 
 namespace FlowTest
@@ -12,14 +13,18 @@ namespace FlowTest
 	public class FlowTestModuleOrchestration
 	{
         public Dictionary<string, ModuleDefinition> mapOfReadPathsToModuleDefinitions { get; }
+        public Dictionary<string, AssemblyDefinition> mapOfReadPathsToAssemblyDefinitions { get; }
         public OrderedDictionary mapOfExecutableSourcePathsToLaunchConfigurations { get; }
         public Dictionary<string, string> mapOfReadPathsToWritePaths { get; }
+        public InstrumentationHookHandler hookHandler { get; }
 
 		public FlowTestModuleOrchestration ()
 		{
 			mapOfReadPathsToModuleDefinitions = new Dictionary<string, ModuleDefinition>();
             mapOfExecutableSourcePathsToLaunchConfigurations = new OrderedDictionary();
             mapOfReadPathsToWritePaths = new Dictionary<string,string>();
+            hookHandler = new InstrumentationHookHandler();
+            mapOfReadPathsToAssemblyDefinitions = new Dictionary<string, AssemblyDefinition>();
 		}
 
         /// <summary>
@@ -67,12 +72,10 @@ namespace FlowTest
 		{
 			try
 			{
-				string poiModuleName = point.moduleReadPath; 
+                if (!mapOfReadPathsToModuleDefinitions.ContainsKey(point.moduleReadPath)) {
+                    AssemblyDefinition targetModule = AssemblyDefinition.ReadAssembly(point.moduleReadPath);
 
-				if (!mapOfReadPathsToModuleDefinitions.ContainsKey(poiModuleName)) {
-					ModuleDefinition targetModule = ModuleDefinition.ReadModule(poiModuleName);
-
-					mapOfReadPathsToModuleDefinitions.Add(
+                    mapOfReadPathsToAssemblyDefinitions.Add(
 						key: point.moduleReadPath,
 						value: targetModule
 					);
@@ -85,13 +88,14 @@ namespace FlowTest
                     {
                         mapOfReadPathsToWritePaths.Add(point.moduleReadPath, point.moduleReadPath);
                     }
-
-                    // TODO 
-					// BootstrapEventAggregation(targetModule);
 				}
 
-                // TODO
 				//point.weaveIntoModule(mapOfReadPathsToModuleDefinitions[poiModuleName]);
+                WeavingPrebuiltInstrumentation.WeaveSendEvent(
+                    instrumentationHooksModule: hookHandler.customHooksModule,
+                    weaveTargetModule: mapOfReadPathsToAssemblyDefinitions[point.moduleReadPath],//mapOfReadPathsToModuleDefinitions[point.moduleReadPath],
+                    weavePoint: point
+                );
 			}
 
 			catch (Exception e) {
@@ -108,10 +112,10 @@ namespace FlowTest
         {
             try
             {
-                foreach (string moduleReadPath in mapOfReadPathsToModuleDefinitions.Keys) {
+                foreach (string moduleReadPath in mapOfReadPathsToAssemblyDefinitions.Keys) {
                     string moduleWritePath =  mapOfReadPathsToWritePaths[moduleReadPath];
-                    ModuleDefinition moduleToWrite = mapOfReadPathsToModuleDefinitions[moduleReadPath];
-                    moduleToWrite.Write (moduleWritePath);
+                    AssemblyDefinition assemblyToWrite = mapOfReadPathsToAssemblyDefinitions[moduleReadPath];
+                    assemblyToWrite.Write(moduleWritePath);
                 }
             }
 

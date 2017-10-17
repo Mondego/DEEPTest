@@ -16,8 +16,8 @@ namespace Test
         {
             // Simple HelloWorld.exe file for testing
             string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
-            string helloWorldExecutablePath = 
-                Directory.GetParent(workingTestDirectory).Parent.Parent.FullName + "/Samples/HelloWorld/bin/Debug/HelloWorld.exe";
+            string helloWorldExecutablePath = workingTestDirectory + "/HelloWorld.exe";
+
             Assert.True(
                 File.Exists(helloWorldExecutablePath), 
                 helloWorldExecutablePath + " not found");
@@ -47,10 +47,11 @@ namespace Test
         {
             // Simple HelloWorld.exe file for testing
             string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
-            string helloWorldWorkingDir = 
-                Directory.GetParent(workingTestDirectory).Parent.Parent.FullName + "/Samples/HelloWorld/bin/Debug/";
-            string sourceExePath = helloWorldWorkingDir + "HelloWorld.exe";
-            string destinationExePath = helloWorldWorkingDir + "WovenHelloWorld.exe";
+            string stagingTestDirectory = Directory.GetParent(workingTestDirectory).FullName + "/staging";
+    
+            string sourceExePath =  stagingTestDirectory + "/HelloWorld.exe";
+            string destinationExePath =  stagingTestDirectory + "/WovenHelloWorld.exe";
+            string customCodeWeavePath = stagingTestDirectory + "/FlowTestInstrumentation.dll";
 
             Assert.True(File.Exists(sourceExePath), sourceExePath + " not found");
 
@@ -65,6 +66,7 @@ namespace Test
             // Weaving 
             WeavePoint wp = new WeavePoint(
                 parentModule: sourceExePath,
+                parentNamespace: "HelloWorld",
                 parentType: "SayHelloWorld",
                 methodToWatch: "Hello"
             );
