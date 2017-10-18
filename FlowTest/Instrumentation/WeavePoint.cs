@@ -11,7 +11,6 @@ using System.Collections;
 
 namespace FlowTest
 {
-	// A method which we instrument before and/or after. 
 	public class WeavePoint
 	{
 		public string moduleReadPath { get; }
@@ -32,7 +31,6 @@ namespace FlowTest
 			methodOfInterest = methodToWatch;
 		}
             
-        // TODO
 		public string generatePayload(string content = "")
 		{
 			List<KeyValuePair<string, string>> eventContents = new List<KeyValuePair<string, string>>();
@@ -44,51 +42,6 @@ namespace FlowTest
 			eventContents.Add(new KeyValuePair<string, string>("value", content));
 
 			return new FormUrlEncodedContent(eventContents).ReadAsStringAsync().Result;
-		}
-
-        // TODO
-		public void weaveIntoModule(
-			ModuleDefinition module
-		)
-		{
-			/*try {
-				TypeDefinition destinationType = module.Types.Single(t => t.Name == parentTypeOfWatchpoint);
-				MethodDefinition poiMethod = destinationType.Methods.Single(m => m.Name == methodOfInterest);
-
-				if (watchBefore)
-				{
-					WeavingFlowTestProxy.InvokeResultAggregatorBeforeMethod(
-						method: poiMethod,
-						key: GetHashCode().ToString(),
-						value: generatePayload(content: "before")
-					);
-
-					WeavingDebug.WeaveDebugStatementBeforeMethod(
-						targetMethod: poiMethod,
-						printDebugValue: "Some weaving happened before " + methodOfInterest
-					);
-				}
-
-				if (watchAfter)
-				{
-					WeavingFlowTestProxy.InvokeResultAggregatorAfterMethod(
-						method: poiMethod,
-						key: GetHashCode().ToString(),
-						value: generatePayload(content: "after")
-					);
-
-					WeavingDebug.WeaveDebugStatementAfterMethod(
-						targetMethod: poiMethod,
-						printDebugValue: "Some weaving happened after " + methodOfInterest
-					);
-				}
-			}
-
-			catch (Exception e) {
-				Console.WriteLine ("| FlowTest Weaver caught an exception while adding a point of interest.");
-				Console.WriteLine ("| PoI: {0} => {1}", parentTypeOfWatchpoint, methodOfInterest);
-				Console.WriteLine ("| {0} {1}", e.InnerException, e.Message);
-			}*/
 		}
 	}
 }

@@ -10,10 +10,8 @@
 		        <include name="Execution/LaunchConfiguration.cs" />
 		        <include name="Execution/ProcessExecutionWithRedirectedIO.cs" />
                 <include name="Instrumentation/FlowTestModuleOrchestration.cs" />
-                <include name="Instrumentation/InstrumentationHookHandler.cs" />
                 <include name="Instrumentation/WeavePoint.cs" />
                 <include name="Instrumentation/WeavingBuildingBlocks.cs" />
-                <include name="Instrumentation/WeavingDebug.cs" />
                 <include name="Instrumentation/WeavingFlowTestProxy.cs" />
                 <include name="Instrumentation/WeavingPrebuiltInstrumentation.cs" />
             </sources>

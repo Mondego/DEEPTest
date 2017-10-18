@@ -402,34 +402,7 @@ namespace FlowTest
 
 			return invocationInstructions;
 		}
-
-		public static void InvokeResultAggregatorBeforeMethod(
-			MethodDefinition method,
-			string key,
-			string value
-		)
-		{
-			List<Instruction> instructions = pointOfInterestEventSetup(method, key, value);
-
-			WeavingBuildingBlocks.WeaveListOfInstructionsAtMethodEntry(
-				methodToWeave: method,
-				listOfInstructionsToWeave: instructions
-			);
-		}
-
-		public static void InvokeResultAggregatorAfterMethod(
-			MethodDefinition method,
-			string key,
-			string value
-		)
-		{
-			List<Instruction> instructions = pointOfInterestEventSetup(method, key, value);
-
-			WeavingBuildingBlocks.WeaveListOfInstructionsAtMethodExit (
-				methodToWeave: method,
-				listOfInstructionsToWeave: instructions
-			);
-		}
+           
 		#endregion
 	
 	}

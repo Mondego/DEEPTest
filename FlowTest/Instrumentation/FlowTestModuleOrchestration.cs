@@ -12,19 +12,20 @@ namespace FlowTest
 {
 	public class FlowTestModuleOrchestration
 	{
-        public Dictionary<string, ModuleDefinition> mapOfReadPathsToModuleDefinitions { get; }
         public Dictionary<string, AssemblyDefinition> mapOfReadPathsToAssemblyDefinitions { get; }
         public OrderedDictionary mapOfExecutableSourcePathsToLaunchConfigurations { get; }
         public Dictionary<string, string> mapOfReadPathsToWritePaths { get; }
-        public InstrumentationHookHandler hookHandler { get; }
+        public AssemblyDefinition flowTestInstrumentationHooks { get; }
 
 		public FlowTestModuleOrchestration ()
 		{
-			mapOfReadPathsToModuleDefinitions = new Dictionary<string, ModuleDefinition>();
             mapOfExecutableSourcePathsToLaunchConfigurations = new OrderedDictionary();
             mapOfReadPathsToWritePaths = new Dictionary<string,string>();
-            hookHandler = new InstrumentationHookHandler();
             mapOfReadPathsToAssemblyDefinitions = new Dictionary<string, AssemblyDefinition>();
+
+            string workingDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+            string instrumentationHookPath = workingDirectory + "/FlowTestInstrumentation.dll";
+            flowTestInstrumentationHooks = AssemblyDefinition.ReadAssembly(instrumentationHookPath);
 		}
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace FlowTest
         }
 
         /// <summary>
-        /// Adds a weave point, initializing its module if needed. 
+        /// Adds a weave point
         /// </summary>
         /// <param name="point">A method to be instrumented in a given library or executable</param>
         /// <param name="moduleWritePath">Write path for when module is not being written in place</param>
@@ -72,7 +73,7 @@ namespace FlowTest
 		{
 			try
 			{
-                if (!mapOfReadPathsToModuleDefinitions.ContainsKey(point.moduleReadPath)) {
+                if (!mapOfReadPathsToAssemblyDefinitions.ContainsKey(point.moduleReadPath)) {
                     AssemblyDefinition targetModule = AssemblyDefinition.ReadAssembly(point.moduleReadPath);
 
                     mapOfReadPathsToAssemblyDefinitions.Add(
@@ -88,12 +89,14 @@ namespace FlowTest
                     {
                         mapOfReadPathsToWritePaths.Add(point.moduleReadPath, point.moduleReadPath);
                     }
+
+                    // TODO template here?
 				}
 
 				//point.weaveIntoModule(mapOfReadPathsToModuleDefinitions[poiModuleName]);
                 WeavingPrebuiltInstrumentation.WeaveSendEvent(
-                    instrumentationHooksModule: hookHandler.customHooksModule,
-                    weaveTargetModule: mapOfReadPathsToAssemblyDefinitions[point.moduleReadPath],//mapOfReadPathsToModuleDefinitions[point.moduleReadPath],
+                    instrumentationHooksModule: flowTestInstrumentationHooks,
+                    weaveTargetModule: mapOfReadPathsToAssemblyDefinitions[point.moduleReadPath],
                     weavePoint: point
                 );
 			}
@@ -157,19 +160,6 @@ namespace FlowTest
                 ((LaunchConfiguration)mapOfExecutableSourcePathsToLaunchConfigurations[i]).Stop();
             }
         }
-
-        //////////////////////////
-
-		private void BootstrapEventAggregation(
-			ModuleDefinition m
-		)
-		{
-			// Load Bootstrap
-			WeavingFlowTestProxy.WeaveThreadSafeFlowTestProxyType (
-				module: m,
-				typeName: "FlowTestProxy"
-			);
-		}
 	}
 }
 

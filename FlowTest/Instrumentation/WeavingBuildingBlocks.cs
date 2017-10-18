@@ -4,6 +4,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace FlowTest
 {
@@ -67,8 +69,9 @@ namespace FlowTest
 			TypeDefinition typeDefinition,
 			string nameOfField,
 			FieldAttributes attributesOfField,
-			TypeReference typeReferenceOfField
-		)
+			TypeReference typeReferenceOfField,
+            object initialValue = null
+        )
 		{
 			#if DEBUG
 			Console.WriteLine("Adding FieldDefinition {0} into TypeDefinition {1} in {2}", 
@@ -81,6 +84,16 @@ namespace FlowTest
 					attributes: attributesOfField,
 					fieldType: typeReferenceOfField
 				);
+
+                if (initialValue != null)
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        bf.Serialize(ms, initialValue);
+                        fieldDefinition.InitialValue = ms.ToArray();
+                    }
+                }
 
 				typeDefinition.Fields.Add(fieldDefinition);
 
@@ -97,18 +110,19 @@ namespace FlowTest
 		}
 
 		public static FieldDefinition FieldPublicStaticWeaveHelper(
-			ModuleDefinition module,
 			TypeDefinition typeContainingField,
 			string fieldName,
-			Type typeOfField
+			Type typeOfField,
+            object initialVal = null
 		)
 		{
-			return _AddFieldDefinitionToType (
-				typeDefinition: typeContainingField,
-				nameOfField: fieldName,
-				attributesOfField: FieldAttributes.Public | FieldAttributes.Static,
-				typeReferenceOfField: module.Import(typeOfField)
-			);
+            return _AddFieldDefinitionToType(
+                typeDefinition: typeContainingField,
+                nameOfField: fieldName,
+                attributesOfField: FieldAttributes.Public | FieldAttributes.Static,
+                typeReferenceOfField: typeContainingField.Module.Import(typeOfField),
+                initialValue: initialVal
+            );
 		}
 
 		#endregion
