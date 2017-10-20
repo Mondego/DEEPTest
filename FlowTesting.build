@@ -4,11 +4,13 @@
 
     <property name="bin.dir" value="bin" />
     <property name="obj.dir" value="obj" />
+    <property name="tools.dir" value="tools"/>
     <property name="staging.dir" value="staging" />
     <property name="project.main.dir" value="${project::get-base-directory()}" />
 	<property name="project.config" value="Debug" />
-    <property name="nunit.console.dir" value="bin/nunit.console-3.6.1" />
-
+    <property name="nunit.console.dir" value="tools/nunit.console-3.6.1" />
+    <property name="build.dir" value="${bin.dir}/${project.config}" />
+    
     <target name="Debug" description="Debug|AnyCPU" depends="Debug-AnyCPU">
 	</target>
 
@@ -31,18 +33,10 @@
         <echo message="Deleting all builds from all configurations" />
         <delete failonerror="false">
             <fileset basedir="${bin.dir}">                
-                <include name="FlowTest.dll"/>
-                <include name="FlowTest.dll.mdb"/>
-                <include name="FlowTestInstrumentation.dll"/>
-                <include name="FlowTestInstrumentation.dll.mdb"/>
-                <include name="Test.dll"/>
-                <include name="Test.dll.mdb"/>
-                <include name="ChatClient.exe"/>
-                <include name="ChatClient.exe.mdb"/>
-                <include name="ChatServer.exe"/>
-                <include name="ChatServer.exe.mdb"/>
-                <include name="HelloWorld.exe"/>
-                <include name="HelloWorld.exe.mdb"/>
+                <include name="*.dll"/>
+                <include name="*.mdb"/>
+                <include name="*.pdb"/>
+                <include name="*.exe"/>
             </fileset>
         </delete>
         <delete>
@@ -53,7 +47,6 @@
                 <include name="*.exe"/>
             </fileset>
         </delete>
-        <delete dir="${obj.dir}" failonerror="false" />
 
         <nant buildfile="FlowTest/FlowTest.dll.build" target="clean" />
         <nant buildfile="FlowTestInstrumentation/FlowTestInstrumentation.dll.build" target="clean" />
@@ -64,6 +57,15 @@
     </target>
 
     <target name="build" depends="init" >
+        <copy todir="${bin.dir}">
+            <fileset basedir="${tools.dir}" >
+                <include name="Mono.Cecil.dll"/>
+                <include name="Mono.Cecil.Inject.dll"/>
+                <include name="Mono.Cecil.Rocks.dll"/>
+                <include name="Newtonsoft.Json.dll" />
+                <include name="nunit.framework.dll"/>
+            </fileset>
+        </copy>
         <nant buildfile="FlowTest/FlowTest.dll.build" target="build" />
         <nant buildfile="FlowTestInstrumentation/FlowTestInstrumentation.dll.build" target="build" />
         <nant buildfile="Test/Test.dll.build" target="build" />
@@ -74,6 +76,6 @@
 
     
     <target name="test-linux" depends="build">
-        <exec program="mono" commandline="${nunit.console.dir}/nunit3-console.exe ${bin.dir}/Test.dll --labels=On --noresult" failonerror="true" />
+        <exec program="mono" commandline="${nunit.console.dir}/nunit3-console.exe ${bin.dir}/Test.dll --labels=On --noresult" failonerror="true"/>
     </target>
 </project>

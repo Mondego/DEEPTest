@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 using FlowTest;
 using System.Threading;
+using System.Collections.Generic;
 
 
 namespace Test
@@ -79,6 +80,10 @@ namespace Test
 
             Assert.True(File.Exists(destinationExePath), destinationExePath + " not found");
             runtime.start();
+
+            // Asserts of interest
+            List<FlowTestEvent> hwEvents = runtime.Events.eventsByWpKey(wp.GetHashCode());
+            Console.WriteLine(hwEvents.Count);
 
             // Shutdown
             runtime.stopAndCleanup();

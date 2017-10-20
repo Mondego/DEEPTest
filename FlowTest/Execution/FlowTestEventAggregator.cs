@@ -16,12 +16,22 @@ namespace FlowTest
         private IPAddress mAddress = IPAddress.Any;
         private int mPort = 60011; // TODO SHOULD BE CONFIGURABLE
 		private TcpListener listener;
-        private Dictionary<int, List<FlowTestEvent>> mapWeavePointToEventList = new Dictionary<int, List<FlowTestEvent>>();
+        public Dictionary<int, List<FlowTestEvent>> mapWeavePointToEventList { get; }
+
         private volatile bool alive = false;
 
         public FlowTestEventAggregator ()
         {
+            mapWeavePointToEventList = new Dictionary<int, List<FlowTestEvent>>();
             listener = new TcpListener(mAddress, mPort);
+        }
+
+        public List<FlowTestEvent> eventsByWpKey(int key)
+        {
+            if (mapWeavePointToEventList.ContainsKey(key)) {
+                return mapWeavePointToEventList[key];
+            }
+            return new List<FlowTestEvent>();
         }
 
 		public void Start ()
