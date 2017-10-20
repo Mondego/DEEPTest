@@ -4,6 +4,7 @@ using System.IO;
 using NUnit.Framework;
 
 using FlowTest;
+using System.Threading;
 
 
 namespace Test
@@ -16,7 +17,7 @@ namespace Test
         {
             // Simple HelloWorld.exe file for testing
             string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
-            string helloWorldExecutablePath = workingTestDirectory + "/HelloWorld.exe";
+            string helloWorldExecutablePath = Directory.GetParent(workingTestDirectory).FullName + "/staging/HelloWorld.exe";
 
             Assert.True(
                 File.Exists(helloWorldExecutablePath), 
@@ -82,6 +83,12 @@ namespace Test
             // Shutdown
             runtime.stopAndCleanup();
             Assert.False(File.Exists(destinationExePath), destinationExePath + " should have been cleaned up");
+        }
+
+        [TearDown]
+        public void Formatting()
+        {
+            Console.WriteLine();
         }
     }
 }

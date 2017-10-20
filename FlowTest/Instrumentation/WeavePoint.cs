@@ -8,6 +8,7 @@ using Mono.Cecil;
 using System.Linq;
 using Mono.Cecil.Cil;
 using System.Collections;
+using System.IO;
 
 namespace FlowTest
 {
@@ -29,6 +30,7 @@ namespace FlowTest
             parentNamespaceOfWatchpoint = parentNamespace;
 			parentTypeOfWatchpoint = parentType;
 			methodOfInterest = methodToWatch;
+            Console.WriteLine("[New Weavepoint #{4}] {0} {1}.{2}.{3}", new DirectoryInfo(moduleReadPath).Name, parentNamespaceOfWatchpoint, parentTypeOfWatchpoint, methodOfInterest, this.GetHashCode());
 		}
             
 		public string generatePayload(string content = "")

@@ -9,6 +9,7 @@
 		        <include name="Execution/FlowTestRuntime.cs" />
 		        <include name="Execution/LaunchConfiguration.cs" />
 		        <include name="Execution/ProcessExecutionWithRedirectedIO.cs" />
+                <include name="Execution/FlowTestEvent.cs" />
                 <include name="Instrumentation/FlowTestModuleOrchestration.cs" />
                 <include name="Instrumentation/WeavePoint.cs" />
                 <include name="Instrumentation/WeavingBuildingBlocks.cs" />

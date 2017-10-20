@@ -17,11 +17,15 @@ namespace FlowTest
         public Dictionary<string, string> mapOfReadPathsToWritePaths { get; }
         public AssemblyDefinition flowTestInstrumentationHooks { get; }
 
+        // TODO Really need a better way to index these if there are a bunch.
+        public Dictionary<int, WeavePoint> mapWeavePointsByHashCode { get; }
+
 		public FlowTestModuleOrchestration ()
 		{
             mapOfExecutableSourcePathsToLaunchConfigurations = new OrderedDictionary();
             mapOfReadPathsToWritePaths = new Dictionary<string,string>();
             mapOfReadPathsToAssemblyDefinitions = new Dictionary<string, AssemblyDefinition>();
+            mapWeavePointsByHashCode = new Dictionary<int, WeavePoint>();
 
             string workingDirectory = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
             string instrumentationHookPath = workingDirectory + "/FlowTestInstrumentation.dll";
@@ -73,6 +77,8 @@ namespace FlowTest
 		{
 			try
 			{
+                mapWeavePointsByHashCode.Add(point.GetHashCode(), point);
+
                 if (!mapOfReadPathsToAssemblyDefinitions.ContainsKey(point.moduleReadPath)) {
                     AssemblyDefinition targetModule = AssemblyDefinition.ReadAssembly(point.moduleReadPath);
 
@@ -89,8 +95,6 @@ namespace FlowTest
                     {
                         mapOfReadPathsToWritePaths.Add(point.moduleReadPath, point.moduleReadPath);
                     }
-
-                    // TODO template here?
 				}
 
 				//point.weaveIntoModule(mapOfReadPathsToModuleDefinitions[poiModuleName]);

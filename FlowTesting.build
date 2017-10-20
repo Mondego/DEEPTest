@@ -49,6 +49,7 @@
             <fileset basedir="${staging.dir}">
                 <include name="*.dll"/>
                 <include name="*.mdb"/>
+                <include name="*.pdb"/>
                 <include name="*.exe"/>
             </fileset>
         </delete>

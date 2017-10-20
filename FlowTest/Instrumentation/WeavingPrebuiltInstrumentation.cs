@@ -30,20 +30,11 @@ namespace FlowTest
                     .GetType(weavePoint.parentNamespaceOfWatchpoint + "." + weavePoint.parentTypeOfWatchpoint);
                 MethodDefinition weavePointTargetMethod = weavePointTargetType.GetMethod(weavePoint.methodOfInterest);
 
-                FieldDefinition weavePointTag = WeavingBuildingBlocks.FieldPublicStaticWeaveHelper(
-                    typeContainingField: weavePointTargetType,
-                    fieldName: "wp",
-                    typeOfField: typeof(string),
-                    initialVal: "test"
+                weavePointTargetMethod.InjectWith(
+                    injectionMethod: sendEventMethodHook,
+                    tag: weavePoint.GetHashCode(),
+                    flags: InjectFlags.PassTag
                 );
-
-                InjectionDefinition injector = 
-                    new InjectionDefinition(
-                        injectTarget: weavePointTargetMethod,
-                        injectMethod: sendEventMethodHook,
-                        flags: InjectFlags.PassStringTag
-                    );
-                injector.Inject();
             }
             catch (Exception e) {
                 Console.WriteLine(e.Message + " BLAH");

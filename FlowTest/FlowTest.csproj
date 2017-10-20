@@ -45,6 +45,7 @@
     <Compile Include="Instrumentation\WeavingBuildingBlocks.cs" />
     <Compile Include="Instrumentation\WeavingFlowTestProxy.cs" />
     <Compile Include="Instrumentation\WeavingPrebuiltInstrumentation.cs" />
+    <Compile Include="Execution\FlowTestEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
