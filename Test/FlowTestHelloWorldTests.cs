@@ -20,28 +20,16 @@ namespace Test
             string workingTestDirectory = TestContext.CurrentContext.TestDirectory;
             string helloWorldExecutablePath = Directory.GetParent(workingTestDirectory).FullName + "/staging/HelloWorld.exe";
 
-            Assert.True(
-                File.Exists(helloWorldExecutablePath), 
-                helloWorldExecutablePath + " not found");
-
             // FlowTestRunTime: execute HelloWorld without modifications
             FlowTestRuntime runtime = new FlowTestRuntime();
-            runtime.Instrumentation.addExecutable(
-                exeSourcePath: helloWorldExecutablePath,
+ 
+            FTProcess hw = runtime.Execute(
+                executablePath: helloWorldExecutablePath,
                 argumentString: "1"
             );
-            runtime.start();
 
-            Assert.AreEqual(
-                expected: 1, 
-                actual: runtime.getExecutableLog(helloWorldExecutablePath).Count, 
-                message: "This execution should have yielded only one output");
-            Assert.AreEqual(
-                expected: "Hello World!", 
-                actual: runtime.getExecutableLog(helloWorldExecutablePath)[0], 
-                message: "The hello world example should have yielded a single statement: Hello World!");
-
-            runtime.stopAndCleanup();
+            hw.Stop();
+            runtime.Stop();
         }
 
         [Test]
@@ -55,15 +43,8 @@ namespace Test
             string destinationExePath =  stagingTestDirectory + "/WovenHelloWorld.exe";
             string customCodeWeavePath = stagingTestDirectory + "/FlowTestInstrumentation.dll";
 
-            Assert.True(File.Exists(sourceExePath), sourceExePath + " not found");
-
             // FlowTestRunTime: execute HelloWorld from a different write path
             FlowTestRuntime runtime = new FlowTestRuntime();
-            runtime.Instrumentation.addExecutable(
-                exeSourcePath: sourceExePath,
-                exeWritePath: destinationExePath,
-                argumentString: "1"
-            );
 
             // Weaving 
             WeavePoint wp = new WeavePoint(
@@ -72,22 +53,21 @@ namespace Test
                 parentType: "SayHelloWorld",
                 methodToWatch: "Hello"
             );
-            runtime.Instrumentation.addWeavePoint(
+            runtime.instrumentation.addWeavePoint(
                 point: wp,
                 moduleWritePath: destinationExePath
             );
-            runtime.Instrumentation.write();
+            runtime.instrumentation.write();
 
-            Assert.True(File.Exists(destinationExePath), destinationExePath + " not found");
-            runtime.start();
-
-            // Asserts of interest
-            List<FlowTestEvent> hwEvents = runtime.Events.eventsByWpKey(wp.GetHashCode());
-            Console.WriteLine(hwEvents.Count);
+            // Run anything needed for the tests
+            FTProcess hw = runtime.Execute(
+                executablePath: destinationExePath,
+                argumentString: "1"
+            );
 
             // Shutdown
-            runtime.stopAndCleanup();
-            Assert.False(File.Exists(destinationExePath), destinationExePath + " should have been cleaned up");
+            hw.Stop();
+            runtime.Stop();
         }
 
         [TearDown]

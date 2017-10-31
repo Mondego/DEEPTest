@@ -32,19 +32,6 @@ namespace FlowTest
 			methodOfInterest = methodToWatch;
             Console.WriteLine("[New Weavepoint #{4}] {0} {1}.{2}.{3}", new DirectoryInfo(moduleReadPath).Name, parentNamespaceOfWatchpoint, parentTypeOfWatchpoint, methodOfInterest, this.GetHashCode());
 		}
-            
-		public string generatePayload(string content = "")
-		{
-			List<KeyValuePair<string, string>> eventContents = new List<KeyValuePair<string, string>>();
-
-			eventContents.Add(new KeyValuePair<string, string>("key", this.GetHashCode().ToString()));
-			eventContents.Add(new KeyValuePair<string, string>("parentModuleName", moduleReadPath));
-			eventContents.Add(new KeyValuePair<string, string>("parentTypeName", parentTypeOfWatchpoint));
-			eventContents.Add(new KeyValuePair<string, string>("point", methodOfInterest));
-			eventContents.Add(new KeyValuePair<string, string>("value", content));
-
-			return new FormUrlEncodedContent(eventContents).ReadAsStringAsync().Result;
-		}
 	}
 }
 

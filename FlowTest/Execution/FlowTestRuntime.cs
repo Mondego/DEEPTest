@@ -3,59 +3,54 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using System.Collections;
+using Mono.Cecil;
 
 namespace FlowTest
 {
 	public class FlowTestRuntime
 	{
-        private FlowTestModuleOrchestration instrumentationHandler = new FlowTestModuleOrchestration();
-        private FlowTestEventAggregator eventHandler = new FlowTestEventAggregator();
+        public FlowTestModuleInstrumentation instrumentation { get; }
 
-        public FlowTestModuleOrchestration Instrumentation { get { return instrumentationHandler; } }
-        public FlowTestEventAggregator Events { get { return eventHandler; } }
-
-        public FlowTestRuntime () {}
+        public FlowTestRuntime () {
+            instrumentation = new FlowTestModuleInstrumentation();
+        }
 
         #region Execution
-
         /// <summary>
-        /// Starts the event logger, and then starts in order any executables to run.
+        /// Execute the specified executablePath, argumentString, nSecondsDelay and workingDirectory.
         /// </summary>
-        public void start()
+        /// <param name="executablePath">Executable path.</param>
+        /// <param name="argumentString">Argument string.</param>
+        /// <param name="nSecondsDelay">N seconds delay.</param>
+        /// <param name="workingDirectory">Working directory.</param>
+        public FTProcess Execute(
+            string executablePath,
+            string argumentString = "",
+            int nSecondsDelay = 0,
+            string workingDirectory = null
+        )
         {
-            eventHandler.Start ();
-            instrumentationHandler.StartLaunchSequence();
+            FTProcess p = 
+                new FTProcess(
+                    targetPath: executablePath,
+                    arguments: argumentString,
+                    workingdir: workingDirectory
+                );
+            p.Start(nSecondsDelay);
+
+            return p;
         }
 
         /// <summary>
-        /// Stops the event logger and any ongoing exes
+        /// Stub for now, stops any internal runtime threads.
         /// </summary>
-        public void stopAndCleanup()
+        public void Stop()
         {
-            eventHandler.Stop();
-            instrumentationHandler.StopLaunchSequence();
-
-            foreach (string sourcePath in instrumentationHandler.mapOfReadPathsToWritePaths.Keys) {
-                string destinationPath = instrumentationHandler.mapOfReadPathsToWritePaths[sourcePath];
-                if (sourcePath != destinationPath) {
-                    File.Delete(destinationPath);
-                }
-            }
         }
 
         #endregion
 
         #region Testing, Regressions, Asserts
-
-        /// <summary>
-        /// Gets all stdout data from running exe
-        /// </summary>
-        /// <returns>List of stdout data from running exe</returns>
-        /// <param name="exePath>the original exe pat</param>
-        public List<string> getExecutableLog(string exePath)
-        {
-            return instrumentationHandler.getStdOutEventsFromLaunchConfig(exePath);
-        }
 
         #endregion
 	}

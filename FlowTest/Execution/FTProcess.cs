@@ -6,7 +6,10 @@ using System.Collections.Generic;
 
 namespace FlowTest
 {
-	public class ProcessExecutionWithRedirectedIO
+    /// <summary>
+    /// FTProcess --- process execution with redirected I/O stream
+    /// </summary>
+	public class FTProcess
 	{
         private Process p;
 		private StreamWriter ProcessStreamInterface;
@@ -32,12 +35,12 @@ namespace FlowTest
             get { return this.errorLog; }
         }
 
-        public ProcessExecutionWithRedirectedIO (string targetPath, string arguments, string workingdir = null)
+        public FTProcess (string targetPath, string arguments, string workingdir = null)
 		{
             exePath = targetPath;
 
 			p = new Process();
-			p.StartInfo.FileName = targetPath;
+            p.StartInfo.FileName = exePath;
 			p.StartInfo.Arguments = arguments;
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.RedirectStandardOutput = true;
@@ -68,8 +71,12 @@ namespace FlowTest
            
 		}
 
-		public void Start()
+        public void Start(int wait = 0)
 		{
+            if (wait > 0) {
+                Thread.Sleep(wait);
+            }
+
 			p.Start();
 			p.BeginOutputReadLine();
             p.BeginErrorReadLine();
@@ -86,10 +93,11 @@ namespace FlowTest
 		public void Stop()
 		{
 			ProcessStreamInterface.Close();
-			p.CloseMainWindow();
-			p.WaitForExit();
-			p.Dispose();
-			Thread.Sleep(1000);
+            if (!p.HasExited) {
+                p.CloseMainWindow();
+                p.WaitForExit();
+                p.Dispose();
+            }
 		}
 	}
 }

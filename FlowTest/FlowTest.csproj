@@ -36,16 +36,13 @@
     <Folder Include="API\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Execution\ProcessExecutionWithRedirectedIO.cs" />
-    <Compile Include="Execution\LaunchConfiguration.cs" />
     <Compile Include="Instrumentation\WeavePoint.cs" />
     <Compile Include="Execution\FlowTestRuntime.cs" />
-    <Compile Include="Instrumentation\FlowTestModuleOrchestration.cs" />
-    <Compile Include="Execution\FlowTestEventAggregator.cs" />
     <Compile Include="Instrumentation\WeavingBuildingBlocks.cs" />
     <Compile Include="Instrumentation\WeavingFlowTestProxy.cs" />
     <Compile Include="Instrumentation\WeavingPrebuiltInstrumentation.cs" />
-    <Compile Include="Execution\FlowTestEvent.cs" />
+    <Compile Include="Execution\FTProcess.cs" />
+    <Compile Include="Instrumentation\FlowTestModuleInstrumentation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

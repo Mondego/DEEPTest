@@ -75,7 +75,7 @@
     </target>
 
     
-    <target name="test-linux" depends="build">
+    <target name="test" depends="build">
         <exec program="mono" commandline="${nunit.console.dir}/nunit3-console.exe ${bin.dir}/Test.dll --labels=On --noresult" failonerror="true"/>
     </target>
 </project>

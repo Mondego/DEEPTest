@@ -4,8 +4,8 @@
         <echo message="Build Directory is ${project::get-base-directory()}/${build.dir}" />
 		<mkdir dir="${project::get-base-directory()}/${build.dir}" />
 		<csc  target="library" debug="${build.debug}" platform="${build.platform}" unsafe="True" warnaserror="False" define="TRACE;DEBUG" nostdlib="False" main="" output="${project::get-base-directory()}/${build.dir}/${project::get-name()}.dll" noconfig="true">
-		    <sources failonempty="true">
-		        <include name="FlowTestProxyTemplate.cs" />
+		    <sources failonempty="false">
+		        <include name="*.cs" />
             </sources>
             <references basedir="${project::get-base-directory()}">
 	            <lib>
