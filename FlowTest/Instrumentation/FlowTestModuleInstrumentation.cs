@@ -56,6 +56,9 @@ namespace FlowTest
                         mapOfReadPathsToWritePaths.Add(point.moduleReadPath, point.moduleReadPath);
                     }
                 }
+
+                // Weave module
+
 			}
 
 			catch (Exception e) {
