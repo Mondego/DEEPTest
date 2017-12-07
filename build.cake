@@ -13,6 +13,8 @@ var configuration = Argument("configuration", "Debug");
 
 // Define directories.
 var deepTestBuildDir = Directory("./DeepTest/bin") + Directory(configuration);
+var echoServerExampleTestSuiteBuildDir = Directory("./Test/Example/Test.Example.EchoChatDTSuite/bin") + Directory(configuration);
+var echoServerExampleBuildDir = Directory("./Test/Example/Test.Example.EchoChatServer/bin") + Directory(configuration);
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -22,6 +24,8 @@ Task("Clean")
     .Does(() =>
 {
     CleanDirectory(deepTestBuildDir);
+    CleanDirectory(echoServerExampleTestSuiteBuildDir);
+    CleanDirectory(echoServerExampleBuildDir);
 });
 
 Task("Restore-NuGet-Packages")
@@ -42,8 +46,14 @@ Task("Build")
 Task("Run-Example-Deep-Tests")
     .IsDependentOn("Build")
     .Does(() =>
-    {
-        NUnit3("./Test/Example/Test.Example.EchoChatDTSuite/bin/" + configuration + "/Test.*.dll", new NUnit3Settings {
+{
+    EnsureDirectoryExists("./staging");
+    CleanDirectory("./staging");
+        
+    var files = GetFiles("./Test/Example/Test.Example.EchoChatDTSuite/bin/Debug/*");
+    CopyFiles(files, "./staging/");
+        
+    NUnit3("./staging/Test.*.dll", new NUnit3Settings {
         NoResults = true
     });
 });

@@ -27,6 +27,7 @@ namespace Test.Example.EchoChatServer
         public void Start()
         {
             listening = true;
+            Console.WriteLine("Starting " + this.ToString());
 
             try {
                 while (listening) {
@@ -44,6 +45,10 @@ namespace Test.Example.EchoChatServer
             catch (Exception e) 
             {
                 Console.WriteLine(e.ToString());
+            }
+
+            finally {
+                Stop();
             }
         }
 
@@ -73,6 +78,7 @@ namespace Test.Example.EchoChatServer
 
         public void Stop()
         {
+            Console.WriteLine("Stopping " + this.ToString());
             listening = false;
             listener.Close();
         }
