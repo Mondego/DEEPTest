@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Example.EchoChatServer", "Test\Example\Test.Example.EchoChatServer\Test.Example.EchoChatServer.csproj", "{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTest", "DeepTest\DeepTest.csproj", "{175F8A87-38F8-469B-8C1F-B0F09BC53A03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Example.EchoChatDTSuite", "Test\Example\Test.Example.EchoChatDTSuite\Test.Example.EchoChatDTSuite.csproj", "{A7FB3487-D07A-461E-B238-38142E01634B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Debug|x86.Build.0 = Debug|Any CPU
+		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Release|x86.ActiveCfg = Release|Any CPU
+		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Release|x86.Build.0 = Release|Any CPU
+		{A7FB3487-D07A-461E-B238-38142E01634B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A7FB3487-D07A-461E-B238-38142E01634B}.Debug|x86.Build.0 = Debug|Any CPU
+		{A7FB3487-D07A-461E-B238-38142E01634B}.Release|x86.ActiveCfg = Release|Any CPU
+		{A7FB3487-D07A-461E-B238-38142E01634B}.Release|x86.Build.0 = Release|Any CPU
+		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Debug|x86.ActiveCfg = Debug|x86
+		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Debug|x86.Build.0 = Debug|x86
+		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Release|x86.ActiveCfg = Release|x86
+		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal

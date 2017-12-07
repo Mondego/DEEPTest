@@ -1,0 +1,62 @@
+#tool nuget:?package=NUnit.ConsoleRunner&version=3.7.0
+
+//////////////////////////////////////////////////////////////////////
+// ARGUMENTS
+//////////////////////////////////////////////////////////////////////
+
+var target = Argument("target", "Default");
+var configuration = Argument("configuration", "Debug");
+
+//////////////////////////////////////////////////////////////////////
+// PREPARATION
+//////////////////////////////////////////////////////////////////////
+
+// Define directories.
+var deepTestBuildDir = Directory("./DeepTest/bin") + Directory(configuration);
+
+//////////////////////////////////////////////////////////////////////
+// TASKS
+//////////////////////////////////////////////////////////////////////
+
+Task("Clean")
+    .Does(() =>
+{
+    CleanDirectory(deepTestBuildDir);
+});
+
+Task("Restore-NuGet-Packages")
+    .IsDependentOn("Clean")
+    .Does(() =>
+{
+    NuGetRestore("DeepTest.sln");
+});
+
+Task("Build")
+    .IsDependentOn("Restore-NuGet-Packages")
+    .Does(() =>
+{
+    MSBuild("DeepTest.sln", settings =>
+        settings.SetVerbosity(Verbosity.Minimal));
+});
+
+Task("Run-Example-Deep-Tests")
+    .IsDependentOn("Build")
+    .Does(() =>
+    {
+        NUnit3("./Test/Example/Test.Example.EchoChatDTSuite/bin/" + configuration + "/Test.*.dll", new NUnit3Settings {
+        NoResults = true
+    });
+});
+
+//////////////////////////////////////////////////////////////////////
+// TASK TARGETS
+//////////////////////////////////////////////////////////////////////
+
+Task("Default")
+    .IsDependentOn("Run-Example-Deep-Tests");
+
+//////////////////////////////////////////////////////////////////////
+// EXECUTION
+//////////////////////////////////////////////////////////////////////
+
+RunTarget(target);

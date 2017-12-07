@@ -1,13 +1,15 @@
-# FlowTest Regression Testing Library
+# DEEPER Test
+
+Distributed End-to-End Extra-Functional Properties (and) Regression Testing
 
 ## Dependencies 
 
-* [NAnt](http://nant.sourceforge.net/)
+Dependencies now handled through [Cake](https://cakebuild.net/)
 
-## Compile
+### Linux
 
-$ nant build
+$ ./build.sh
 
-## Run Test Suite on Linux
+### Windows
 
-$ nant test-linux
+./build.ps1
