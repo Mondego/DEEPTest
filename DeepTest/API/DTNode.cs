@@ -12,6 +12,11 @@ namespace DeepTest
             readPath = assemblyPath;
         }
 
+        public override string ToString()
+        {
+            return String.Format("DTNode {0}", readPath);
+        }
+
         /// <summary>
         /// Execute the specified executablePath, argumentString, nSecondsDelay and workingDirectory.
         /// </summary>

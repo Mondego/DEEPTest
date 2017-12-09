@@ -61,5 +61,6 @@
   <ItemGroup>
     <Folder Include="API\" />
     <Folder Include="Utility\" />
+    <Folder Include="Instrumentation\" />
   </ItemGroup>
 </Project>

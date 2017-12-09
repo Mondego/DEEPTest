@@ -20,8 +20,9 @@ namespace Test.Example.EchoChatDTSuite
         {
             DTNode echoServer = dtr.addSystemUnderTest("Test.Example.EchoChatServer.exe");
 
-            // Weaving
-            
+            dtr.Weave(echoServer, "SendMessageCallback");
+            dtr.Weave(echoServer, "ReceiveMessageCallback");
+
             echoServer.Start(
                 externalPath: stagingDirectory + "/Test.Example.EchoChatServer.exe",
                 argumentString: "127.0.0.1 60708",
@@ -33,9 +34,11 @@ namespace Test.Example.EchoChatDTSuite
         public void TestPlaceholder()
         {
             Thread.Sleep(5000);
+
             UdpMessageSender helloEchoServer = new UdpMessageSender("127.0.0.1", 60708);
             helloEchoServer.SendMessage("Hello World!");
-            Thread.Sleep(50000);
+
+            Thread.Sleep(5000);
         }
 
         [TearDown]

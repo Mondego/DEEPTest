@@ -24,6 +24,11 @@ namespace DeepTest
                 v.Stop();
             }
         }
+
+        public void Weave(DTNode assembly, string method)
+        {
+            Console.WriteLine("Weaving {0}.{1}", assembly.ToString(), method);
+        }
     }
 }
 
