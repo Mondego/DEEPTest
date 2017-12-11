@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DeepTest
 {
-    public class DTNode
+    public class DTNodeDefinition
     {
-        private string readPath;
-        DTProcess mProcess = null;
+        public string readPath { get; }
+        private List<DTNodeInstance> nodeInstances;
 
-        public DTNode(string assemblyPath)
+        public DTNodeDefinition(string assemblyPath)
         {
             readPath = assemblyPath;
+            nodeInstances = new List<DTNodeInstance>();
         }
 
         public override string ToString()
         {
-            return String.Format("DTNode {0}", readPath);
+            return String.Format("DTNodeDefinition {0}", readPath);
         }
 
         /// <summary>
@@ -24,7 +26,7 @@ namespace DeepTest
         /// <param name="argumentString">Argument string.</param>
         /// <param name="nSecondsDelay">N seconds delay.</param>
         /// <param name="workingDirectory">Working directory.</param>
-        public DTProcess Start(
+        public void StartInstance(
             string externalPath = "",
             string argumentString = "",
             int nSecondsDelay = 0,
@@ -37,20 +39,22 @@ namespace DeepTest
                 runPath = externalPath;    
             }
 
-            mProcess = new DTProcess(
-                targetPath: runPath,
-                arguments: argumentString,
-                workingdir: workingDirectory
-            );
-            
-            mProcess.Start(nSecondsDelay);
+            DTNodeInstance nInstance = 
+                new DTNodeInstance(
+                    runPath,
+                    argumentString,
+                    nSecondsDelay,
+                    workingDirectory
+                );
 
-            return mProcess;
+            nodeInstances.Add(nInstance);
         }
 
         public void Stop()
         {
-            mProcess.Stop();
+            foreach (DTNodeInstance dtni in nodeInstances) {
+                dtni.mProcess.Stop();
+            }
         }
     }
 }

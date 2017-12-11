@@ -5,29 +5,48 @@ namespace DeepTest
 {
     public class DTRuntime
     {
-        private Dictionary <string, DTNode> sutExecution = new Dictionary<string, DTNode>();
+        private WeavingHandler weavingHandler;
+        private Dictionary<string, DTNodeDefinition> executionDefinitions;
 
         public DTRuntime()
         {
+            weavingHandler = new WeavingHandler();
+            executionDefinitions = new Dictionary<string, DTNodeDefinition>();
         }
 
-        public DTNode addSystemUnderTest(string path)
+        public DTNodeDefinition addSystemUnderTest(string path)
         {
-            DTNode sut = new DTNode(path);
-            sutExecution.Add(path, sut);
-            return sut;
+            try
+            {
+                weavingHandler.ReadAssembly(path);
+                DTNodeDefinition sut = new DTNodeDefinition(path);
+                executionDefinitions.Add(path, sut);
+
+                return sut;
+            }
+
+            catch (Exception e) {
+
+            }
+
+            return null;
         }
 
         public void StopAll()
         {
-            foreach (DTNode v in sutExecution.Values) {
+            foreach (DTNodeDefinition v in executionDefinitions.Values) {
                 v.Stop();
             }
         }
 
-        public void Weave(DTNode assembly, string method)
+        public WeavePoint AddWeavePoint(DTNodeDefinition component, string weaveIntoType, string weaveInMethod)
         {
-            Console.WriteLine("Weaving {0}.{1}", assembly.ToString(), method);
+            return weavingHandler.AddWeavePointToNode(component, weaveIntoType, weaveInMethod);
+        }
+
+        public void Write(DTNodeDefinition componentToWrite)
+        {
+            weavingHandler.Write(componentToWrite);
         }
     }
 }

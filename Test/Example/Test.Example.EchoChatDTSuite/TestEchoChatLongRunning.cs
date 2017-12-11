@@ -18,14 +18,15 @@ namespace Test.Example.EchoChatDTSuite
         [OneTimeSetUp]
         public void DeepTestFixtureSetUp()
         {
-            DTNode echoServer = dtr.addSystemUnderTest("Test.Example.EchoChatServer.exe");
+            DTNodeDefinition echoServer = dtr.addSystemUnderTest("Test.Example.EchoChatServer.exe");
 
-            dtr.Weave(echoServer, "SendMessageCallback");
-            dtr.Weave(echoServer, "ReceiveMessageCallback");
+            dtr.AddWeavePoint(echoServer, "EchoChatServer", "ReceiveMessageCallback");
+            dtr.Write(echoServer);
 
-            echoServer.Start(
+            echoServer.StartInstance(
                 externalPath: stagingDirectory + "/Test.Example.EchoChatServer.exe",
                 argumentString: "127.0.0.1 60708",
+                nSecondsDelay: 0,
                 workingDirectory: stagingDirectory
             );
         }

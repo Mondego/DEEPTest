@@ -1,5 +1,4 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.7.0
-#addin Cake.Curl
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -14,6 +13,8 @@ var configuration = Argument("configuration", "Debug");
 
 // Define directories.
 var deepTestBuildDir = Directory("./DeepTest/bin") + Directory(configuration);
+var deepTestPluginBuildDir = Directory("./DeepTestPlugin/bin") + Directory(configuration);
+
 var echoServerExampleTestSuiteBuildDir = Directory("./Test/Example/Test.Example.EchoChatDTSuite/bin") + Directory(configuration);
 var echoServerExampleBuildDir = Directory("./Test/Example/Test.Example.EchoChatServer/bin") + Directory(configuration);
 
@@ -25,6 +26,7 @@ Task("Clean")
     .Does(() =>
 {
     CleanDirectory(deepTestBuildDir);
+    CleanDirectory(deepTestPluginBuildDir);
     CleanDirectory(echoServerExampleTestSuiteBuildDir);
     CleanDirectory(echoServerExampleBuildDir);
 });
