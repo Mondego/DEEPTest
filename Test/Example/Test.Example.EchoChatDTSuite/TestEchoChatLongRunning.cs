@@ -6,7 +6,6 @@ using NUnit.Framework;
 
 using DeepTest;
 
-
 namespace Test.Example.EchoChatDTSuite
 {
     [TestFixture]
@@ -18,7 +17,8 @@ namespace Test.Example.EchoChatDTSuite
         [OneTimeSetUp]
         public void DeepTestFixtureSetUp()
         {
-            DTNodeDefinition echoServer = dtr.addSystemUnderTest("Test.Example.EchoChatServer.exe");
+            Console.WriteLine(stagingDirectory);
+            DTNodeDefinition echoServer = dtr.addSystemUnderTest(stagingDirectory + "/" + "Test.Example.EchoChatServer.exe");
 
             dtr.AddWeavePoint(echoServer, "EchoChatServer", "ReceiveMessageCallback");
             dtr.Write(echoServer);
@@ -34,12 +34,12 @@ namespace Test.Example.EchoChatDTSuite
         [Test]
         public void TestPlaceholder()
         {
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
 
             UdpMessageSender helloEchoServer = new UdpMessageSender("127.0.0.1", 60708);
             helloEchoServer.SendMessage("Hello World!");
 
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
         }
 
         [TearDown]
