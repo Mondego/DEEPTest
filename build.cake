@@ -13,7 +13,7 @@ var configuration = Argument("configuration", "Debug");
 
 // Define directories.
 var deepTestBuildDir = Directory("./DeepTest/bin") + Directory(configuration);
-var deepTestPluginBuildDir = Directory("./DeepTestPlugin/bin") + Directory(configuration);
+var deepTestWrapperBuildDir = Directory("./DeepTestWrapper/bin") + Directory(configuration);
 
 var echoServerExampleTestSuiteBuildDir = Directory("./Test/Example/Test.Example.EchoChatDTSuite/bin") + Directory(configuration);
 var echoServerExampleBuildDir = Directory("./Test/Example/Test.Example.EchoChatServer/bin") + Directory(configuration);
@@ -26,7 +26,7 @@ Task("Clean")
     .Does(() =>
 {
     CleanDirectory(deepTestBuildDir);
-    CleanDirectory(deepTestPluginBuildDir);
+    CleanDirectory(deepTestWrapperBuildDir);
     CleanDirectory(echoServerExampleTestSuiteBuildDir);
     CleanDirectory(echoServerExampleBuildDir);
 });

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTest", "DeepTest\DeepTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Example.EchoChatDTSuite", "Test\Example\Test.Example.EchoChatDTSuite\Test.Example.EchoChatDTSuite.csproj", "{A7FB3487-D07A-461E-B238-38142E01634B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTestPlugin", "DeepTestPlugin\DeepTestPlugin.csproj", "{DFEB8A10-F5FE-4114-A7F6-6D90D9193AD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTestWrapper", "DeepTestWrapper\DeepTestWrapper.csproj", "{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +19,10 @@ Global
 		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Debug|x86.Build.0 = Debug|Any CPU
 		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Release|x86.ActiveCfg = Release|Any CPU
 		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Release|x86.Build.0 = Release|Any CPU
+		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Debug|x86.Build.0 = Debug|Any CPU
+		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Release|x86.ActiveCfg = Release|Any CPU
+		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Release|x86.Build.0 = Release|Any CPU
 		{A7FB3487-D07A-461E-B238-38142E01634B}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{A7FB3487-D07A-461E-B238-38142E01634B}.Debug|x86.Build.0 = Debug|Any CPU
 		{A7FB3487-D07A-461E-B238-38142E01634B}.Release|x86.ActiveCfg = Release|Any CPU
@@ -27,9 +31,5 @@ Global
 		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Debug|x86.Build.0 = Debug|x86
 		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Release|x86.ActiveCfg = Release|x86
 		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Release|x86.Build.0 = Release|x86
-		{DFEB8A10-F5FE-4114-A7F6-6D90D9193AD5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DFEB8A10-F5FE-4114-A7F6-6D90D9193AD5}.Debug|x86.Build.0 = Debug|Any CPU
-		{DFEB8A10-F5FE-4114-A7F6-6D90D9193AD5}.Release|x86.ActiveCfg = Release|Any CPU
-		{DFEB8A10-F5FE-4114-A7F6-6D90D9193AD5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

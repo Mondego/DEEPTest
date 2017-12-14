@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DFEB8A10-F5FE-4114-A7F6-6D90D9193AD5}</ProjectGuid>
+    <ProjectGuid>{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DeepTestPlugin</RootNamespace>
-    <AssemblyName>DeepTestPlugin</AssemblyName>
+    <RootNamespace>DeepTestWrapper</RootNamespace>
+    <AssemblyName>DeepTestWrapper</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -35,7 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="InjectionPlugin.cs" />
+    <Compile Include="DTWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -50,8 +50,9 @@
     <Compile Include="Instrumentation\WeavingHandler.cs" />
     <Compile Include="Instrumentation\WeavePoint.cs" />
     <Compile Include="API\DTNodeDefinition.cs" />
-    <Compile Include="Instrumentation\WeavingBuildingBlocks.cs" />
     <Compile Include="API\DTNodeInstance.cs" />
+    <Compile Include="Instrumentation\WeavingAspectLocation.cs" />
+    <Compile Include="Instrumentation\WeavePointSignature.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -61,5 +62,11 @@
     <Folder Include="API\" />
     <Folder Include="Utility\" />
     <Folder Include="Instrumentation\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DeepTestWrapper\DeepTestWrapper.csproj">
+      <Project>{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}</Project>
+      <Name>DeepTestWrapper</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

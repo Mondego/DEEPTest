@@ -26,7 +26,9 @@ namespace DeepTest
             }
 
             catch (Exception e) {
-
+                Console.WriteLine("DTNodeDefinition.addSystemUnderTest(path) caught exception {0} {1}", 
+                    e.ToString(), 
+                    e.Message); 
             }
 
             return null;
