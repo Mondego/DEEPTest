@@ -42,7 +42,20 @@ namespace DeepTest
                     wpMethod
                 );
                 
-                addWeavePointAnchor(wpDestination, wp);
+                //addWeavePointAnchor(wpDestination, wp);
+
+                StopwatchHelper.addStopwatchInWeavePoint(
+                    wp,
+                    wp.wpMethodDefinition.Body.Instructions.First(),
+                    wp.wpMethodDefinition.Body.Instructions.Last().Previous
+                );
+
+                Console.WriteLine("***");
+                foreach(Instruction i in wp.wpMethodDefinition.Body.Instructions)
+                {
+                    Console.WriteLine(i);
+                }
+                Console.WriteLine("***");
 
                 return wp;
             }
@@ -96,6 +109,7 @@ namespace DeepTest
                         wp.wpMethodDefinition.Module.Import(
                             typeof(DTWrapper).GetMethod("Assert", new Type[] {}))));
 
+                MethodDefinition sendMsgDebug = findMethodDefinition(ad, wp.wpPath.wpContainingTypeName, "SendMessageCallback");
 
                 WeaveDebugInfoAtWeavePointExit(wp, "info: weaving DTWrapper @ EchoChatServer.ReceiveMessageCallback");
             

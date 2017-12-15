@@ -53,6 +53,15 @@
     <Compile Include="API\DTNodeInstance.cs" />
     <Compile Include="Instrumentation\WeavingAspectLocation.cs" />
     <Compile Include="Instrumentation\WeavePointSignature.cs" />
+    <Compile Include="Instrumentation\Helpers\System\Diagnostics\StopwatchHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\Mono.Cecil\TypeDefinitionHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\Mono.Cecil\PropertyDefinitionHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\Mono.Cecil\FieldDefinitionHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\Mono.Cecil\EventDefinitionHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\Mono.Cecil\MethodDefinitionHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\Mono.Cecil\ModuleDefinitionHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\Mono.Cecil\Mono.Cecil.Cil\VariableDefinitionHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\System\Threading\ThreadHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -62,6 +71,12 @@
     <Folder Include="API\" />
     <Folder Include="Utility\" />
     <Folder Include="Instrumentation\" />
+    <Folder Include="Instrumentation\Helpers\" />
+    <Folder Include="Instrumentation\Helpers\System\" />
+    <Folder Include="Instrumentation\Helpers\System\Diagnostics\" />
+    <Folder Include="Instrumentation\Helpers\Mono.Cecil\" />
+    <Folder Include="Instrumentation\Helpers\Mono.Cecil\Mono.Cecil.Cil\" />
+    <Folder Include="Instrumentation\Helpers\System\Threading\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DeepTestWrapper\DeepTestWrapper.csproj">

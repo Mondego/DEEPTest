@@ -28,8 +28,6 @@ namespace DeepTest
             WeavePoint wp,
             List<Instruction> listOfInstructionsToWeave)
         {
-            Console.WriteLine("WeavingAspectLocation.WeaveInstructions");
-
             try
             {
                 wp.wpMethodDefinition.Body.SimplifyMacros ();
