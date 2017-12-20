@@ -5,8 +5,15 @@ namespace DeepTest
 {
     public class DTRuntime
     {
-        private WeavingHandler weavingHandler;
+        private WeavingHandler weavingHandler = new WeavingHandler();
         private Dictionary<string, DTNodeDefinition> executionDefinitions;
+
+        public WeavingHandler Instrumentation
+        {
+            get {
+                return weavingHandler;
+            }
+        }
 
         public DTRuntime()
         {
@@ -39,16 +46,6 @@ namespace DeepTest
             foreach (DTNodeDefinition v in executionDefinitions.Values) {
                 v.Stop();
             }
-        }
-
-        public WeavePoint AddWeavePoint(DTNodeDefinition component, string weaveIntoType, string weaveInMethod)
-        {
-            return weavingHandler.AddWeavePointToNode(component, weaveIntoType, weaveInMethod);
-        }
-
-        public void Write(DTNodeDefinition componentToWrite)
-        {
-            weavingHandler.Write(componentToWrite);
         }
     }
 }

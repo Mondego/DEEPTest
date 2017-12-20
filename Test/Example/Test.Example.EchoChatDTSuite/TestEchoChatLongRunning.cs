@@ -20,8 +20,9 @@ namespace Test.Example.EchoChatDTSuite
             Console.WriteLine(stagingDirectory);
             DTNodeDefinition echoServer = dtr.addSystemUnderTest(stagingDirectory + "/" + "Test.Example.EchoChatServer.exe");
 
-            dtr.AddWeavePoint(echoServer, "EchoChatServer", "ReceiveMessageCallback");
-            dtr.Write(echoServer);
+            WeavePoint echoChatReceiveMsgWP = 
+                dtr.Instrumentation.AddWeavePoint(echoServer, "EchoChatServer", "ReceiveMessageCallback");
+            dtr.Instrumentation.Write(echoServer);
 
             echoServer.StartInstance(
                 externalPath: stagingDirectory + "/Test.Example.EchoChatServer.exe",

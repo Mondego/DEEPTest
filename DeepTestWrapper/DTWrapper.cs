@@ -4,9 +4,9 @@ namespace DeepTestWrapper
 {
     public static class DTWrapper
     {
-        public static void Assert()
+        public static void Assert(string data)
         {
-            // Placeholder for Injection fixes
+            Console.WriteLine("DTWrap.Assert --- {0}", data);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace DeepTest
             mWeaves = new Dictionary<string, AssemblyDefinition>();
         }
             
-        public WeavePoint AddWeavePointToNode(
+        public WeavePoint AddWeavePoint(
             DTNodeDefinition target,
             string nameOfWeavePointType,
             string nameOfWeavePointMethod
@@ -41,8 +41,6 @@ namespace DeepTest
                     nameOfWeavePointMethod,
                     wpMethod
                 );
-                
-                //addWeavePointAnchor(wpDestination, wp);
 
                 StopwatchHelper.addStopwatchInWeavePoint(
                     wp,
@@ -50,12 +48,7 @@ namespace DeepTest
                     wp.wpMethodDefinition.Body.Instructions.Last().Previous
                 );
 
-                Console.WriteLine("***");
-                foreach(Instruction i in wp.wpMethodDefinition.Body.Instructions)
-                {
-                    Console.WriteLine(i);
-                }
-                Console.WriteLine("***");
+                addWeavePointAssertionAnchors(wp);
 
                 return wp;
             }
@@ -97,29 +90,41 @@ namespace DeepTest
         /// </summary>
         /// <param name="ad">AssemblyDefinition to be woven</param>
         /// <param name="wp">WeavePoint to use for metadata</param>
-        public void addWeavePointAnchor(AssemblyDefinition ad, WeavePoint wp)
+        public void addWeavePointAssertionAnchors(WeavePoint wp)
         {
             try
             {
-                List<Instruction> weaveInstructions = new List<Instruction>();
-
-                weaveInstructions.Add(
+                List<Instruction> atEntry = new List<Instruction>();
+                atEntry.Add(
+                    wp.wpMethodDefinition.Body.GetILProcessor().Create(
+                        OpCodes.Ldstr,
+                        "WeavingHandler-> addWeavePointAssertionAnchors-> Entry"
+                    ));
+                atEntry.Add(
                     wp.wpMethodDefinition.Body.GetILProcessor().Create(
                         OpCodes.Callvirt,
                         wp.wpMethodDefinition.Module.Import(
-                            typeof(DTWrapper).GetMethod("Assert", new Type[] {}))));
-
-                MethodDefinition sendMsgDebug = findMethodDefinition(ad, wp.wpPath.wpContainingTypeName, "SendMessageCallback");
-
-                WeaveDebugInfoAtWeavePointExit(wp, "info: weaving DTWrapper @ EchoChatServer.ReceiveMessageCallback");
-            
-                WeavingAspectLocation.WeaveInstructions(
-                    WeavingAspectLocation.WeaveLocation.MethodEntry | WeavingAspectLocation.WeaveLocation.MethodExit,
+                            typeof(DTWrapper).GetMethod("Assert", new [] { typeof(string) }))));
+                WeavingAspectLocation.WeaveInstructionsAtEntry(
                     wp,
-                    weaveInstructions
+                    atEntry
                 );
 
-                WeaveDebugInfoAtWeavePointEntry(wp, "info: debugging DTWrapper @ EchoChatServer.ReceiveMessageCallback");
+                List<Instruction> atExit = new List<Instruction>();
+                atExit.Add(
+                    wp.wpMethodDefinition.Body.GetILProcessor().Create(
+                        OpCodes.Ldstr,
+                        "WeavingHandler-> addWeavePointAssertionAnchors-> Exit"
+                    ));
+                atExit.Add(
+                    wp.wpMethodDefinition.Body.GetILProcessor().Create(
+                        OpCodes.Callvirt,
+                        wp.wpMethodDefinition.Module.Import(
+                            typeof(DTWrapper).GetMethod("Assert", new [] { typeof(string) }))));
+                WeavingAspectLocation.WeaveInstructionsAtExit(
+                    wp,
+                    atExit
+                );
             }
 
             catch (Exception e)
@@ -142,8 +147,7 @@ namespace DeepTest
                     wp.wpMethodDefinition.Module.Import(
                         typeof(System.Console).GetMethod("WriteLine", new [] { typeof(string) }))));
 
-            WeavingAspectLocation.WeaveInstructions(
-                WeavingAspectLocation.WeaveLocation.MethodEntry,
+            WeavingAspectLocation.WeaveInstructionsAtEntry(
                 wp,
                 weaveInstructions
             );
@@ -163,8 +167,7 @@ namespace DeepTest
                     wp.wpMethodDefinition.Module.Import(
                         typeof(System.Console).GetMethod("WriteLine", new [] { typeof(string) }))));
 
-            WeavingAspectLocation.WeaveInstructions(
-                WeavingAspectLocation.WeaveLocation.MethodExit,
+            WeavingAspectLocation.WeaveInstructionsAtExit(
                 wp,
                 weaveInstructions
             );

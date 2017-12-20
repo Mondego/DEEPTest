@@ -25,7 +25,11 @@ namespace DeepTest
         /// <param name="wp">WeavePoint wp</param>
         /// <param name="startBefore"></param>
         /// <param name="stopAfter"></param>
-        public static void addStopwatchInWeavePoint(WeavePoint wp, Instruction startBefore, Instruction stopAfter)
+        public static void addStopwatchInWeavePoint(
+            WeavePoint wp, 
+            Instruction startBefore, 
+            Instruction stopAfter
+        )
         {
             wp.wpMethodDefinition.Body.SimplifyMacros();
             ILProcessor ilp = wp.wpMethodDefinition.Body.GetILProcessor();
@@ -83,6 +87,7 @@ namespace DeepTest
                 ilp.Create(OpCodes.Call,
                     wp.wpMethodDefinition.Module.Import(
                         typeof(Console).GetMethod("WriteLine", new [] { typeof(Int64) })));
+
             ilp.InsertAfter(callVirtualStopwatchStop,loadStopwatchInstruction2);
             ilp.InsertAfter(loadStopwatchInstruction2,callVirtualStopwatchGetElapsedMilliseconds);
             ilp.InsertAfter(callVirtualStopwatchGetElapsedMilliseconds,printValue);

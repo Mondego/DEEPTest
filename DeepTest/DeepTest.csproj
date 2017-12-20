@@ -77,6 +77,7 @@
     <Folder Include="Instrumentation\Helpers\Mono.Cecil\" />
     <Folder Include="Instrumentation\Helpers\Mono.Cecil\Mono.Cecil.Cil\" />
     <Folder Include="Instrumentation\Helpers\System\Threading\" />
+    <Folder Include="Instrumentation\Helpers\DeepTestWrapper\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DeepTestWrapper\DeepTestWrapper.csproj">

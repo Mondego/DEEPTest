@@ -23,7 +23,7 @@ namespace DeepTest
 
         public override string ToString()
         {
-            return String.Format("[WPSig] {0} {1}.{2}",
+            return String.Format("[DT.Inst.WPSignature] {0} {1}.{2}",
                 new DirectoryInfo(wpModuleReadPath).Name,
                 wpContainingTypeName, 
                 wpMethodName
