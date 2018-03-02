@@ -6,7 +6,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
-namespace Framework
+namespace DeepTestFramework
 {
     public class WeavingAspectLocation
     {

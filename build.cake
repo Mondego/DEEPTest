@@ -71,7 +71,10 @@ Task("Run-Benchmark-Deep-Tests")
     EnsureDirectoryExists(stagingDir);
     CleanDirectory(stagingDir);
 
-    CopyFiles("./DeepTest/bin/Debug/*.dll", stagingDir);
+    CopyFiles("./DeepTest/InternalTestDriver/bin/Debug/*.dll", stagingDir);
+    CopyFiles("./DeepTest/InternalTestDriver/bin/Debug/*.exe", stagingDir);
+
+    // To be obsoleted later
     CopyFiles("./NFBenchImport.Benchmark.Reference/bin/Debug/*.exe", stagingDir);
     CopyFiles("./NFBenchImport.Benchmark.Performance/bin/Debug/*.exe", stagingDir);
     CopyFiles("./NFBenchImport.Services.ClientApplication/bin/Debug/*.exe", stagingDir);   

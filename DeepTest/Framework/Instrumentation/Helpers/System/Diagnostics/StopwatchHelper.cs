@@ -5,7 +5,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
-namespace Framework
+namespace DeepTestFramework
 {
     /// <summary>
     /// Helper for commonly used System.Diagnostics.Stopwatch functionality in DT.

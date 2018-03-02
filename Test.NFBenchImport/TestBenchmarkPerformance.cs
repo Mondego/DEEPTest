@@ -4,7 +4,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-using Framework;
+using DeepTestFramework;
 
 namespace Test.NFBenchImport
 {
@@ -47,6 +47,7 @@ namespace Test.NFBenchImport
             );
 
             dtr.Instrumentation.Write(app, alternateWritePath: wovenNfbPerfPath);
+            dtr.StartDriver(stagingPath);
 
             app.StartInstance(
                 externalPath: wovenNfbPerfPath,

@@ -2,7 +2,7 @@
 using System.IO;
 using Mono.Cecil;
 
-namespace Framework
+namespace DeepTestFramework
 {
 	public class WeavePoint
 	{

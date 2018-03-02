@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using InternalTestDriver;
 
-namespace Framework
+namespace DeepTestFramework
 {
     public class DTRuntime
     {
-        public static Dictionary<int, AssertionResult> results;
-        private WeavingHandler weavingHandler;
-        private Dictionary<string, DTNodeDefinition> executionDefinitions;
+        private WeavingHandler weavingHandler = new WeavingHandler();
+        private Dictionary<string, DTNodeDefinition> executionDefinitions = new Dictionary<string, DTNodeDefinition>();
+        private DTProcess networkedTestDriver;
+
         public WeavingHandler Instrumentation
         {
             get {
@@ -17,9 +19,6 @@ namespace Framework
 
         public DTRuntime()
         {
-            executionDefinitions = new Dictionary<string, DTNodeDefinition>();
-            weavingHandler = new WeavingHandler();
-            results = new Dictionary<int, AssertionResult>();
         }
 
         public DTNodeDefinition addSystemUnderTest(string path)
@@ -42,20 +41,28 @@ namespace Framework
             return null;
         }
 
+        public void StartDriver(string workingDirectory)
+        {
+            string testDriverLocation = workingDirectory + "InternalTestDriver.exe";
+
+            networkedTestDriver = new DTProcess(
+                targetPath: testDriverLocation,
+                arguments: "",
+                workingdir: workingDirectory
+            );
+            networkedTestDriver.Start();
+        }
+
         public void StopAll()
         {
+            if (networkedTestDriver != null && !networkedTestDriver.p.HasExited) {
+                networkedTestDriver.Stop();
+            }
+
             foreach (DTNodeDefinition v in executionDefinitions.Values) {
                 v.Stop();
             }
         }
-
-        // Maybe these need their own library later
-        public static void updateAssertionResultEntry(int key, string value)
-        {
-            Console.WriteLine("DTRuntime.updateAssertionResultEntry {0}->{1}", key, value);
-            results.Add(key, new AssertionResult(key, value));
-        }
-
     }
 }
 

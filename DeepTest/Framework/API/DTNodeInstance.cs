@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Framework
+namespace DeepTestFramework
 {
     public class DTNodeInstance
     {

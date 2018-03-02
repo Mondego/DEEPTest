@@ -9,7 +9,7 @@ using Mono.Cecil.Cil;
 using Mono.Cecil.Inject;
 using RemoteTestingWrapper;
 
-namespace Framework
+namespace DeepTestFramework
 {
     public class WeavingHandler
     {

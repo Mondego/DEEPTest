@@ -41,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="API\AssertionResult.cs" />
     <Compile Include="API\DTNodeDefinition.cs" />
     <Compile Include="API\DTNodeInstance.cs" />
     <Compile Include="API\DTProcess.cs" />
@@ -61,6 +60,14 @@
     <ProjectReference Include="..\RemoteTestingWrapper\RemoteTestingWrapper.csproj">
       <Project>{6E11FF0E-4B96-4235-A61D-9916579BBCCF}</Project>
       <Name>RemoteTestingWrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InternalTestDriver\InternalTestDriver.csproj">
+      <Project>{7CCC0238-09A9-4B3B-BF6C-989B50C03539}</Project>
+      <Name>InternalTestDriver</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemoteAssertionMessages\RemoteAssertionMessages.csproj">
+      <Project>{8A3DF506-6F80-46B0-B08E-B166267A1654}</Project>
+      <Name>RemoteAssertionMessages</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
