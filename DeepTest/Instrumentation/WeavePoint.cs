@@ -6,7 +6,6 @@ namespace DeepTest
 {
 	public class WeavePoint
 	{
-        public WeavePointSignature wpPath { get; }
         public MethodDefinition wpMethodDefinition { get; }
 
 		public WeavePoint (
@@ -16,17 +15,12 @@ namespace DeepTest
             MethodDefinition methodDefinition
         )
         {
-            wpPath = new WeavePointSignature(
-                path: parentModule,
-                typeName: parentType,
-                methodName: methodToWatch
-            );
             wpMethodDefinition = methodDefinition;
         }
 
         public override string ToString()
         {
-            return wpPath.ToString();
+            return wpMethodDefinition.FullName;
         }
 	}
 }

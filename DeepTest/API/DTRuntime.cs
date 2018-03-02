@@ -5,9 +5,9 @@ namespace DeepTest
 {
     public class DTRuntime
     {
-        private WeavingHandler weavingHandler = new WeavingHandler();
+        public static Dictionary<int, AssertionResult> results;
+        private WeavingHandler weavingHandler;
         private Dictionary<string, DTNodeDefinition> executionDefinitions;
-
         public WeavingHandler Instrumentation
         {
             get {
@@ -17,8 +17,9 @@ namespace DeepTest
 
         public DTRuntime()
         {
-            weavingHandler = new WeavingHandler();
             executionDefinitions = new Dictionary<string, DTNodeDefinition>();
+            weavingHandler = new WeavingHandler();
+            results = new Dictionary<int, AssertionResult>();
         }
 
         public DTNodeDefinition addSystemUnderTest(string path)
@@ -47,6 +48,14 @@ namespace DeepTest
                 v.Stop();
             }
         }
+
+        // Maybe these need their own library later
+        public static void updateAssertionResultEntry(int key, string value)
+        {
+            Console.WriteLine("DTRuntime.updateAssertionResultEntry {0}->{1}", key, value);
+            results.Add(key, new AssertionResult(key, value));
+        }
+
     }
 }
 

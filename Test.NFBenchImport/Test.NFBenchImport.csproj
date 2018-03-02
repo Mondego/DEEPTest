@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A7FB3487-D07A-461E-B238-38142E01634B}</ProjectGuid>
+    <ProjectGuid>{1EBA1215-37AC-48AA-A441-DFEDB64766D3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Test.Example.EchoChatDTSuite</RootNamespace>
-    <AssemblyName>Test.Example.EchoChatDTSuite</AssemblyName>
+    <RootNamespace>Test.NFBenchImport</RootNamespace>
+    <AssemblyName>Test.NFBenchImport</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -30,27 +30,27 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\tools\NUnit\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\tools\NUnit\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestBenchmarkSecurity.cs" />
-    <Compile Include="TestBenchmarkReliability.cs" />
+    <Compile Include="TestBenchmarkReference.cs" />
+    <Compile Include="TestBenchmarkPerformance.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\DeepTest\DeepTest.csproj">
+    <ProjectReference Include="..\DeepTest\DeepTest.csproj">
       <Project>{175F8A87-38F8-469B-8C1F-B0F09BC53A03}</Project>
       <Name>DeepTest</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Test.Example.EchoChatServer\Test.Example.EchoChatServer.csproj">
-      <Project>{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}</Project>
-      <Name>Test.Example.EchoChatServer</Name>
+    <ProjectReference Include="..\NFBenchImport.Benchmark.Reference\NFBenchImport.Benchmark.Reference.csproj">
+      <Project>{3977C80A-B8A9-4918-B775-1325052366FF}</Project>
+      <Name>NFBenchImport.Benchmark.Reference</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\DeepTestPlugin\DeepTestPlugin.csproj">
-      <Project>{2A68466B-6EF5-4919-99D8-6A6E34B066A4}</Project>
-      <Name>DeepTestPlugin</Name>
+    <ProjectReference Include="..\NFBenchImport.Services.ClientApplication\NFBenchImport.Services.ClientApplication.csproj">
+      <Project>{1AA30BDA-C824-4382-B047-5073E344319A}</Project>
+      <Name>NFBenchImport.Services.ClientApplication</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

@@ -8,29 +8,9 @@ namespace DeepTest
 {
 	public class DTProcess
 	{
-        private Process p;
+        public Process p { get; }
 		private StreamWriter ProcessStreamInterface;
         private string exePath;
-        public int PID {
-            get { 
-                if (p.HasExited) {
-                    return -1;
-                }
-
-                return p.Id;
-            }
-        }
-
-        private List<string> eventLog = new List<string>();
-        private List<string> errorLog = new List<string>();
-        public List<string> Log
-        {
-            get { return this.eventLog; }
-        }
-        public List<string> Errors
-        {
-            get { return this.errorLog; }
-        }
 
         public DTProcess (string targetPath, string arguments, string workingdir = null)
 		{
@@ -49,13 +29,10 @@ namespace DeepTest
 			}
 
 			p.OutputDataReceived += delegate(object sender, DataReceivedEventArgs e) {
-				if (e.Data.Length > 0)
-				{
-					Console.WriteLine("[PID {0} {1}] {2}", 
-						p.Id, new FileInfo(targetPath).Name,
-						e.Data.ToString().Trim());
-                    eventLog.Add(e.Data.ToString().Trim());
-				}
+                if (e.Data.Length > 0)
+                {
+                    Console.WriteLine(e.Data.ToString().Trim());
+                }
 			};
 
             p.ErrorDataReceived += delegate(object sender, System.Diagnostics.DataReceivedEventArgs e) {
@@ -70,21 +47,27 @@ namespace DeepTest
 
         public void Start(int wait = 0)
 		{
-            if (wait > 0) {
-                Thread.Sleep(wait);
+            try 
+            {
+                if (wait > 0) {
+                    Thread.Sleep(wait * 1000);
+                }
+
+                p.Start();
+                p.BeginOutputReadLine();
+                p.BeginErrorReadLine();
+                ProcessStreamInterface = p.StandardInput;
+                Thread.Sleep(1000);
             }
 
-			p.Start();
-			p.BeginOutputReadLine();
-            p.BeginErrorReadLine();
-			ProcessStreamInterface = p.StandardInput;
-			Thread.Sleep (1000);
+            catch (Exception e) {
+                Console.WriteLine(e.Message);
+            }
 		}
 
 		public void SendMessageToComponentConsole(string msg)
 		{
 			ProcessStreamInterface.WriteLine(msg);
-			Thread.Sleep(1000);
 		}
 
 		public void Stop()

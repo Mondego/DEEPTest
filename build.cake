@@ -8,15 +8,22 @@ var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Debug");
 
 //////////////////////////////////////////////////////////////////////
-// PREPARATION
+// DIRECTORIES
 //////////////////////////////////////////////////////////////////////
 
-// Define directories.
+// DeepTest
 var deepTestBuildDir = Directory("./DeepTest/bin") + Directory(configuration);
-var deepTestWrapperBuildDir = Directory("./DeepTestWrapper/bin") + Directory(configuration);
+var deepTestPluginBuildDir = Directory("./DeepTestPlugin/bin") + Directory(configuration);
 
+// NFBench Mirror
+var nfbImportReferenceBuildDir = Directory("./NFBenchImport.Benchmark.Reference/bin") + Directory(configuration);
+var nfbImportPerformanceBuildDir = Directory("./NFBenchImport.Benchmark.Performance/bin") + Directory(configuration);
+var nfbClientAppBuildDir = Directory("./NFBenchImport.Services.ClientApplication/bin") + Directory(configuration);
+
+// Test Directories
+var nfbImportTestsBuildDir = Directory("./Test.NFBenchImport/bin") + Directory(configuration);
 var echoServerExampleTestSuiteBuildDir = Directory("./Test/Example/Test.Example.EchoChatDTSuite/bin") + Directory(configuration);
-var echoServerExampleBuildDir = Directory("./Test/Example/Test.Example.EchoChatServer/bin") + Directory(configuration);
+var stagingDir = Directory("./staging");
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -26,9 +33,14 @@ Task("Clean")
     .Does(() =>
 {
     CleanDirectory(deepTestBuildDir);
-    CleanDirectory(deepTestWrapperBuildDir);
+    CleanDirectory(deepTestPluginBuildDir);
+    
+    CleanDirectory(nfbImportReferenceBuildDir);
+    CleanDirectory(nfbImportPerformanceBuildDir);
+    CleanDirectory(nfbClientAppBuildDir);
+    
+    CleanDirectory(nfbImportTestsBuildDir);
     CleanDirectory(echoServerExampleTestSuiteBuildDir);
-    CleanDirectory(echoServerExampleBuildDir);
 });
 
 Task("Restore-NuGet-Packages")
@@ -46,17 +58,19 @@ Task("Build")
         settings.SetVerbosity(Verbosity.Minimal));
 });
 
-Task("Run-Example-Deep-Tests")
+Task("Run-Benchmark-Deep-Tests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    EnsureDirectoryExists("./staging");
-    CleanDirectory("./staging");
-        
-    var files = GetFiles("./Test/Example/Test.Example.EchoChatDTSuite/bin/Debug/*");
-    CopyFiles(files, "./staging/");
-        
-    NUnit3("./staging/Test.*.dll", new NUnit3Settings {
+    EnsureDirectoryExists(stagingDir);
+    CleanDirectory(stagingDir);
+
+    CopyFiles("./DeepTest/bin/Debug/*.dll", stagingDir);
+    CopyFiles("./NFBenchImport.Benchmark.Reference/bin/Debug/*.exe", stagingDir);
+    CopyFiles("./NFBenchImport.Benchmark.Performance/bin/Debug/*.exe", stagingDir);
+    CopyFiles("./NFBenchImport.Services.ClientApplication/bin/Debug/*.exe", stagingDir);   
+ 
+    NUnit3("./Test.NFBenchImport/bin/Debug/Test*.dll", new NUnit3Settings {
         NoResults = true
     });
 });
@@ -66,7 +80,7 @@ Task("Run-Example-Deep-Tests")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Run-Example-Deep-Tests");
+    .IsDependentOn("Run-Benchmark-Deep-Tests");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION

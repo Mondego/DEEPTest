@@ -7,7 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTest", "DeepTest\DeepTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Example.EchoChatDTSuite", "Test\Example\Test.Example.EchoChatDTSuite\Test.Example.EchoChatDTSuite.csproj", "{A7FB3487-D07A-461E-B238-38142E01634B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTestWrapper", "DeepTestWrapper\DeepTestWrapper.csproj", "{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTestPlugin", "DeepTestPlugin\DeepTestPlugin.csproj", "{2A68466B-6EF5-4919-99D8-6A6E34B066A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFBenchImport.Services.ClientApplication", "NFBenchImport.Services.ClientApplication\NFBenchImport.Services.ClientApplication.csproj", "{1AA30BDA-C824-4382-B047-5073E344319A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFBenchImport.Benchmark.Reference", "NFBenchImport.Benchmark.Reference\NFBenchImport.Benchmark.Reference.csproj", "{3977C80A-B8A9-4918-B775-1325052366FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.NFBenchImport", "Test.NFBenchImport\Test.NFBenchImport.csproj", "{1EBA1215-37AC-48AA-A441-DFEDB64766D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFBenchImport.Benchmark.Performance", "NFBenchImport.Benchmark.Performance\NFBenchImport.Benchmark.Performance.csproj", "{967F28A5-7A88-41AA-9401-BC20AA11E314}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +27,26 @@ Global
 		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Debug|x86.Build.0 = Debug|Any CPU
 		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Release|x86.ActiveCfg = Release|Any CPU
 		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Release|x86.Build.0 = Release|Any CPU
-		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Debug|x86.Build.0 = Debug|Any CPU
-		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Release|x86.ActiveCfg = Release|Any CPU
-		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Release|x86.Build.0 = Release|Any CPU
+		{1AA30BDA-C824-4382-B047-5073E344319A}.Debug|x86.ActiveCfg = Debug|x86
+		{1AA30BDA-C824-4382-B047-5073E344319A}.Debug|x86.Build.0 = Debug|x86
+		{1AA30BDA-C824-4382-B047-5073E344319A}.Release|x86.ActiveCfg = Release|x86
+		{1AA30BDA-C824-4382-B047-5073E344319A}.Release|x86.Build.0 = Release|x86
+		{1EBA1215-37AC-48AA-A441-DFEDB64766D3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1EBA1215-37AC-48AA-A441-DFEDB64766D3}.Debug|x86.Build.0 = Debug|Any CPU
+		{1EBA1215-37AC-48AA-A441-DFEDB64766D3}.Release|x86.ActiveCfg = Release|Any CPU
+		{1EBA1215-37AC-48AA-A441-DFEDB64766D3}.Release|x86.Build.0 = Release|Any CPU
+		{2A68466B-6EF5-4919-99D8-6A6E34B066A4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2A68466B-6EF5-4919-99D8-6A6E34B066A4}.Debug|x86.Build.0 = Debug|Any CPU
+		{2A68466B-6EF5-4919-99D8-6A6E34B066A4}.Release|x86.ActiveCfg = Release|Any CPU
+		{2A68466B-6EF5-4919-99D8-6A6E34B066A4}.Release|x86.Build.0 = Release|Any CPU
+		{3977C80A-B8A9-4918-B775-1325052366FF}.Debug|x86.ActiveCfg = Debug|x86
+		{3977C80A-B8A9-4918-B775-1325052366FF}.Debug|x86.Build.0 = Debug|x86
+		{3977C80A-B8A9-4918-B775-1325052366FF}.Release|x86.ActiveCfg = Release|x86
+		{3977C80A-B8A9-4918-B775-1325052366FF}.Release|x86.Build.0 = Release|x86
+		{967F28A5-7A88-41AA-9401-BC20AA11E314}.Debug|x86.ActiveCfg = Debug|x86
+		{967F28A5-7A88-41AA-9401-BC20AA11E314}.Debug|x86.Build.0 = Debug|x86
+		{967F28A5-7A88-41AA-9401-BC20AA11E314}.Release|x86.ActiveCfg = Release|x86
+		{967F28A5-7A88-41AA-9401-BC20AA11E314}.Release|x86.Build.0 = Release|x86
 		{A7FB3487-D07A-461E-B238-38142E01634B}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{A7FB3487-D07A-461E-B238-38142E01634B}.Debug|x86.Build.0 = Debug|Any CPU
 		{A7FB3487-D07A-461E-B238-38142E01634B}.Release|x86.ActiveCfg = Release|Any CPU
