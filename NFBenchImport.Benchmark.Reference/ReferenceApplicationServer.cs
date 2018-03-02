@@ -3,10 +3,35 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Diagnostics;
 
 namespace NFBenchImport.Benchmark.Reference
 {
+    /*public sealed class mSingleton
+    {
+        private mSingleton()
+        {
+        }
+
+        public static mSingleton Instance { get { return Nested.instance; } }
+
+        public void Message(System.Diagnostics.Stopwatch sw)
+        {
+            Console.WriteLine("mSingleton.Message " + sw.ElapsedMilliseconds / 1000.0);
+        }
+
+        private class Nested
+        {
+            // Explicit static constructor to tell C# compiler
+            // not to mark type as beforefieldinit
+            static Nested()
+            {
+            }
+
+            internal static readonly mSingleton instance = new mSingleton();
+        }
+    }*/
+
+
     public class ReferenceApplicationServer
     {
         protected ConcurrentDictionary<string, IPEndPoint> mConnections;
@@ -16,6 +41,7 @@ namespace NFBenchImport.Benchmark.Reference
         protected string mEndpointInfo;
         protected string mHostname;
         protected int mPort;
+        protected System.Diagnostics.Stopwatch s;
 
         public ReferenceApplicationServer(string hostname, int port)
         {
@@ -29,6 +55,10 @@ namespace NFBenchImport.Benchmark.Reference
 
         protected void debugMessage (string message)
         {
+            /*s = System.Diagnostics.Stopwatch.StartNew();
+            System.Threading.Thread.Sleep(2000);
+            s.Stop();
+            mSingleton.Instance.Message(s);*/
             Console.WriteLine("{0} {1} --- {2}",
                 this.GetType().Name,
                 mEndpointInfo, 

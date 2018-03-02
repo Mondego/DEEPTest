@@ -7,6 +7,7 @@ using System.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Inject;
+using Mono.Cecil.Rocks;
 using RemoteTestingWrapper;
 
 namespace DeepTestFramework
@@ -42,14 +43,6 @@ namespace DeepTestFramework
                 _nameOfWeavePointMethod: nameOfWeavePointMethod,
                 _onEntry: true
             );
-
-            /*StopwatchHelper.addStopwatchInWeavePoint(
-            wp,
-            wp.wpMethodDefinition.Body.Instructions.First(),
-            wp.wpMethodDefinition.Body.Instructions.Last().Previous
-            );
-
-            addWeavePointAssertionAnchors(wp);*/
 
             return entry;
         }
@@ -139,8 +132,44 @@ namespace DeepTestFramework
                 weaveBefore: false
             );
 
-            /*
-            TypeDefinition remoteAssertionHandler = 
+            /*Console.WriteLine("----");
+            foreach (Instruction i in stop.wpMethodDefinition.DeclaringType.Methods.Single(mm => mm.Name == "debugMessage").Body.Instructions) {
+                Console.WriteLine(i);
+            }
+            Console.WriteLine("----");*/
+
+            // TODO move this maybe but it's fine for now
+            ILProcessor ilp = stop.wpMethodDefinition.Body.GetILProcessor();
+            stop.wpMethodDefinition.Body.SimplifyMacros();
+            Instruction startingPoint = stop.wpMethodDefinition.Body.Instructions.Last();
+
+            Instruction callSingletonInstance =
+                ilp.Create(OpCodes.Call, 
+                    stop.wpMethodDefinition.Module.Import(
+                        typeof(RemoteSafeAssertionsSingleton).GetMethod("get_Instance", new Type[] { })));
+
+            Instruction loadThis = ilp.Create(OpCodes.Ldarg_0);
+
+            Instruction loadStopwatchField = 
+                ilp.Create(
+                    OpCodes.Ldfld,
+                    wovenStopwatch);
+
+            Instruction callSingletonMethod =
+                ilp.Create(OpCodes.Callvirt, 
+                    stop.wpMethodDefinition.Module.Import(
+                        typeof(RemoteSafeAssertionsSingleton).GetMethod("Message", new Type[] { typeof(Stopwatch) })));
+           
+            ilp.InsertBefore(startingPoint, callSingletonInstance);
+            ilp.InsertAfter(callSingletonInstance, loadThis);
+            ilp.InsertAfter(loadThis, loadStopwatchField);
+            ilp.InsertAfter(loadStopwatchField, callSingletonMethod);
+
+            stop.wpMethodDefinition.Body.OptimizeMacros();
+
+           /* 
+            * TODO move injection stuff to safer spot
+            * TypeDefinition remoteAssertionHandler = 
                 mPlugin.MainModule.Types.Single(t => t.Name == "WeavingAssertionHandler");
             MethodDefinition stopwatchHandler = 
                 remoteAssertionHandler.Methods.Single(m => m.Name == "stopwatchResultHook");

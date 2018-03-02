@@ -96,7 +96,7 @@ namespace NFBenchImport.Benchmark.Performance
 
         protected void processMessage(string message, string endp)
         {
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
 
             if (message[0] == '@') {
                 int senderId = (int)Int64.Parse(message.Split(new char[] { ' ' }, 3)[1].Remove(0, 1));
