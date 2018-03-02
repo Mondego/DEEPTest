@@ -4,7 +4,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-using DeepTest;
+using Framework; // Probably rename this to DeepTestFramework to be more informative
 
 namespace Test.NFBenchImport
 {

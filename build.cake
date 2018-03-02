@@ -12,17 +12,21 @@ var configuration = Argument("configuration", "Debug");
 //////////////////////////////////////////////////////////////////////
 
 // DeepTest
-var deepTestBuildDir = Directory("./DeepTest/bin") + Directory(configuration);
-var deepTestPluginBuildDir = Directory("./DeepTestPlugin/bin") + Directory(configuration);
+var buildInternalTestDriver = Directory("./DeepTest/InternalTestDriver/bin") + Directory(configuration);
+var buildRemoteAssertionMessages = Directory("./DeepTest/RemoteAssertionMessages/bin") + Directory(configuration);
+var buildRemoteTestDriverHandler = Directory("./DeepTest/RemoteTestDriverHandler/bin") + Directory(configuration);
+var buildFramework = Directory("./DeepTest/Framework/bin") + Directory(configuration);
+var buildRemoteTestingWrapper = Directory("./DeepTest/RemoteTestingWrapper/bin") + Directory(configuration);
 
-// NFBench Mirror
+// NFBench Mirror --- To be Obsolete
 var nfbImportReferenceBuildDir = Directory("./NFBenchImport.Benchmark.Reference/bin") + Directory(configuration);
 var nfbImportPerformanceBuildDir = Directory("./NFBenchImport.Benchmark.Performance/bin") + Directory(configuration);
 var nfbClientAppBuildDir = Directory("./NFBenchImport.Services.ClientApplication/bin") + Directory(configuration);
 
-// Test Directories
+// Test Directories --- To be obsolete
 var nfbImportTestsBuildDir = Directory("./Test.NFBenchImport/bin") + Directory(configuration);
-var echoServerExampleTestSuiteBuildDir = Directory("./Test/Example/Test.Example.EchoChatDTSuite/bin") + Directory(configuration);
+
+// Demo & Staging
 var stagingDir = Directory("./staging");
 
 //////////////////////////////////////////////////////////////////////
@@ -32,15 +36,17 @@ var stagingDir = Directory("./staging");
 Task("Clean")
     .Does(() =>
 {
-    CleanDirectory(deepTestBuildDir);
-    CleanDirectory(deepTestPluginBuildDir);
-    
+    CleanDirectory(buildInternalTestDriver);
+    CleanDirectory(buildRemoteAssertionMessages);
+    CleanDirectory(buildRemoteTestDriverHandler);
+    CleanDirectory(buildFramework);
+    CleanDirectory(buildRemoteTestingWrapper);
+
+    // To be removed from framework
     CleanDirectory(nfbImportReferenceBuildDir);
     CleanDirectory(nfbImportPerformanceBuildDir);
     CleanDirectory(nfbClientAppBuildDir);
-    
     CleanDirectory(nfbImportTestsBuildDir);
-    CleanDirectory(echoServerExampleTestSuiteBuildDir);
 });
 
 Task("Restore-NuGet-Packages")

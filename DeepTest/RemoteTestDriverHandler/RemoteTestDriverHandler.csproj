@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{23A1F946-550C-42EC-A944-66A62C3BC6B4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>RemoteTestDriverHandler</RootNamespace>
+    <AssemblyName>RemoteTestDriverHandler</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Microsoft.Extensions.Logging">
+      <HintPath>..\..\tools\Microsoft.Extensions.Logging.Abstractions\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Akka">
+      <HintPath>..\..\tools\Akka\lib\net45\Akka.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections">
+      <HintPath>..\..\tools\System.Collections.Immutable\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices">
+      <HintPath>..\..\tools\System.Runtime.CompilerServices.Unsafe\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft">
+      <HintPath>..\..\tools\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions">
+      <HintPath>..\..\tools\Microsoft.Extensions.Logging\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection">
+      <HintPath>..\..\tools\Microsoft.Extensions.DependencyInjection.Abstractions\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions">
+      <HintPath>..\..\tools\Microsoft.Extensions.Logging\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Google">
+      <HintPath>..\..\tools\Google.Protobuf\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty">
+      <HintPath>..\..\tools\DotNetty.Transport\lib\net45\DotNetty.Transport.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty">
+      <HintPath>..\..\tools\DotNetty.Handlers\lib\net45\DotNetty.Handlers.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty">
+      <HintPath>..\..\tools\DotNetty.Common\lib\net45\DotNetty.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty">
+      <HintPath>..\..\tools\DotNetty.Codecs\lib\net45\DotNetty.Codecs.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty">
+      <HintPath>..\..\tools\DotNetty.Codecs\lib\net45\DotNetty.Codecs.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MyClass.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteAssertionMessages\RemoteAssertionMessages.csproj">
+      <Project>{8A3DF506-6F80-46B0-B08E-B166267A1654}</Project>
+      <Name>RemoteAssertionMessages</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

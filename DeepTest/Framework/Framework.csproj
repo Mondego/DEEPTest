@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1EBA1215-37AC-48AA-A441-DFEDB64766D3}</ProjectGuid>
+    <ProjectGuid>{E57540BB-F4F5-4975-98E6-7FE5C2693B4B}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Test.NFBenchImport</RootNamespace>
-    <AssemblyName>Test.NFBenchImport</AssemblyName>
+    <RootNamespace>DeepTestFramework</RootNamespace>
+    <AssemblyName>Framework</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -29,28 +29,38 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\tools\NUnit\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\tools\Mono.Cecil\lib\net45\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Inject">
+      <HintPath>..\..\lib\Mono.Cecil.Inject.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\..\tools\Mono.Cecil\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestBenchmarkReference.cs" />
-    <Compile Include="TestBenchmarkPerformance.cs" />
+    <Compile Include="API\AssertionResult.cs" />
+    <Compile Include="API\DTNodeDefinition.cs" />
+    <Compile Include="API\DTNodeInstance.cs" />
+    <Compile Include="API\DTProcess.cs" />
+    <Compile Include="API\DTRuntime.cs" />
+    <Compile Include="Instrumentation\WeavePoint.cs" />
+    <Compile Include="Instrumentation\WeavingAspectLocation.cs" />
+    <Compile Include="Instrumentation\WeavingHandler.cs" />
+    <Compile Include="Instrumentation\Helpers\System\Diagnostics\StopwatchHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\NFBenchImport.Benchmark.Reference\NFBenchImport.Benchmark.Reference.csproj">
-      <Project>{3977C80A-B8A9-4918-B775-1325052366FF}</Project>
-      <Name>NFBenchImport.Benchmark.Reference</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NFBenchImport.Services.ClientApplication\NFBenchImport.Services.ClientApplication.csproj">
-      <Project>{1AA30BDA-C824-4382-B047-5073E344319A}</Project>
-      <Name>NFBenchImport.Services.ClientApplication</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DeepTest\Framework\Framework.csproj">
-      <Project>{E57540BB-F4F5-4975-98E6-7FE5C2693B4B}</Project>
-      <Name>Framework</Name>
+    <Folder Include="Instrumentation\" />
+    <Folder Include="API\" />
+    <Folder Include="Instrumentation\Helpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteTestingWrapper\RemoteTestingWrapper.csproj">
+      <Project>{6E11FF0E-4B96-4235-A61D-9916579BBCCF}</Project>
+      <Name>RemoteTestingWrapper</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
