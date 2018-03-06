@@ -4,10 +4,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7CCC0238-09A9-4B3B-BF6C-989B50C03539}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>InternalTestDriver</RootNamespace>
     <AssemblyName>InternalTestDriver</AssemblyName>
-    <StartupObject>InternalTestDriver.InternalTestDriverMain</StartupObject>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

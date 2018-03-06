@@ -8,7 +8,8 @@ namespace DeepTestFramework
     {
         private WeavingHandler weavingHandler = new WeavingHandler();
         private Dictionary<string, DTNodeDefinition> executionDefinitions = new Dictionary<string, DTNodeDefinition>();
-        private DTProcess networkedTestDriver;
+        //private DTProcess networkedTestDriver;
+        private InternalTestDriverMain mInternalDriver;
 
         public WeavingHandler Instrumentation
         {
@@ -43,21 +44,14 @@ namespace DeepTestFramework
 
         public void StartDriver(string workingDirectory)
         {
-            string testDriverLocation = workingDirectory + "InternalTestDriver.exe";
-
-            networkedTestDriver = new DTProcess(
-                targetPath: testDriverLocation,
-                arguments: "",
-                workingdir: workingDirectory
-            );
-            networkedTestDriver.Start();
+            mInternalDriver = new InternalTestDriverMain();
         }
 
         public void StopAll()
         {
-            if (networkedTestDriver != null && !networkedTestDriver.p.HasExited) {
+            /*if (networkedTestDriver != null && !networkedTestDriver.p.HasExited) {
                 networkedTestDriver.Stop();
-            }
+            }*/
 
             foreach (DTNodeDefinition v in executionDefinitions.Values) {
                 v.Stop();

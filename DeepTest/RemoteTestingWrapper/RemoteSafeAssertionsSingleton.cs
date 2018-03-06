@@ -5,12 +5,14 @@ using RemoteAssertionMessages;
 
 using Akka.Actor;
 using Akka.Configuration;
+using System.Collections.Generic;
 
 namespace RemoteTestingWrapper
 {
     public sealed class RemoteSafeAssertionsSingleton
     {
-        private ActorSystem mSystem; 
+        private ActorSystem mSystem;
+        private Dictionary<string, string> mResults;
 
         private RemoteSafeAssertionsSingleton()
         {
@@ -49,11 +51,14 @@ akka {
         public void Message(Stopwatch s)
         {
             Console.WriteLine("called the singleton message " + s.ElapsedMilliseconds / 1000.0 + " s");
-        
-            AssertionResultMessage s2 = new AssertionResultMessage();
-            s2.AboutRemoteWrapper = "about";
-            s2.AssertionResult = "result";
-            s2.AssertionContext = "context";
+
+            var sendStopwatchActor = mSystem.ActorOf(Props.Create<WrapperActor>());
+
+            sendStopwatchActor.Tell(new AssertionResultMessage() {
+                AboutRemoteWrapper = "WeavingAssertionHandler",
+                AssertionContext = "Stopwatch",
+                AssertionResult = s.ElapsedMilliseconds.ToString()
+            });
         }
     }
 }
