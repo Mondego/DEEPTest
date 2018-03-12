@@ -3,35 +3,19 @@ using System.Diagnostics;
 
 using RemoteAssertionMessages;
 
-using Akka.Actor;
-using Akka.Configuration;
 using System.Collections.Generic;
+using System.Net.Sockets;
+using System.IO;
+using System.Net;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace RemoteTestingWrapper
 {
     public sealed class RemoteSafeAssertionsSingleton
     {
-        private ActorSystem mSystem;
-        private Dictionary<string, string> mResults;
-
         private RemoteSafeAssertionsSingleton()
         {
-            var config = ConfigurationFactory.ParseString(@"
-akka {  
-    actor {
-        provider = remote
-    }
-    remote {
-        dot-netty.tcp {
-            port = 0
-            hostname = localhost
-        }
-    }
-}
-");
-            mSystem = ActorSystem.Create("WovenRoamingSystem", config);
-
-            // mRoamer.Tell(new AssertionResultMessage() {});
         }
 
         public static RemoteSafeAssertionsSingleton Instance { get { return Nested.instance; } }
@@ -46,19 +30,23 @@ akka {
 
             internal static readonly RemoteSafeAssertionsSingleton instance = new RemoteSafeAssertionsSingleton();
         }
-
-        // Custom methods here
-        public void Message(Stopwatch s)
+            
+        public void Message(int metadata, int wpId, Stopwatch s)
         {
-            Console.WriteLine("called the singleton message " + s.ElapsedMilliseconds / 1000.0 + " s");
+            Console.WriteLine("Sending result to 127.0.0.1:" + metadata);
+            TcpClient tcpc = new TcpClient("127.0.0.1", metadata);
+            NetworkStream ns = tcpc.GetStream();
 
-            var sendStopwatchActor = mSystem.ActorOf(Props.Create<WrapperActor>());
+            AssertionResult sar = new AssertionResult {
+                assertionResultType = "stopwatch",
+                value = s.ElapsedMilliseconds,
+                wpKey = wpId
+            };
 
-            sendStopwatchActor.Tell(new AssertionResultMessage() {
-                AboutRemoteWrapper = "WeavingAssertionHandler",
-                AssertionContext = "Stopwatch",
-                AssertionResult = s.ElapsedMilliseconds.ToString()
-            });
+            byte[] messageData = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(sar));
+            ns.Write(messageData, 0, messageData.Length);
+            ns.Close();
+            tcpc.Close();
         }
     }
 }

@@ -5,6 +5,8 @@ using System.Threading;
 using NUnit.Framework;
 
 using DeepTestFramework;
+using System.Threading.Tasks;
+using InternalTestDriver;
 
 namespace Test.NFBenchImport
 {
@@ -29,25 +31,31 @@ namespace Test.NFBenchImport
             DTNodeDefinition app = dtr.addSystemUnderTest(nfbRefPath);
 
             WeavePoint onMessageReceive =
-                dtr.Instrumentation.AddWeavePointOnEntry(
+                dtr.weavingHandler.AddWeavePointOnEntry(
                     target: app,
                     nameOfWeavePointType: "ReferenceApplicationServer",
                     nameOfWeavePointMethod: "receiveMessageCallback"
                 );
             WeavePoint onMessageResponseEnd =
-                dtr.Instrumentation.AddWeavePointOnExit(
+                dtr.weavingHandler.AddWeavePointOnExit(
                     target: app,
                     nameOfWeavePointType: "ReferenceApplicationServer",
                     nameOfWeavePointMethod: "endMessageSendCallback"
                 );
-            
-            dtr.Instrumentation.insertStopwatchAssertion(
+
+            Instrumentation.Stopwatch.From(wp1).To(Wp2).Collect();
+            Instrumentation.AddSleepFor(n).At(wp1);
+            Instrumentation.Count(wp1).Collect();
+            Instrumentation.At(wp1).Collect("counter");
+
+            dtr.weavingHandler.insertStopwatchAssertion(
                 start: onMessageReceive,
                 stop: onMessageResponseEnd
             );
 
-            dtr.Instrumentation.Write(app, alternateWritePath: wovenNfbRefPath);
-            dtr.StartDriver(stagingPath);
+            dtr.StartDriver();
+
+            dtr.weavingHandler.Write(app, alternateWritePath: wovenNfbRefPath);
 
             app.StartInstance(
                 externalPath: wovenNfbRefPath,
@@ -60,16 +68,19 @@ namespace Test.NFBenchImport
         public void TestRoundtripMessage()
         {
             DTProcess client = new DTProcess(
+                id: "client1",
                 targetPath: clientPath,
                 arguments: "127.0.0.1 60708 0",
                 workingdir: stagingPath
             );
             client.Start();
 
-            for (int i = 0; i < 3; i++) {
-                client.SendMessageToComponentConsole("#0 Message " + i + " from DT.TestBenchmarkReference");
-                Thread.Sleep(2000);
-            }
+            client.SendMessageToComponentConsole("#0 Message " + 0 + " from DT.TestBenchmarkReference");
+
+            Assert.That(dtr.getResultByWeavePoint(wpEnd),Is.LessThanOrEqualTo(1000));
+            dtr.getResults(wpEnd, "client1");
+            dtr.getResults(wpEnd);
+            dtr.getResults("client1");
 
             Thread.Sleep(1000);
             client.Stop();

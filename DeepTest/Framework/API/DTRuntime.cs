@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using InternalTestDriver;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace DeepTestFramework
 {
     public class DTRuntime
     {
-        private WeavingHandler weavingHandler = new WeavingHandler();
-        private Dictionary<string, DTNodeDefinition> executionDefinitions = new Dictionary<string, DTNodeDefinition>();
-        //private DTProcess networkedTestDriver;
-        private InternalTestDriverMain mInternalDriver;
-
-        public WeavingHandler Instrumentation
-        {
-            get {
-                return weavingHandler;
-            }
-        }
+        public WeavingHandler weavingHandler;
+        private Dictionary<string, DTNodeDefinition> executionDefinitions; 
+        private AdHocInternalDriver tempDriver = new AdHocInternalDriver();
 
         public DTRuntime()
         {
+            executionDefinitions = new Dictionary<string, DTNodeDefinition>();
+            weavingHandler = new WeavingHandler(metadata: tempDriver.getDriverPort());
+        }
+
+        public WeavingHandler getInstrumentation()
+        {
+            return weavingHandler;
         }
 
         public DTNodeDefinition addSystemUnderTest(string path)
@@ -42,16 +43,28 @@ namespace DeepTestFramework
             return null;
         }
 
-        public void StartDriver(string workingDirectory)
+        public async Task<bool> remoteAssertionTookAtMost(double expectedMax)
         {
-            mInternalDriver = new InternalTestDriverMain();
+            double actual = 9000.0;
+
+            if (actual <= expectedMax)
+            {
+                return true;
+            }
+
+            else { 
+                return false; 
+            }
+        }
+
+        public void StartDriver()
+        {
+            Thread.Sleep(3000);
         }
 
         public void StopAll()
         {
-            /*if (networkedTestDriver != null && !networkedTestDriver.p.HasExited) {
-                networkedTestDriver.Stop();
-            }*/
+            tempDriver.Disactivate();
 
             foreach (DTNodeDefinition v in executionDefinitions.Values) {
                 v.Stop();

@@ -14,7 +14,6 @@ var configuration = Argument("configuration", "Debug");
 // DeepTest
 var buildInternalTestDriver = Directory("./DeepTest/InternalTestDriver/bin") + Directory(configuration);
 var buildRemoteAssertionMessages = Directory("./DeepTest/RemoteAssertionMessages/bin") + Directory(configuration);
-var buildRemoteTestDriverHandler = Directory("./DeepTest/RemoteTestDriverHandler/bin") + Directory(configuration);
 var buildFramework = Directory("./DeepTest/Framework/bin") + Directory(configuration);
 var buildRemoteTestingWrapper = Directory("./DeepTest/RemoteTestingWrapper/bin") + Directory(configuration);
 
@@ -38,7 +37,6 @@ Task("Clean")
 {
     CleanDirectory(buildInternalTestDriver);
     CleanDirectory(buildRemoteAssertionMessages);
-    CleanDirectory(buildRemoteTestDriverHandler);
     CleanDirectory(buildFramework);
     CleanDirectory(buildRemoteTestingWrapper);
 
@@ -79,7 +77,8 @@ Task("Run-Benchmark-Deep-Tests")
     CopyFiles("./NFBenchImport.Services.ClientApplication/bin/Debug/*.exe", stagingDir);   
  
     NUnit3("./Test.NFBenchImport/bin/Debug/Test*.dll", new NUnit3Settings {
-        NoResults = true
+        NoResults = true,
+        StopOnError = false
     });
 });
 

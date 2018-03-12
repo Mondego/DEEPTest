@@ -6,8 +6,8 @@ using System.IO;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Inject;
 using Mono.Cecil.Rocks;
+
 using RemoteTestingWrapper;
 
 namespace DeepTestFramework
@@ -17,8 +17,9 @@ namespace DeepTestFramework
         private AssemblyDefinition mPlugin;
         private Dictionary<string, AssemblyDefinition> mWeaves = 
             new Dictionary<string, AssemblyDefinition>();
+        private int tempMetadata;
 
-        public WeavingHandler()
+        public WeavingHandler(int metadata)
         {
             System.Reflection.AssemblyName pluginAssemblyMetadata =
                 System.Reflection.Assembly.GetExecutingAssembly()
@@ -29,6 +30,7 @@ namespace DeepTestFramework
                 System.Reflection.Assembly.ReflectionOnlyLoad(
                     pluginAssemblyMetadata.FullName).Location);
 
+            tempMetadata = metadata;
         }
 
         public WeavePoint AddWeavePointOnEntry(
@@ -132,13 +134,7 @@ namespace DeepTestFramework
                 weaveBefore: false
             );
 
-            /*Console.WriteLine("----");
-            foreach (Instruction i in stop.wpMethodDefinition.DeclaringType.Methods.Single(mm => mm.Name == "debugMessage").Body.Instructions) {
-                Console.WriteLine(i);
-            }
-            Console.WriteLine("----");*/
-
-            // TODO move this maybe but it's fine for now
+            // TODO move this to RemoteAssertionHelper
             ILProcessor ilp = stop.wpMethodDefinition.Body.GetILProcessor();
             stop.wpMethodDefinition.Body.SimplifyMacros();
             Instruction startingPoint = stop.wpMethodDefinition.Body.Instructions.Last();
@@ -147,9 +143,11 @@ namespace DeepTestFramework
                 ilp.Create(OpCodes.Call, 
                     stop.wpMethodDefinition.Module.Import(
                         typeof(RemoteSafeAssertionsSingleton).GetMethod("get_Instance", new Type[] { })));
+            Instruction loadWpIdInstruct = ilp.Create(OpCodes.Ldc_I4, stop.GetHashCode());
+            Instruction loadPortInstruct = ilp.Create(OpCodes.Ldc_I4, tempMetadata);
+            Console.WriteLine("temp " + tempMetadata);
 
             Instruction loadThis = ilp.Create(OpCodes.Ldarg_0);
-
             Instruction loadStopwatchField = 
                 ilp.Create(
                     OpCodes.Ldfld,
@@ -158,85 +156,17 @@ namespace DeepTestFramework
             Instruction callSingletonMethod =
                 ilp.Create(OpCodes.Callvirt, 
                     stop.wpMethodDefinition.Module.Import(
-                        typeof(RemoteSafeAssertionsSingleton).GetMethod("Message", new Type[] { typeof(Stopwatch) })));
+                        typeof(RemoteSafeAssertionsSingleton).GetMethod(
+                            "Message", new Type[] { typeof(int), typeof(int), typeof(Stopwatch) })));
            
             ilp.InsertBefore(startingPoint, callSingletonInstance);
-            ilp.InsertAfter(callSingletonInstance, loadThis);
+            ilp.InsertAfter(callSingletonInstance, loadPortInstruct);
+            ilp.InsertAfter(loadPortInstruct, loadWpIdInstruct);
+            ilp.InsertAfter(loadWpIdInstruct, loadThis);
             ilp.InsertAfter(loadThis, loadStopwatchField);
             ilp.InsertAfter(loadStopwatchField, callSingletonMethod);
 
             stop.wpMethodDefinition.Body.OptimizeMacros();
-
-           /* 
-            * TODO move injection stuff to safer spot
-            * TypeDefinition remoteAssertionHandler = 
-                mPlugin.MainModule.Types.Single(t => t.Name == "WeavingAssertionHandler");
-            MethodDefinition stopwatchHandler = 
-                remoteAssertionHandler.Methods.Single(m => m.Name == "stopwatchResultHook");
-                 
-            InjectionDefinition injector = 
-                new InjectionDefinition(
-                    stop.wpMethodDefinition,
-                    stopwatchHandler,
-                    InjectFlags.PassFields,
-                    null,
-                    wovenStopwatch
-                );
-            
-            injector.Inject(
-                startCode: stop.wpMethodDefinition.Body.Instructions.Last(),
-                token: null,
-                direction: InjectDirection.Before
-            );*/
-        }
-
-
-        /// <summary>
-        /// Adds anchor for assertions at entrance and exit of target method
-        /// </summary>
-        /// <param name="ad">AssemblyDefinition to be woven</param>
-        /// <param name="wp">WeavePoint to use for metadata</param>
-        public void addWeavePointAssertionAnchors(WeavePoint wp)
-        {
-            try
-            {
-                List<Instruction> atEntry = new List<Instruction>();
-                atEntry.Add(
-                    wp.wpMethodDefinition.Body.GetILProcessor().Create(
-                        OpCodes.Ldstr,
-                        "WeavingHandler-> addWeavePointAssertionAnchors-> Entry"
-                    ));
-                atEntry.Add(
-                    wp.wpMethodDefinition.Body.GetILProcessor().Create(
-                        OpCodes.Callvirt,
-                        wp.wpMethodDefinition.Module.Import(
-                            typeof(WeavingAssertionHandler).GetMethod("updateResultEntry", new [] { typeof(string) }))));
-                WeavingAspectLocation.WeaveInstructionsAtEntry(
-                    wp,
-                    atEntry
-                );
-
-                List<Instruction> atExit = new List<Instruction>();
-                atExit.Add(
-                    wp.wpMethodDefinition.Body.GetILProcessor().Create(
-                        OpCodes.Ldstr,
-                        "WeavingHandler-> addWeavePointAssertionAnchors-> Exit"
-                    ));
-                atExit.Add(
-                    wp.wpMethodDefinition.Body.GetILProcessor().Create(
-                        OpCodes.Callvirt,
-                        wp.wpMethodDefinition.Module.Import(
-                            typeof(WeavingAssertionHandler).GetMethod("updateResultEntry", new [] { typeof(string) }))));
-                WeavingAspectLocation.WeaveInstructionsAtExit(
-                    wp,
-                    atExit
-                );
-            }
-
-            catch (Exception e)
-            {
-                Console.WriteLine("WeavingHandler.addWeavePointAnchor caught exception " + e.Message);
-            }
         }
 
         public void WeaveDebugInfoAtWeavePointEntry(WeavePoint wp, string info = "")
