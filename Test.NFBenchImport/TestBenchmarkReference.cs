@@ -10,7 +10,7 @@ using InternalTestDriver;
 
 namespace Test.NFBenchImport
 {
-    [TestFixture]
+    //[TestFixture]
     public class TestBenchmarkReference
     {
         private DTRuntime dtr = new DTRuntime();
@@ -25,7 +25,7 @@ namespace Test.NFBenchImport
         private static string clientPath = stagingPath + "NFBenchImport.Services.ClientApplication.exe";
         private static string wovenNfbRefPath = stagingPath + "_woven_NFBenchImport.Benchmark.Reference.exe";
 
-        [OneTimeSetUp]
+        //[OneTimeSetUp]
         public void ReferenceFixtureSetUp()
         {
             DTNodeDefinition app = dtr.addSystemUnderTest(nfbRefPath);
@@ -42,11 +42,11 @@ namespace Test.NFBenchImport
                     nameOfWeavePointType: "ReferenceApplicationServer",
                     nameOfWeavePointMethod: "endMessageSendCallback"
                 );
-
+            /*
             Instrumentation.Stopwatch.From(wp1).To(Wp2).Collect();
             Instrumentation.AddSleepFor(n).At(wp1);
             Instrumentation.Count(wp1).Collect();
-            Instrumentation.At(wp1).Collect("counter");
+            Instrumentation.At(wp1).Collect("counter");*/
 
             dtr.weavingHandler.insertStopwatchAssertion(
                 start: onMessageReceive,
@@ -64,10 +64,10 @@ namespace Test.NFBenchImport
             );   
         }
 
-        [Test]
+        //[Test]
         public void TestRoundtripMessage()
         {
-            DTProcess client = new DTProcess(
+            /*DTProcess client = new DTProcess(
                 id: "client1",
                 targetPath: clientPath,
                 arguments: "127.0.0.1 60708 0",
@@ -77,13 +77,13 @@ namespace Test.NFBenchImport
 
             client.SendMessageToComponentConsole("#0 Message " + 0 + " from DT.TestBenchmarkReference");
 
-            Assert.That(dtr.getResultByWeavePoint(wpEnd),Is.LessThanOrEqualTo(1000));
+            /*Assert.That(dtr.getResultByWeavePoint(wpEnd),Is.LessThanOrEqualTo(1000));
             dtr.getResults(wpEnd, "client1");
             dtr.getResults(wpEnd);
             dtr.getResults("client1");
 
             Thread.Sleep(1000);
-            client.Stop();
+            client.Stop();*/
         }
 
         [OneTimeTearDown]
