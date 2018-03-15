@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8FED18AA-10D8-425A-BD04-BFC9856313A5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>DeepTest.API.Tests</RootNamespace>
+    <AssemblyName>DeepTest.API.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\tools\NUnit\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="InstrumentationAPITests.cs" />
+    <Compile Include="TestUtility.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\DeepTest\TestDriverAPI\TestDriverAPI.csproj">
+      <Project>{1B014E2B-557A-47C8-B04B-1D1B3D581F87}</Project>
+      <Name>TestDriverAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Examples\ExampleClientServerEchoApp\ExampleClientServerEchoApp.csproj">
+      <Project>{6242E4D4-C49E-43AE-AFA5-56EE984115D9}</Project>
+      <Name>ExampleClientServerEchoApp</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

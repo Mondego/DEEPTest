@@ -1,4 +1,5 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.7.0
+#addin "Cake.Incubator"
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -8,22 +9,14 @@ var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Debug");
 
 //////////////////////////////////////////////////////////////////////
-// DIRECTORIES
 //////////////////////////////////////////////////////////////////////
 
-// DeepTest
-var buildInternalTestDriver = Directory("./DeepTest/InternalTestDriver/bin") + Directory(configuration);
-var buildRemoteAssertionMessages = Directory("./DeepTest/RemoteAssertionMessages/bin") + Directory(configuration);
-var buildFramework = Directory("./DeepTest/Framework/bin") + Directory(configuration);
-var buildRemoteTestingWrapper = Directory("./DeepTest/RemoteTestingWrapper/bin") + Directory(configuration);
+var DeepTestSolutionPath = "DeepTest.sln";
 
-// NFBench Mirror --- To be Obsolete
-var nfbImportReferenceBuildDir = Directory("./NFBenchImport.Benchmark.Reference/bin") + Directory(configuration);
-var nfbImportPerformanceBuildDir = Directory("./NFBenchImport.Benchmark.Performance/bin") + Directory(configuration);
-var nfbClientAppBuildDir = Directory("./NFBenchImport.Services.ClientApplication/bin") + Directory(configuration);
-
-// Test Directories --- To be obsolete
-var nfbImportTestsBuildDir = Directory("./Test.NFBenchImport/bin") + Directory(configuration);
+var RootDir = Directory("./");
+var DeepTestFrameworkDir = Directory("./DeepTest/");
+var TestDir = Directory("./Test/"); 
+var ExamplesDir = Directory("./Examples/");
 
 // Demo & Staging
 var stagingDir = Directory("./staging");
@@ -35,50 +28,65 @@ var stagingDir = Directory("./staging");
 Task("Clean")
     .Does(() =>
 {
-    CleanDirectory(buildInternalTestDriver);
-    CleanDirectory(buildRemoteAssertionMessages);
-    CleanDirectory(buildFramework);
-    CleanDirectory(buildRemoteTestingWrapper);
+    foreach(var path in GetSubDirectories(DeepTestFrameworkDir))
+    {
+        Information("Cleaning {0}", path);
+        CleanDirectories(path + "/bin/" + configuration);
+        CleanDirectories(path + "/obj/" + configuration);
+    }
 
-    // To be removed from framework
-    CleanDirectory(nfbImportReferenceBuildDir);
-    CleanDirectory(nfbImportPerformanceBuildDir);
-    CleanDirectory(nfbClientAppBuildDir);
-    CleanDirectory(nfbImportTestsBuildDir);
+    foreach(var path in GetSubDirectories(TestDir))
+    {
+        Information("Cleaning {0}", path);
+        CleanDirectories(path + "/bin/" + configuration);
+        CleanDirectories(path + "/obj/" + configuration);
+    }
+
+    foreach(var path in GetSubDirectories(ExamplesDir))
+    {
+        Information("Cleaning {0}", path);
+        CleanDirectories(path + "/bin/" + configuration);
+        CleanDirectories(path + "/obj/" + configuration);
+    }
 });
 
 Task("Restore-NuGet-Packages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    NuGetRestore("DeepTest.sln");
+    NuGetRestore(DeepTestSolutionPath);
 });
 
 Task("Build")
     .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
 {
-    MSBuild("DeepTest.sln", settings =>
+    MSBuild(DeepTestSolutionPath, settings =>
         settings.SetVerbosity(Verbosity.Minimal));
 });
 
-Task("Run-Benchmark-Deep-Tests")
+Task("Test")
     .IsDependentOn("Build")
     .Does(() =>
 {
     EnsureDirectoryExists(stagingDir);
     CleanDirectory(stagingDir);
+    
+    foreach(var path in GetSubDirectories(ExamplesDir))
+    {
+        Information("Copying Example Project {0}", path);
+        CopyFiles(
+            GetFiles(path + "/bin/" + configuration + "/*.exe"),
+            stagingDir
+        );
+        CopyFiles(
+            GetFiles(path + "/bin/" + configuration + "/*.dll"),
+            stagingDir
+        );
+    }
 
-    CopyFiles("./DeepTest/RemoteTestingWrapper/bin/Debug/*.dll", stagingDir);
-    CopyFiles("./DeepTest/InternalTestDriver/bin/Debug/*.exe", stagingDir);   
-    // To be obsoleted later
-    CopyFiles("./NFBenchImport.Benchmark.Reference/bin/Debug/*.exe", stagingDir);
-    CopyFiles("./NFBenchImport.Benchmark.Performance/bin/Debug/*.exe", stagingDir);
-    CopyFiles("./NFBenchImport.Services.ClientApplication/bin/Debug/*.exe", stagingDir);   
- 
-    NUnit3("./Test.NFBenchImport/bin/Debug/Test*.dll", new NUnit3Settings {
-        NoResults = true,
-        StopOnError = false
+    NUnit3("./Test/**/bin/Debug/*.Tests.dll", new NUnit3Settings {
+        NoResults = true
     });
 });
 
@@ -87,10 +95,6 @@ Task("Run-Benchmark-Deep-Tests")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Run-Benchmark-Deep-Tests");
-
-//////////////////////////////////////////////////////////////////////
-// EXECUTION
-//////////////////////////////////////////////////////////////////////
+    .IsDependentOn("Test");
 
 RunTarget(target);

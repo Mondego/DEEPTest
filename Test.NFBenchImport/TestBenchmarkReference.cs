@@ -42,11 +42,6 @@ namespace Test.NFBenchImport
                     nameOfWeavePointType: "ReferenceApplicationServer",
                     nameOfWeavePointMethod: "endMessageSendCallback"
                 );
-            /*
-            Instrumentation.Stopwatch.From(wp1).To(Wp2).Collect();
-            Instrumentation.AddSleepFor(n).At(wp1);
-            Instrumentation.Count(wp1).Collect();
-            Instrumentation.At(wp1).Collect("counter");*/
 
             dtr.weavingHandler.insertStopwatchAssertion(
                 start: onMessageReceive,
