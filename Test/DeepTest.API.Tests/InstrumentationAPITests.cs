@@ -3,7 +3,7 @@ using System.IO;
 
 using NUnit.Framework;
 
-using TestDriverAPI;
+using DeepTestFramework;
 
 namespace DeepTest.API.Tests
 {
@@ -25,15 +25,31 @@ namespace DeepTest.API.Tests
         [Test]
         public void ExampleEchoServer_InstrumentationDelay_ShouldIncreaseMessageRoundtrip()
         {
-            string echoClientServerExamplePath = 
+            string stagingPath = 
                 Path.Combine(
                     TestUtility.getRelativeSolutionPath(TestContext.CurrentContext.TestDirectory),
-                    "staging/ExampleClientServerEchoApp.exe"
+                    "staging/"
                 );
-            Console.WriteLine("Target system: {0}", echoClientServerExamplePath);
+            string echoClientServerExamplePath = 
+                Path.Combine(
+                    stagingPath,
+                    "ExampleClientServerEchoApp.exe"
+                );
+            string instrumentedAppPath = 
+                Path.Combine(
+                    stagingPath,
+                    "Instrumented_DelayTest_ExampleClientServerEchoApp.exe"
+                );
+
+            Console.WriteLine("Instrumenting system: {0}", echoClientServerExamplePath);
+            Console.WriteLine("Writing to: {0}", instrumentedAppPath);
 
             DeepTestHandler handler = new DeepTestHandler();
             handler.Instrumentation.AddAssemblyFromPath(echoClientServerExamplePath);
+            handler.Instrumentation.SetAssemblyOutputPath(
+                "ExampleClientServerEchoApp",
+                instrumentedAppPath
+            );
 
             // TODO error handle so that that each of these throws if not found, or throws if too many
             InstrumentationPoint testDelayIp = 
@@ -43,21 +59,44 @@ namespace DeepTest.API.Tests
                     .FindMethodNamed("RespondToMessage");
             //testDelayIp.printMethodInstructions();
 
-            handler.Instrumentation.Delay.AddSecondsOfSleep(5).AtEntry(testDelayIp);
+            handler.Instrumentation.Delay
+                .AddSecondsOfSleep(5)
+                .AtEntry(testDelayIp);
+            
+            SystemProcessWithInput app = 
+                handler.Deployment.ExecuteWithArguments(instrumentedAppPath, "server 60013");
+            app.Start();
+            app.StopAfterNSeconds(5);
         }
 
         [Test]
         public void ExampleEchoServer_MeasureStopwatch_ShouldCollectRoundtripMessageTimes()
         {
-            string echoClientServerExamplePath = 
+            string stagingPath = 
                 Path.Combine(
                     TestUtility.getRelativeSolutionPath(TestContext.CurrentContext.TestDirectory),
-                    "staging/ExampleClientServerEchoApp.exe"
+                    "staging/"
                 );
-            Console.WriteLine("Target system: {0}", echoClientServerExamplePath);
+            string echoClientServerExamplePath = 
+                Path.Combine(
+                    stagingPath,
+                    "ExampleClientServerEchoApp.exe"
+                );
+            string instrumentedAppPath = 
+                Path.Combine(
+                    stagingPath,
+                    "Instrumented_StopWatchTest_ExampleClientServerEchoApp.exe"
+                );
+
+            Console.WriteLine("Instrumenting system: {0}", echoClientServerExamplePath);
+            Console.WriteLine("Writing to: {0}", instrumentedAppPath);
 
             DeepTestHandler handler = new DeepTestHandler();
             handler.Instrumentation.AddAssemblyFromPath(echoClientServerExamplePath);
+            handler.Instrumentation.SetAssemblyOutputPath(
+                "ExampleClientServerEchoApp",
+                instrumentedAppPath
+            );
 
             InstrumentationPoint stopwatchStartPoint = 
                 handler.Instrumentation.AddNamedInstrumentationPoint("startStopwatchGotMessage")
@@ -73,21 +112,45 @@ namespace DeepTest.API.Tests
                     .FindMethodNamed("RespondToMessage");
             //stopwatchEndPoint.printMethodInstructions();
 
-            handler.Instrumentation.Measure.WithStopWatch().AtEntry(stopwatchStartPoint).UntilExit(stopwatchEndPoint);
+            handler.Instrumentation.Measure
+                .WithStopWatch()
+                .AtEntry(stopwatchStartPoint)
+                .UntilExit(stopwatchEndPoint);
+            
+            SystemProcessWithInput app = 
+                handler.Deployment.ExecuteWithArguments(instrumentedAppPath, "server 60012");
+            app.Start();
+            app.StopAfterNSeconds(5);
         }
 
         [Test]
         public void ExampleEchoServer_SnapshotValue_ShouldCollectInternalFields()
         {
-            string echoClientServerExamplePath = 
+            string stagingPath = 
                 Path.Combine(
                     TestUtility.getRelativeSolutionPath(TestContext.CurrentContext.TestDirectory),
-                    "staging/ExampleClientServerEchoApp.exe"
+                    "staging/"
                 );
-            Console.WriteLine("Target system: {0}", echoClientServerExamplePath);
+            string echoClientServerExamplePath = 
+                Path.Combine(
+                    stagingPath,
+                    "ExampleClientServerEchoApp.exe"
+                );
+            string instrumentedAppPath = 
+                Path.Combine(
+                    stagingPath,
+                    "Instrumented_SnapshotTest_ExampleClientServerEchoApp.exe"
+                );
+
+            Console.WriteLine("Instrumenting system: {0}", echoClientServerExamplePath);
+            Console.WriteLine("Writing to: {0}", instrumentedAppPath);
 
             DeepTestHandler handler = new DeepTestHandler();
             handler.Instrumentation.AddAssemblyFromPath(echoClientServerExamplePath);
+            handler.Instrumentation.SetAssemblyOutputPath(
+                "ExampleClientServerEchoApp",
+                instrumentedAppPath
+            );
 
             InstrumentationPoint snapshotClient = 
                 handler.Instrumentation.AddNamedInstrumentationPoint("snapshotClient")
@@ -103,8 +166,18 @@ namespace DeepTest.API.Tests
                     .FindMethodNamed("RespondToMessage");
             //snapshotNMessagesSent.printMethodInstructions();
 
-            handler.Instrumentation.Snapshot.ValueOf("remote").AtExit(snapshotClient);
-            handler.Instrumentation.Snapshot.ValueOf("nMessagesSent").AtExit(snapshotNMessagesSent);
+            handler.Instrumentation.Snapshot
+                .ValueOf("remote")
+                .AtExit(snapshotClient);
+            
+            handler.Instrumentation.Snapshot
+                .ValueOf("nMessagesSent")
+                .AtExit(snapshotNMessagesSent);
+
+            SystemProcessWithInput app = 
+                handler.Deployment.ExecuteWithArguments(instrumentedAppPath, "server 60011");
+            app.Start();
+            app.StopAfterNSeconds(5);
         }
     }
 }

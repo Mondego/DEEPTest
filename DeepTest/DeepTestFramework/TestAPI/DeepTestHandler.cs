@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace TestDriverAPI
+namespace DeepTestFramework
 {
     public class DeepTestHandler
     {
         public InstrumentationAPI Instrumentation { get; }
-        public TestExecutionAPI Deployment { get; }
+        public SystemUnderTestDeploymentAPI Deployment { get; }
 
         public DeepTestHandler()
         {
             Instrumentation = new InstrumentationAPI();
-            Deployment = new TestExecutionAPI();
+            Deployment = new SystemUnderTestDeploymentAPI();
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
 
+
 namespace DeepTestFramework
 {
     public class DTNodeInstance
     {
-        public DTProcess mProcess { get; }
+        public SystemProcessWithInput mProcess { get; }
         private string path;
         private string args;
         private int delay;
@@ -22,7 +23,7 @@ namespace DeepTestFramework
             delay = nSecondsDelay;
             directory = workingDirectory;
 
-            mProcess = new DTProcess(
+            mProcess = new SystemProcessWithInput(
                 targetPath: path,
                 arguments: args,
                 workingdir: directory

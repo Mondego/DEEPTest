@@ -6,15 +6,19 @@ using System.Collections.Generic;
 
 namespace DeepTestFramework
 {
-	public class DTProcess
+	public class SystemProcessWithInput
 	{
         public Process p { get; }
 		private StreamWriter ProcessStreamInterface;
         private string exePath;
 
-        public DTProcess (string targetPath, string arguments, string workingdir = null)
+        public SystemProcessWithInput (string targetPath, string arguments, string workingdir = null)
 		{
             exePath = targetPath;
+
+            if (!File.Exists(exePath)) {
+                throw new FileNotFoundException("InstrumentedProcess path " + targetPath);
+            }
 
 			p = new Process();
             p.StartInfo.FileName = exePath;
@@ -65,13 +69,14 @@ namespace DeepTestFramework
             }
 		}
 
-		public void SendMessageToComponentConsole(string msg)
+		public void ConsoleInput(string msg)
 		{
 			ProcessStreamInterface.WriteLine(msg);
 		}
 
 		public void Stop()
 		{
+            Console.WriteLine("Stopping P{0} {1}", p.Id, exePath);
 			ProcessStreamInterface.Close();
             if (!p.HasExited) {
                 p.CloseMainWindow();
@@ -79,6 +84,13 @@ namespace DeepTestFramework
                 p.Dispose();
             }
 		}
+
+        public void StopAfterNSeconds(int n)
+        {
+            Console.WriteLine("Stopping P{0} {1} in {2} seconds", p.Id, exePath, n);
+            Thread.Sleep(n * 1000);
+            Stop();
+        }
 	}
 }
 

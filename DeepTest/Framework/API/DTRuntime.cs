@@ -43,20 +43,6 @@ namespace DeepTestFramework
             return null;
         }
 
-        public async Task<bool> remoteAssertionTookAtMost(double expectedMax)
-        {
-            double actual = 9000.0;
-
-            if (actual <= expectedMax)
-            {
-                return true;
-            }
-
-            else { 
-                return false; 
-            }
-        }
-
         public void StartDriver()
         {
             Thread.Sleep(3000);

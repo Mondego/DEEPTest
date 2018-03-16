@@ -60,17 +60,17 @@ namespace Test.NFBenchImport
         //[Test]
         public void TestRoundtripMessage()
         {
-            DTProcess client = new DTProcess(
+            /*SystemProcessWithInput client = new SystemProcessWithInput(
                 targetPath: clientPath,
                 arguments: "127.0.0.1 60728 0",
                 workingdir: stagingPath
             );
             client.Start();
 
-            client.SendMessageToComponentConsole("#0 Message " + 0 + " from DT.TestBenchmarkReference");
+            client.ConsoleInput("#0 Message " + 0 + " from DT.TestBenchmarkReference");
 
             Thread.Sleep(1000);
-            client.Stop();
+            client.Stop();*/
         }
 
         //[OneTimeTearDown]

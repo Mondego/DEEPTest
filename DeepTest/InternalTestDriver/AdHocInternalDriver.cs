@@ -81,13 +81,6 @@ namespace InternalTestDriver
             }
         }
 
-        public async Task<double> endToEndTime(int wpKey)
-        {
-            //return await results[wpKey].ReceiveAsync()
-            //await 
-            return 0.0;
-        }
-
         public void Disactivate()
         {
             isListening = false;

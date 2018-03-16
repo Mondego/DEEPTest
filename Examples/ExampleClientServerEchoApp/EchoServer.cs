@@ -48,6 +48,7 @@ namespace ExampleClientServerEchoApp
 
         public void Stop()
         {
+            Console.WriteLine("Stopping EchoServer @ {0}", mPort);
             listening = false;
             listener.Close();
         }
