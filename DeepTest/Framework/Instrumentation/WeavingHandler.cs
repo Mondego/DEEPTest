@@ -33,115 +33,36 @@ namespace DeepTestFramework
             tempMetadata = metadata;
         }
 
-        public WeavePoint AddWeavePointOnEntry(
-            DTNodeDefinition target,
-            string nameOfWeavePointType,
-            string nameOfWeavePointMethod
-        )
-        {
-            WeavePoint entry = _generateWeavePoint(
-                _target: target, 
-                _nameOfWeavePointType: nameOfWeavePointType, 
-                _nameOfWeavePointMethod: nameOfWeavePointMethod,
-                _onEntry: true
-            );
-
-            return entry;
-        }
-
-        public WeavePoint AddWeavePointOnExit(
-            DTNodeDefinition target,
-            string nameOfWeavePointType,
-            string nameOfWeavePointMethod
-        )
-        {
-            WeavePoint exit = 
-                _generateWeavePoint(
-                    _target: target, 
-                    _nameOfWeavePointType: nameOfWeavePointType, 
-                    _nameOfWeavePointMethod: nameOfWeavePointMethod,
-                    _onEntry: false
-                ); 
-            
-           /*StopwatchHelper.addStopwatchInWeavePoint(
-            wp,
-            wp.wpMethodDefinition.Body.Instructions.First(),
-            wp.wpMethodDefinition.Body.Instructions.Last().Previous
-            );
-
-            addWeavePointAssertionAnchors(wp);*/
-
-            return exit;
-        }
-
-            
-        private WeavePoint _generateWeavePoint(
-            DTNodeDefinition _target,
-            string _nameOfWeavePointType,
-            string _nameOfWeavePointMethod,
-            bool _onEntry
-        )
-        {
-            try
-            {
-                AssemblyDefinition wpAssembly;
-                mWeaves.TryGetValue(_target.readPath, out wpAssembly);
-
-                // Find method to weave
-                Console.WriteLine("WeavingHandler._generateWeavePoint {0}->{1}", _nameOfWeavePointType, _nameOfWeavePointMethod);
-                TypeDefinition foundTypeDefinition = wpAssembly.MainModule.Types.Single(td => td.Name == _nameOfWeavePointType);
-                MethodDefinition foundMethodDefinition = foundTypeDefinition.Methods.Single(md => md.Name ==  _nameOfWeavePointMethod);
-
-                WeavePoint wp = new WeavePoint(
-                    _target.readPath,
-                    _nameOfWeavePointType,
-                    _nameOfWeavePointMethod,
-                    foundMethodDefinition
-                );
-
-                return wp;
-            }
-
-            catch (Exception e) {
-                Console.WriteLine(
-                    "WeavingHandler.AddWeavePoint caught unexpected {0} {1}",
-                    e.GetType(),
-                    e.Message);
-            }
-
-            return null;
-        }
-
-        public void insertStopwatchAssertion(WeavePoint start, WeavePoint stop)
+        public void insertStopwatchAssertion(InstrumentationPoint start, InstrumentationPoint stop)
         {
             FieldDefinition wovenStopwatch = 
                 StopwatchHelper.addStopwatchFieldToType(
-                    stop.wpMethodDefinition.DeclaringType,
+                    stop.instrumentationPointTypeDefinition,
                     "wovenStopwatch"
                 );
 
             StopwatchHelper.startStopwatch(
                 wp: start,
                 stopwatch: wovenStopwatch,
-                atInstruction: start.wpMethodDefinition.Body.Instructions.First(),
+                atInstruction: start.instrumentationPointMethodDefinition.Body.Instructions.First(),
                 weaveBefore: true
             );
                
             StopwatchHelper.stopStopwatch(
                 wp: stop,
                 stopwatch: wovenStopwatch,
-                atInstruction: stop.wpMethodDefinition.Body.Instructions.First(),
+                atInstruction: stop.instrumentationPointMethodDefinition.Body.Instructions.First(),
                 weaveBefore: false
             );
 
             // TODO move this to RemoteAssertionHelper
-            ILProcessor ilp = stop.wpMethodDefinition.Body.GetILProcessor();
-            stop.wpMethodDefinition.Body.SimplifyMacros();
-            Instruction startingPoint = stop.wpMethodDefinition.Body.Instructions.Last();
+            ILProcessor ilp = stop.instrumentationPointMethodDefinition.Body.GetILProcessor();
+            stop.instrumentationPointMethodDefinition.Body.SimplifyMacros();
+            Instruction startingPoint = stop.instrumentationPointMethodDefinition.Body.Instructions.Last();
 
             Instruction callSingletonInstance =
                 ilp.Create(OpCodes.Call, 
-                    stop.wpMethodDefinition.Module.Import(
+                    stop.instrumentationPointMethodDefinition.Module.Import(
                         typeof(RemoteSafeAssertionsSingleton).GetMethod("get_Instance", new Type[] { })));
             Instruction loadWpIdInstruct = ilp.Create(OpCodes.Ldc_I4, stop.GetHashCode());
             Instruction loadPortInstruct = ilp.Create(OpCodes.Ldc_I4, tempMetadata);
@@ -155,7 +76,7 @@ namespace DeepTestFramework
 
             Instruction callSingletonMethod =
                 ilp.Create(OpCodes.Callvirt, 
-                    stop.wpMethodDefinition.Module.Import(
+                    stop.instrumentationPointMethodDefinition.Module.Import(
                         typeof(RemoteSafeAssertionsSingleton).GetMethod(
                             "Message", new Type[] { typeof(int), typeof(int), typeof(Stopwatch) })));
            
@@ -166,44 +87,44 @@ namespace DeepTestFramework
             ilp.InsertAfter(loadThis, loadStopwatchField);
             ilp.InsertAfter(loadStopwatchField, callSingletonMethod);
 
-            stop.wpMethodDefinition.Body.OptimizeMacros();
+            stop.instrumentationPointMethodDefinition.Body.OptimizeMacros();
         }
 
-        public void WeaveDebugInfoAtWeavePointEntry(WeavePoint wp, string info = "")
+        public void WeaveDebugInfoAtWeavePointEntry(InstrumentationPoint wp, string info = "")
         {
             List<Instruction> weaveInstructions = new List<Instruction>();
             string loadEntryValue = "[Debug] Weaving Before " + info;
         
             weaveInstructions.Add(
-                wp.wpMethodDefinition.Body.GetILProcessor().Create(OpCodes.Ldstr, loadEntryValue)
+                wp.instrumentationPointMethodDefinition.Body.GetILProcessor().Create(OpCodes.Ldstr, loadEntryValue)
             );
             weaveInstructions.Add(
-                wp.wpMethodDefinition.Body.GetILProcessor().Create(
+                wp.instrumentationPointMethodDefinition.Body.GetILProcessor().Create(
                     OpCodes.Call,
-                    wp.wpMethodDefinition.Module.Import(
+                    wp.instrumentationPointMethodDefinition.Module.Import(
                         typeof(System.Console).GetMethod("WriteLine", new [] { typeof(string) }))));
 
-            WeavingAspectLocation.WeaveInstructionsAtEntry(
+            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodEntry(
                 wp,
                 weaveInstructions
             );
         }
 
-        public void WeaveDebugInfoAtWeavePointExit(WeavePoint wp, string info = "")
+        public void WeaveDebugInfoAtWeavePointExit(InstrumentationPoint wp, string info = "")
         {
             List<Instruction> weaveInstructions = new List<Instruction>();
             string loadExitValue = "[Debug] Weaving After " + info;
 
             weaveInstructions.Add(
-                wp.wpMethodDefinition.Body.GetILProcessor().Create(OpCodes.Ldstr, loadExitValue)
+                wp.instrumentationPointMethodDefinition.Body.GetILProcessor().Create(OpCodes.Ldstr, loadExitValue)
             );
             weaveInstructions.Add(
-                wp.wpMethodDefinition.Body.GetILProcessor().Create(
+                wp.instrumentationPointMethodDefinition.Body.GetILProcessor().Create(
                     OpCodes.Call,
-                    wp.wpMethodDefinition.Module.Import(
+                    wp.instrumentationPointMethodDefinition.Module.Import(
                         typeof(System.Console).GetMethod("WriteLine", new [] { typeof(string) }))));
 
-            WeavingAspectLocation.WeaveInstructionsAtExit(
+            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(
                 wp,
                 weaveInstructions
             );
@@ -223,28 +144,6 @@ namespace DeepTestFramework
             catch (Exception e) {
                 Console.WriteLine(
                     "DTWeavingHandler.AddWeavePointToNode caught unexpected {0} {1}",
-                    e.GetType(),
-                    e.Message);
-            }
-        }
-
-        public void Write(DTNodeDefinition target, string alternateWritePath = "")
-        {
-            try
-            {
-                string writePath = target.readPath;
-                if (alternateWritePath != "")
-                {
-                    writePath = alternateWritePath;
-                }
-
-                AssemblyDefinition assemblyToWrite = mWeaves[target.readPath];
-                assemblyToWrite.Write(writePath);
-            }
-
-            catch (Exception e) {
-                Console.WriteLine(
-                    "DTWeavingHandler.Write() caught unexpected {0} {1}",
                     e.GetType(),
                     e.Message);
             }

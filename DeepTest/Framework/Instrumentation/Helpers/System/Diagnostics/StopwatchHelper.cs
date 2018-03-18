@@ -37,19 +37,20 @@ namespace DeepTestFramework
             return stopwatch;
         }
 
-        public static void startStopwatch(WeavePoint wp, 
+        public static void startStopwatch(
+            InstrumentationPoint wp, 
             FieldDefinition stopwatch, 
             Instruction atInstruction, 
             bool weaveBefore
         )
         {
-            wp.wpMethodDefinition.Body.SimplifyMacros();
-            ILProcessor ilp = wp.wpMethodDefinition.Body.GetILProcessor();
+            wp.instrumentationPointMethodDefinition.Body.SimplifyMacros();
+            ILProcessor ilp = wp.instrumentationPointMethodDefinition.Body.GetILProcessor();
 
             Instruction loadThis = ilp.Create(OpCodes.Ldarg_0);
             Instruction callStopwatchStartNew = ilp.Create(
                     OpCodes.Call,
-                    wp.wpMethodDefinition.Module.Import(
+                wp.instrumentationPointMethodDefinition.Module.Import(
                         typeof(Stopwatch).GetMethod("StartNew", new Type[] { })));
             Instruction storeStopwatchInFieldDef = ilp.Create(
                     OpCodes.Stfld,
@@ -66,18 +67,18 @@ namespace DeepTestFramework
                 ilp.InsertAfter(callStopwatchStartNew, storeStopwatchInFieldDef);
             }
 
-            wp.wpMethodDefinition.Body.OptimizeMacros();
+            wp.instrumentationPointMethodDefinition.Body.OptimizeMacros();
         }
 
         public static void stopStopwatch(
-            WeavePoint wp, 
+            InstrumentationPoint wp, 
             FieldDefinition stopwatch, 
             Instruction atInstruction, 
             bool weaveBefore
         )
         {
-            wp.wpMethodDefinition.Body.SimplifyMacros();
-            ILProcessor ilp = wp.wpMethodDefinition.Body.GetILProcessor();   
+            wp.instrumentationPointMethodDefinition.Body.SimplifyMacros();
+            ILProcessor ilp = wp.instrumentationPointMethodDefinition.Body.GetILProcessor();   
 
             Instruction loadThis = ilp.Create(OpCodes.Ldarg_0);
             Instruction loadStopwatchField = 
@@ -86,7 +87,7 @@ namespace DeepTestFramework
                     stopwatch);
             Instruction callStop = 
                 ilp.Create(OpCodes.Callvirt, 
-                    wp.wpMethodDefinition.Module.Import(
+                    wp.instrumentationPointMethodDefinition.Module.Import(
                         typeof(Stopwatch).GetMethod("Stop", new Type[] { })));
 
             if (weaveBefore) {
@@ -99,7 +100,7 @@ namespace DeepTestFramework
                 ilp.InsertAfter(loadStopwatchField, callStop);
             }
            
-            wp.wpMethodDefinition.Body.OptimizeMacros();
+            wp.instrumentationPointMethodDefinition.Body.OptimizeMacros();
         }
     }
 }

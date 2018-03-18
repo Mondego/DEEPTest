@@ -1,14 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFBenchImport.Services.ClientApplication", "NFBenchImport.Services.ClientApplication\NFBenchImport.Services.ClientApplication.csproj", "{1AA30BDA-C824-4382-B047-5073E344319A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFBenchImport.Benchmark.Reference", "NFBenchImport.Benchmark.Reference\NFBenchImport.Benchmark.Reference.csproj", "{3977C80A-B8A9-4918-B775-1325052366FF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.NFBenchImport", "Test.NFBenchImport\Test.NFBenchImport.csproj", "{1EBA1215-37AC-48AA-A441-DFEDB64766D3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFBenchImport.Benchmark.Performance", "NFBenchImport.Benchmark.Performance\NFBenchImport.Benchmark.Performance.csproj", "{967F28A5-7A88-41AA-9401-BC20AA11E314}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DeepTest", "DeepTest", "{4034F715-C916-45DA-BDA0-2C2C84A9D9E9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteAssertionMessages", "DeepTest\RemoteAssertionMessages\RemoteAssertionMessages.csproj", "{8A3DF506-6F80-46B0-B08E-B166267A1654}"
@@ -37,18 +29,6 @@ Global
 		{16E02605-4148-4A13-B3AD-3581A2C6B2FA}.Debug|x86.Build.0 = Debug|Any CPU
 		{16E02605-4148-4A13-B3AD-3581A2C6B2FA}.Release|x86.ActiveCfg = Release|Any CPU
 		{16E02605-4148-4A13-B3AD-3581A2C6B2FA}.Release|x86.Build.0 = Release|Any CPU
-		{1AA30BDA-C824-4382-B047-5073E344319A}.Debug|x86.ActiveCfg = Debug|x86
-		{1AA30BDA-C824-4382-B047-5073E344319A}.Debug|x86.Build.0 = Debug|x86
-		{1AA30BDA-C824-4382-B047-5073E344319A}.Release|x86.ActiveCfg = Release|x86
-		{1AA30BDA-C824-4382-B047-5073E344319A}.Release|x86.Build.0 = Release|x86
-		{1EBA1215-37AC-48AA-A441-DFEDB64766D3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{1EBA1215-37AC-48AA-A441-DFEDB64766D3}.Debug|x86.Build.0 = Debug|Any CPU
-		{1EBA1215-37AC-48AA-A441-DFEDB64766D3}.Release|x86.ActiveCfg = Release|Any CPU
-		{1EBA1215-37AC-48AA-A441-DFEDB64766D3}.Release|x86.Build.0 = Release|Any CPU
-		{3977C80A-B8A9-4918-B775-1325052366FF}.Debug|x86.ActiveCfg = Debug|x86
-		{3977C80A-B8A9-4918-B775-1325052366FF}.Debug|x86.Build.0 = Debug|x86
-		{3977C80A-B8A9-4918-B775-1325052366FF}.Release|x86.ActiveCfg = Release|x86
-		{3977C80A-B8A9-4918-B775-1325052366FF}.Release|x86.Build.0 = Release|x86
 		{6242E4D4-C49E-43AE-AFA5-56EE984115D9}.Debug|x86.ActiveCfg = Debug|x86
 		{6242E4D4-C49E-43AE-AFA5-56EE984115D9}.Debug|x86.Build.0 = Debug|x86
 		{6242E4D4-C49E-43AE-AFA5-56EE984115D9}.Release|x86.ActiveCfg = Release|x86
@@ -65,10 +45,6 @@ Global
 		{8FED18AA-10D8-425A-BD04-BFC9856313A5}.Debug|x86.Build.0 = Debug|Any CPU
 		{8FED18AA-10D8-425A-BD04-BFC9856313A5}.Release|x86.ActiveCfg = Release|Any CPU
 		{8FED18AA-10D8-425A-BD04-BFC9856313A5}.Release|x86.Build.0 = Release|Any CPU
-		{967F28A5-7A88-41AA-9401-BC20AA11E314}.Debug|x86.ActiveCfg = Debug|x86
-		{967F28A5-7A88-41AA-9401-BC20AA11E314}.Debug|x86.Build.0 = Debug|x86
-		{967F28A5-7A88-41AA-9401-BC20AA11E314}.Release|x86.ActiveCfg = Release|x86
-		{967F28A5-7A88-41AA-9401-BC20AA11E314}.Release|x86.Build.0 = Release|x86
 		{E57540BB-F4F5-4975-98E6-7FE5C2693B4B}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{E57540BB-F4F5-4975-98E6-7FE5C2693B4B}.Debug|x86.Build.0 = Debug|Any CPU
 		{E57540BB-F4F5-4975-98E6-7FE5C2693B4B}.Release|x86.ActiveCfg = Release|Any CPU

@@ -51,6 +51,9 @@
     <Compile Include="TestAPI\InstrumentationAPI.cs" />
     <Compile Include="Instrumentation\InstrumentationHelpers\InstrumentationHelper.cs" />
     <Compile Include="Deployment\SystemUnderTestMessageHandler.cs" />
+    <Compile Include="Instrumentation\InstrumentationHelpers\InstrumentationPositionInMethodHelper.cs" />
+    <Compile Include="Instrumentation\InstrumentationHelpers\IDeepTestInstrumentAt.cs" />
+    <Compile Include="Instrumentation\InstrumentationHelpers\IDeepTesttInstrumentUntil.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

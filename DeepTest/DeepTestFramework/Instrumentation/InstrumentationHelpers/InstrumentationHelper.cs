@@ -14,28 +14,28 @@ namespace DeepTestFramework
 
         public InstrumentationHelper AtEntry(InstrumentationPoint ip)
         {
-            // TODO 
+            //InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodEntry(ip, ???);
 
             return _Save(ip);
         }
 
         public InstrumentationHelper AtExit(InstrumentationPoint ip)
         {
-            // TODO
+            //InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(ip, ???);
 
             return _Save(ip);
         }
 
         public InstrumentationHelper UntilEntry(InstrumentationPoint ip)
         {
-            // TODO
+            //InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodEntry(ip, ???);
 
             return _Save(ip);
         }
 
         public InstrumentationHelper UntilExit(InstrumentationPoint ip)
         {
-            // TODO
+            //InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(ip, ???);
 
             return _Save(ip);
         }
