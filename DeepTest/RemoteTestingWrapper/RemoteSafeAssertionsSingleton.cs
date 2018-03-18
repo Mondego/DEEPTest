@@ -33,11 +33,11 @@ namespace RemoteTestingWrapper
             
         public void Message(int metadata, int wpId, Stopwatch s)
         {
-            Console.WriteLine("Sending result to 127.0.0.1:" + metadata);
+            /*Console.WriteLine("Sending result to 127.0.0.1:" + metadata);
             TcpClient tcpc = new TcpClient("127.0.0.1", metadata);
             NetworkStream ns = tcpc.GetStream();
 
-            AssertionResult sar = new AssertionResult {
+            InstrumentationDataMessage sar = new InstrumentationDataMessage {
                 assertionResultType = "stopwatch",
                 value = s.ElapsedMilliseconds,
                 wpKey = wpId
@@ -46,7 +46,7 @@ namespace RemoteTestingWrapper
             byte[] messageData = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(sar));
             ns.Write(messageData, 0, messageData.Length);
             ns.Close();
-            tcpc.Close();
+            tcpc.Close();*/
         }
     }
 }

@@ -6,7 +6,6 @@ using NUnit.Framework;
 
 using DeepTestFramework;
 using System.Threading.Tasks;
-using InternalTestDriver;
 
 namespace Test.NFBenchImport
 {

@@ -55,9 +55,5 @@
       <Project>{E57540BB-F4F5-4975-98E6-7FE5C2693B4B}</Project>
       <Name>Framework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DeepTest\InternalTestDriver\InternalTestDriver.csproj">
-      <Project>{7CCC0238-09A9-4B3B-BF6C-989B50C03539}</Project>
-      <Name>InternalTestDriver</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using InternalTestDriver;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -10,12 +9,11 @@ namespace DeepTestFramework
     {
         public WeavingHandler weavingHandler;
         private Dictionary<string, DTNodeDefinition> executionDefinitions; 
-        private AdHocInternalDriver tempDriver = new AdHocInternalDriver();
 
         public DTRuntime()
         {
             executionDefinitions = new Dictionary<string, DTNodeDefinition>();
-            weavingHandler = new WeavingHandler(metadata: tempDriver.getDriverPort());
+            weavingHandler = new WeavingHandler(0);
         }
 
         public WeavingHandler getInstrumentation()
@@ -50,8 +48,6 @@ namespace DeepTestFramework
 
         public void StopAll()
         {
-            tempDriver.Disactivate();
-
             foreach (DTNodeDefinition v in executionDefinitions.Values) {
                 v.Stop();
             }

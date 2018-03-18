@@ -4,8 +4,11 @@ namespace DeepTestFramework
 {
     public class SystemUnderTestDeploymentAPI
     {
+        public SystemUnderTestMessageHandler Messenger { get; private set; }
+
         public SystemUnderTestDeploymentAPI()
         {
+            Messenger = new SystemUnderTestMessageHandler();
         }
 
         public SystemProcessWithInput ExecutePath(string path)

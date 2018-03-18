@@ -40,10 +40,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Examples\ExampleClientServerEchoApp\ExampleClientServerEchoApp.csproj">
-      <Project>{6242E4D4-C49E-43AE-AFA5-56EE984115D9}</Project>
-      <Name>ExampleClientServerEchoApp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DeepTest\Framework\Framework.csproj">
       <Project>{E57540BB-F4F5-4975-98E6-7FE5C2693B4B}</Project>
       <Name>Framework</Name>
