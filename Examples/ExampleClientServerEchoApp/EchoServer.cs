@@ -39,10 +39,10 @@ namespace ExampleClientServerEchoApp
             return Encoding.UTF8.GetString(encoded);
         }
 
-        public void RespondToMessage(IPEndPoint remote, string message)
+        public void RespondToMessage(IPEndPoint sendTo, string message)
         {
             byte[] responseBuffer = Encoding.UTF8.GetBytes("echo " + message);
-            listener.Send(responseBuffer, responseBuffer.Length, remote);
+            listener.Send(responseBuffer, responseBuffer.Length, sendTo);
             nMessagesSent += 1;
         }
 

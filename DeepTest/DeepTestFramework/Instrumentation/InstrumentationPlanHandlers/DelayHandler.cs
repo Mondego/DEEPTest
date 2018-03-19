@@ -13,7 +13,7 @@ namespace DeepTestFramework
 
         public InstrumentationHelper AddSecondsOfSleep(int nSeconds)
         {
-            return new SleepHelper(instrumentationSource);
+            return new SleepHelper(instrumentationSource, nSeconds);
         }
     }
 }

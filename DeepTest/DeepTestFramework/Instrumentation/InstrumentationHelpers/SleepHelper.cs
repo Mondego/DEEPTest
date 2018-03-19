@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace DeepTestFramework
 {
     public class SleepHelper : InstrumentationHelper
     {
-        public SleepHelper(InstrumentationAPI i) : base(i)
+        protected int nSecondsSleep;
+        
+        public SleepHelper(InstrumentationAPI i, int sleepSeconds) : base(i)
         {
+            nSecondsSleep = sleepSeconds;
         }
 
         protected override List<Instruction> InstrumentationHelperOpeningInstructions(
@@ -17,8 +21,19 @@ namespace DeepTestFramework
         {
             List<Instruction> weaveOpeningInstructions = new List<Instruction>();
 
-            // TODO load how many sleep seconds needed
-            // TODO inject a thread.sleep call
+            ILProcessor ilp = ip.instrumentationPointMethodDefinition.Body.GetILProcessor();
+
+            Instruction loadIntSleepQuantity = ilp.Create(OpCodes.Ldc_I4, nSecondsSleep * 1000);
+            Instruction loadCallThreadSleep = 
+                ilp.Create(
+                    OpCodes.Call,
+                    ip.instrumentationPointMethodDefinition.Module.Import(
+                        typeof(System.Threading.Thread).GetMethod("Sleep", new Type[] { typeof(int) })));
+
+            ip.instrumentationPointMethodDefinition.Body.OptimizeMacros();
+
+            weaveOpeningInstructions.Add(loadIntSleepQuantity);
+            weaveOpeningInstructions.Add(loadCallThreadSleep);
 
             return weaveOpeningInstructions;
         }

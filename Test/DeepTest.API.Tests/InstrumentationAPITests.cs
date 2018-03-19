@@ -57,7 +57,6 @@ namespace DeepTest.API.Tests
                     .FindInAssemblyNamed("ExampleClientServerEchoApp")
                     .FindInTypeNamed("EchoServer")
                     .FindMethodNamed("RespondToMessage");
-            //testDelayIp.printMethodInstructions();
 
             handler.Instrumentation.Delay
                 .AddSecondsOfSleep(5)
@@ -66,7 +65,10 @@ namespace DeepTest.API.Tests
             SystemProcessWithInput app = 
                 handler.Deployment.ExecuteWithArguments(instrumentedAppPath, "server 60013");
             app.Start();
-            app.StopAfterNSeconds(5);
+
+            TestUtility.mockUdpClientRequest("127.0.0.1", 60013, "test");
+
+            app.StopAfterNSeconds(20);
         }
 
         [Test]
@@ -103,14 +105,12 @@ namespace DeepTest.API.Tests
                     .FindInAssemblyNamed("ExampleClientServerEchoApp")
                     .FindInTypeNamed("EchoServer")
                     .FindMethodNamed("GetAvailableMessage");
-            //stopwatchStartPoint.printMethodInstructions();
  
             InstrumentationPoint stopwatchEndPoint = 
                 handler.Instrumentation.AddNamedInstrumentationPoint("stopStopwatchSentMessage")
                     .FindInAssemblyNamed("ExampleClientServerEchoApp")
                     .FindInTypeNamed("EchoServer")
                     .FindMethodNamed("RespondToMessage");
-            //stopwatchEndPoint.printMethodInstructions();
 
             handler.Instrumentation.Measure
                 .WithStopWatch()
@@ -120,7 +120,10 @@ namespace DeepTest.API.Tests
             SystemProcessWithInput app = 
                 handler.Deployment.ExecuteWithArguments(instrumentedAppPath, "server 60012");
             app.Start();
-            app.StopAfterNSeconds(5);
+
+            TestUtility.mockUdpClientRequest("127.0.0.1", 60012, "test");
+
+            app.StopAfterNSeconds(20);
         }
 
         [Test]
@@ -157,27 +160,28 @@ namespace DeepTest.API.Tests
                     .FindInAssemblyNamed("ExampleClientServerEchoApp")
                     .FindInTypeNamed("EchoServer")
                     .FindMethodNamed("RespondToMessage");
-            //snapshotClient.printMethodInstructions();
 
             InstrumentationPoint snapshotNMessagesSent = 
                 handler.Instrumentation.AddNamedInstrumentationPoint("stopStopwatchSentMessage")
                     .FindInAssemblyNamed("ExampleClientServerEchoApp")
                     .FindInTypeNamed("EchoServer")
                     .FindMethodNamed("RespondToMessage");
-            //snapshotNMessagesSent.printMethodInstructions();
 
             handler.Instrumentation.Snapshot
-                .ValueOf("remote")
+                .ValueOfField("remote")
                 .StartingAtExit(snapshotClient);
             
             handler.Instrumentation.Snapshot
-                .ValueOf("nMessagesSent")
+                .ValueOfField("nMessagesSent")
                 .StartingAtExit(snapshotNMessagesSent);
 
             SystemProcessWithInput app = 
                 handler.Deployment.ExecuteWithArguments(instrumentedAppPath, "server 60011");
             app.Start();
-            app.StopAfterNSeconds(5);
+
+            TestUtility.mockUdpClientRequest("127.0.0.1", 60011, "test");
+
+            app.StopAfterNSeconds(20);
         }
     }
 }

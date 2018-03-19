@@ -12,14 +12,14 @@ using RemoteTestingWrapper;
 
 namespace DeepTestFramework
 {
-    public class WeavingHandler
+    public class LegacyWeavingHandler
     {
         private AssemblyDefinition mPlugin;
         private Dictionary<string, AssemblyDefinition> mWeaves = 
             new Dictionary<string, AssemblyDefinition>();
         private int tempMetadata;
 
-        public WeavingHandler(int metadata)
+        public LegacyWeavingHandler(int metadata)
         {
             System.Reflection.AssemblyName pluginAssemblyMetadata =
                 System.Reflection.Assembly.GetExecutingAssembly()
@@ -35,28 +35,8 @@ namespace DeepTestFramework
 
         public void insertStopwatchAssertion(InstrumentationPoint start, InstrumentationPoint stop)
         {
-            FieldDefinition wovenStopwatch = 
-                LegacyStopwatchHelper.addStopwatchFieldToType(
-                    stop.instrumentationPointTypeDefinition,
-                    "wovenStopwatch"
-                );
-
-            LegacyStopwatchHelper.startStopwatch(
-                wp: start,
-                stopwatch: wovenStopwatch,
-                atInstruction: start.instrumentationPointMethodDefinition.Body.Instructions.First(),
-                weaveBefore: true
-            );
-               
-            LegacyStopwatchHelper.stopStopwatch(
-                wp: stop,
-                stopwatch: wovenStopwatch,
-                atInstruction: stop.instrumentationPointMethodDefinition.Body.Instructions.First(),
-                weaveBefore: false
-            );
-
             // TODO move this to RemoteAssertionHelper
-            ILProcessor ilp = stop.instrumentationPointMethodDefinition.Body.GetILProcessor();
+            /*ILProcessor ilp = stop.instrumentationPointMethodDefinition.Body.GetILProcessor();
             stop.instrumentationPointMethodDefinition.Body.SimplifyMacros();
             Instruction startingPoint = stop.instrumentationPointMethodDefinition.Body.Instructions.Last();
 
@@ -87,47 +67,7 @@ namespace DeepTestFramework
             ilp.InsertAfter(loadThis, loadStopwatchField);
             ilp.InsertAfter(loadStopwatchField, callSingletonMethod);
 
-            stop.instrumentationPointMethodDefinition.Body.OptimizeMacros();
-        }
-
-        public void WeaveDebugInfoAtWeavePointEntry(InstrumentationPoint wp, string info = "")
-        {
-            List<Instruction> weaveInstructions = new List<Instruction>();
-            string loadEntryValue = "[Debug] Weaving Before " + info;
-        
-            weaveInstructions.Add(
-                wp.instrumentationPointMethodDefinition.Body.GetILProcessor().Create(OpCodes.Ldstr, loadEntryValue)
-            );
-            weaveInstructions.Add(
-                wp.instrumentationPointMethodDefinition.Body.GetILProcessor().Create(
-                    OpCodes.Call,
-                    wp.instrumentationPointMethodDefinition.Module.Import(
-                        typeof(System.Console).GetMethod("WriteLine", new [] { typeof(string) }))));
-
-            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodEntry(
-                wp,
-                weaveInstructions
-            );
-        }
-
-        public void WeaveDebugInfoAtWeavePointExit(InstrumentationPoint wp, string info = "")
-        {
-            List<Instruction> weaveInstructions = new List<Instruction>();
-            string loadExitValue = "[Debug] Weaving After " + info;
-
-            weaveInstructions.Add(
-                wp.instrumentationPointMethodDefinition.Body.GetILProcessor().Create(OpCodes.Ldstr, loadExitValue)
-            );
-            weaveInstructions.Add(
-                wp.instrumentationPointMethodDefinition.Body.GetILProcessor().Create(
-                    OpCodes.Call,
-                    wp.instrumentationPointMethodDefinition.Module.Import(
-                        typeof(System.Console).GetMethod("WriteLine", new [] { typeof(string) }))));
-
-            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(
-                wp,
-                weaveInstructions
-            );
+            stop.instrumentationPointMethodDefinition.Body.OptimizeMacros();*/
         }
 
         public void ReadAssembly(string path)

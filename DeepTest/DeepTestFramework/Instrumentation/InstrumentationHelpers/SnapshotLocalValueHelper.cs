@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
+using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace DeepTestFramework
 {
     public class SnapshotLocalValueHelper : InstrumentationHelper
     {
-        public SnapshotLocalValueHelper(InstrumentationAPI i) : base(i)
+        protected string snapshotFieldName;
+
+        public SnapshotLocalValueHelper(InstrumentationAPI i, string fieldName) : base(i)
         {
+            snapshotFieldName = fieldName;
         }
 
         protected override void InstrumentationHelperInitialization(
@@ -25,7 +31,44 @@ namespace DeepTestFramework
         {
             List<Instruction> weaveOpeningInstructions = new List<Instruction>();
 
-            // TODO calls "this" then loads value of interest
+            ILProcessor ilp = ip.instrumentationPointMethodDefinition.Body.GetILProcessor();
+            ip.instrumentationPointMethodDefinition.Body.SimplifyMacros();
+
+            string loadEntryValue = "[Start Snapshot] Field: " + snapshotFieldName;
+            string endSnapshotValue = "[End Snapshot Field]";
+            FieldDefinition snapshotFieldDefinition = 
+                ip.instrumentationPointTypeDefinition.Fields
+                    .Single(f => f.Name == snapshotFieldName);
+
+            Instruction startSnapshotListing = ilp.Create(OpCodes.Ldstr, loadEntryValue);
+            Instruction endSnapshotListing = ilp.Create(OpCodes.Ldstr, endSnapshotValue);
+            Instruction systemConsoleWriteString =
+                ilp.Create(
+                    OpCodes.Call,
+                    ip.instrumentationPointMethodDefinition.Module.Import(
+                        typeof(System.Console).GetMethod("WriteLine", new [] { typeof(string) })));
+
+            Instruction loadThis = ilp.Create(OpCodes.Ldarg_0);
+            Instruction loadSnapshotValue =
+                ilp.Create(OpCodes.Ldfld, snapshotFieldDefinition);
+            Instruction boxSnapshotField =
+                ilp.Create(OpCodes.Box, snapshotFieldDefinition.FieldType);
+            Instruction systemConsoleWriteObject =
+                ilp.Create(
+                    OpCodes.Call,
+                    ip.instrumentationPointMethodDefinition.Module.Import(
+                        typeof(System.Console).GetMethod("WriteLine", new [] { typeof(object) })));
+
+            ip.instrumentationPointMethodDefinition.Body.OptimizeMacros();
+
+            weaveOpeningInstructions.Add(startSnapshotListing);
+            weaveOpeningInstructions.Add(systemConsoleWriteString);
+            weaveOpeningInstructions.Add(loadThis);
+            weaveOpeningInstructions.Add(loadSnapshotValue);
+            weaveOpeningInstructions.Add(boxSnapshotField);
+            weaveOpeningInstructions.Add(systemConsoleWriteObject);
+            weaveOpeningInstructions.Add(endSnapshotListing);
+            weaveOpeningInstructions.Add(systemConsoleWriteString);
 
             return weaveOpeningInstructions;
         }
