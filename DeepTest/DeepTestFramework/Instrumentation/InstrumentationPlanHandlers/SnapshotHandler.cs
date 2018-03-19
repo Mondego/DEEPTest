@@ -12,7 +12,7 @@ namespace DeepTestFramework
 
         public InstrumentationHelper ValueOf(string field)
         {
-            return new InstrumentationHelper(instrumentationSource);
+            return new SnapshotLocalValueHelper(instrumentationSource);
         }
     }
 }

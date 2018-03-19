@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Instrumentation\WeavingHandler.cs" />
-    <Compile Include="Instrumentation\Helpers\System\Diagnostics\StopwatchHelper.cs" />
+    <Compile Include="Instrumentation\Helpers\System\Diagnostics\LegacyStopwatchHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

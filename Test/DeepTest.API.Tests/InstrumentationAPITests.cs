@@ -61,7 +61,7 @@ namespace DeepTest.API.Tests
 
             handler.Instrumentation.Delay
                 .AddSecondsOfSleep(5)
-                .AtEntry(testDelayIp);
+                .StartingAtEntry(testDelayIp);
             
             SystemProcessWithInput app = 
                 handler.Deployment.ExecuteWithArguments(instrumentedAppPath, "server 60013");
@@ -114,7 +114,7 @@ namespace DeepTest.API.Tests
 
             handler.Instrumentation.Measure
                 .WithStopWatch()
-                .AtEntry(stopwatchStartPoint)
+                .StartingAtEntry(stopwatchStartPoint)
                 .UntilExit(stopwatchEndPoint);
             
             SystemProcessWithInput app = 
@@ -168,11 +168,11 @@ namespace DeepTest.API.Tests
 
             handler.Instrumentation.Snapshot
                 .ValueOf("remote")
-                .AtExit(snapshotClient);
+                .StartingAtExit(snapshotClient);
             
             handler.Instrumentation.Snapshot
                 .ValueOf("nMessagesSent")
-                .AtExit(snapshotNMessagesSent);
+                .StartingAtExit(snapshotNMessagesSent);
 
             SystemProcessWithInput app = 
                 handler.Deployment.ExecuteWithArguments(instrumentedAppPath, "server 60011");

@@ -13,7 +13,7 @@ namespace DeepTestFramework
 
         public InstrumentationHelper WithStopWatch()
         {
-            return new InstrumentationHelper(instrumentationSource);
+            return new StopwatchHelper(instrumentationSource);
         }
     }
 }

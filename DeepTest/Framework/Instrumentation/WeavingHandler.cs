@@ -36,19 +36,19 @@ namespace DeepTestFramework
         public void insertStopwatchAssertion(InstrumentationPoint start, InstrumentationPoint stop)
         {
             FieldDefinition wovenStopwatch = 
-                StopwatchHelper.addStopwatchFieldToType(
+                LegacyStopwatchHelper.addStopwatchFieldToType(
                     stop.instrumentationPointTypeDefinition,
                     "wovenStopwatch"
                 );
 
-            StopwatchHelper.startStopwatch(
+            LegacyStopwatchHelper.startStopwatch(
                 wp: start,
                 stopwatch: wovenStopwatch,
                 atInstruction: start.instrumentationPointMethodDefinition.Body.Instructions.First(),
                 weaveBefore: true
             );
                
-            StopwatchHelper.stopStopwatch(
+            LegacyStopwatchHelper.stopStopwatch(
                 wp: stop,
                 stopwatch: wovenStopwatch,
                 atInstruction: stop.instrumentationPointMethodDefinition.Body.Instructions.First(),

@@ -16,6 +16,10 @@ namespace DeepTestFramework
             List<Instruction> instructionsToWeave
         )
         {
+            if (instructionsToWeave.Count == 0) {
+                return;
+            }
+
             List<Instruction> findReturnInstructionsInTargetMethod = 
                 ip.instrumentationPointMethodDefinition.Body.Instructions
                     .Where(i => i.OpCode == OpCodes.Ret).ToList();
@@ -40,6 +44,10 @@ namespace DeepTestFramework
             List<Instruction> instructionsToWeave
         )
         {
+            if (instructionsToWeave.Count == 0) {
+                return;
+            }
+
             ILProcessor instructionProcessor = ip.instrumentationPointMethodDefinition.Body.GetILProcessor();
             ip.instrumentationPointMethodDefinition.Body.SimplifyMacros();
             Instruction originalFirstInstruction = ip.instrumentationPointMethodDefinition.Body.Instructions.First();

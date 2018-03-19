@@ -52,8 +52,9 @@
     <Compile Include="Instrumentation\InstrumentationHelpers\InstrumentationHelper.cs" />
     <Compile Include="Deployment\SystemUnderTestMessageHandler.cs" />
     <Compile Include="Instrumentation\InstrumentationHelpers\InstrumentationPositionInMethodHelper.cs" />
-    <Compile Include="Instrumentation\InstrumentationHelpers\IDeepTestInstrumentAt.cs" />
-    <Compile Include="Instrumentation\InstrumentationHelpers\IDeepTesttInstrumentUntil.cs" />
+    <Compile Include="Instrumentation\InstrumentationHelpers\StopwatchHelper.cs" />
+    <Compile Include="Instrumentation\InstrumentationHelpers\SleepHelper.cs" />
+    <Compile Include="Instrumentation\InstrumentationHelpers\SnapshotLocalValueHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

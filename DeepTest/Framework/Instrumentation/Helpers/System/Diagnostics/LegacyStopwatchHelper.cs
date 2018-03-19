@@ -18,7 +18,7 @@ namespace DeepTestFramework
     /// 
     /// sw.ElapsedMilliseconds is a wholesome choice here since it adjusts for machine/OS-specific timing.
     /// </summary>
-    public class StopwatchHelper
+    public class LegacyStopwatchHelper
     {
         public static FieldDefinition addStopwatchFieldToType(
             TypeDefinition t, 
