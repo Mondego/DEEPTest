@@ -69,5 +69,9 @@
       <Project>{8A3DF506-6F80-46B0-B08E-B166267A1654}</Project>
       <Name>RemoteAssertionMessages</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RemoteTestingWrapper\RemoteTestingWrapper.csproj">
+      <Project>{6E11FF0E-4B96-4235-A61D-9916579BBCCF}</Project>
+      <Name>RemoteTestingWrapper</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

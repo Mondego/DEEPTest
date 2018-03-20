@@ -51,7 +51,6 @@ namespace DeepTest.API.Tests
                 instrumentedAppPath
             );
 
-            // TODO error handle so that that each of these throws if not found, or throws if too many
             InstrumentationPoint testDelayIp = 
                 handler.Instrumentation.AddNamedInstrumentationPoint("testDelayIP")
                     .FindInAssemblyNamed("ExampleClientServerEchoApp")

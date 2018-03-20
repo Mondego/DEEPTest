@@ -5,6 +5,7 @@ using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using RemoteTestingWrapper;
 
 namespace DeepTestFramework
 {
@@ -33,42 +34,41 @@ namespace DeepTestFramework
 
             ILProcessor ilp = ip.instrumentationPointMethodDefinition.Body.GetILProcessor();
             ip.instrumentationPointMethodDefinition.Body.SimplifyMacros();
-
-            string loadEntryValue = "[Start Snapshot] Field: " + snapshotFieldName;
-            string endSnapshotValue = "[End Snapshot Field]";
+    
+            // Load value of interest and box as object
             FieldDefinition snapshotFieldDefinition = 
                 ip.instrumentationPointTypeDefinition.Fields
                     .Single(f => f.Name == snapshotFieldName);
-
-            Instruction startSnapshotListing = ilp.Create(OpCodes.Ldstr, loadEntryValue);
-            Instruction endSnapshotListing = ilp.Create(OpCodes.Ldstr, endSnapshotValue);
-            Instruction systemConsoleWriteString =
-                ilp.Create(
-                    OpCodes.Call,
-                    ip.instrumentationPointMethodDefinition.Module.Import(
-                        typeof(System.Console).GetMethod("WriteLine", new [] { typeof(string) })));
-
             Instruction loadThis = ilp.Create(OpCodes.Ldarg_0);
             Instruction loadSnapshotValue =
                 ilp.Create(OpCodes.Ldfld, snapshotFieldDefinition);
             Instruction boxSnapshotField =
                 ilp.Create(OpCodes.Box, snapshotFieldDefinition.FieldType);
-            Instruction systemConsoleWriteObject =
-                ilp.Create(
-                    OpCodes.Call,
+            
+            // Load IP name
+            Instruction loadIpId = ilp.Create(OpCodes.Ldstr, ip.Name);
+
+            // Call default remote test wrapper handler
+            Instruction loadRemoteTestDriverInstance =
+                ilp.Create(OpCodes.Call, 
                     ip.instrumentationPointMethodDefinition.Module.Import(
-                        typeof(System.Console).GetMethod("WriteLine", new [] { typeof(object) })));
+                        typeof(StandaloneInstrumentationMessageHandler).GetMethod("get_Instance", new Type[] { })));
+           
+            Instruction callCaptureIpContents =
+                ilp.Create(OpCodes.Callvirt, 
+                    ip.instrumentationPointMethodDefinition.Module.Import(
+                        typeof(StandaloneInstrumentationMessageHandler).GetMethod(
+                            "CaptureInstrumentationPoint", 
+                            new Type[] { typeof(object), typeof(string) })));
 
             ip.instrumentationPointMethodDefinition.Body.OptimizeMacros();
-
-            weaveOpeningInstructions.Add(startSnapshotListing);
-            weaveOpeningInstructions.Add(systemConsoleWriteString);
+           
+            weaveOpeningInstructions.Add(loadRemoteTestDriverInstance);
             weaveOpeningInstructions.Add(loadThis);
             weaveOpeningInstructions.Add(loadSnapshotValue);
             weaveOpeningInstructions.Add(boxSnapshotField);
-            weaveOpeningInstructions.Add(systemConsoleWriteObject);
-            weaveOpeningInstructions.Add(endSnapshotListing);
-            weaveOpeningInstructions.Add(systemConsoleWriteString);
+            weaveOpeningInstructions.Add(loadIpId);
+            weaveOpeningInstructions.Add(callCaptureIpContents);
 
             return weaveOpeningInstructions;
         }

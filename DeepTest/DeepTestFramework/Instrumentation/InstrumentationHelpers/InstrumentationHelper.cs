@@ -49,7 +49,7 @@ namespace DeepTestFramework
         protected virtual void InstrumentationHelperInitialization (InstrumentationPoint ip) 
         {
         }
-                
+
         protected abstract List<Instruction> InstrumentationHelperOpeningInstructions(InstrumentationPoint ip);
 
         protected virtual List<Instruction> InstrumentationHelperClosingInstructions(InstrumentationPoint ip)

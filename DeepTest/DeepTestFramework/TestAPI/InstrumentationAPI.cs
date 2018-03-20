@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 using Mono.Cecil;
-using System.IO;
 
 namespace DeepTestFramework
 {
     public class InstrumentationAPI
     {
-        protected Dictionary<string, AssemblyDefinition> mapAssemblyNamesToDefinitions;
-        protected Dictionary<string, InstrumentationPoint> mapInstrumentationPointNamesToSpecifications;
-        protected Dictionary<string, string> mapAssemblyNamesToWritePaths;
+        private Dictionary<string, AssemblyDefinition> mapAssemblyNamesToDefinitions;
+        private Dictionary<string, InstrumentationPoint> mapInstrumentationPointNamesToSpecifications;
+        private Dictionary<string, string> mapAssemblyNamesToWritePaths;
 
         public MeasurementHandler Measure { get; }
         public SnapshotHandler Snapshot { get; }

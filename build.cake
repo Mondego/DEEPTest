@@ -85,6 +85,11 @@ Task("Test")
         );
     }
 
+    CopyFiles(
+        GetFiles("./Test/**/bin/Debug/RemoteTestingWrapper.dll"),
+        stagingDir
+    );
+
     NUnit3("./Test/**/bin/Debug/*.Tests.dll", new NUnit3Settings {
         NoResults = true
     });

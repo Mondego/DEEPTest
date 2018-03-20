@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 
-using RemoteAssertionMessages;
-
-using System.Collections.Generic;
-using System.Net.Sockets;
-using System.IO;
-using System.Net;
-using System.Text;
-using Newtonsoft.Json;
-
 namespace RemoteTestingWrapper
 {
-    public sealed class RemoteSafeAssertionsSingleton
+    public sealed class StandaloneInstrumentationMessageHandler
     {
-        private RemoteSafeAssertionsSingleton()
+        private StandaloneInstrumentationMessageHandler()
         {
+            Console.WriteLine("First-time setup of StandaloneInstrumentationMessageHandler");
         }
 
-        public static RemoteSafeAssertionsSingleton Instance { get { return Nested.instance; } }
+        public static StandaloneInstrumentationMessageHandler Instance { get { return Nested.instance; } }
 
         private class Nested
         {
@@ -28,9 +20,22 @@ namespace RemoteTestingWrapper
             {
             }
 
-            internal static readonly RemoteSafeAssertionsSingleton instance = new RemoteSafeAssertionsSingleton();
+            internal static readonly StandaloneInstrumentationMessageHandler instance = new StandaloneInstrumentationMessageHandler();
         }
             
+        public void CaptureInstrumentationPoint(object value, string instrumentationPointId)
+        {
+            Console.WriteLine("Captured Object " + value);
+            Console.WriteLine("Instrumentation point: " + instrumentationPointId);
+        }
+
+        public void CaptureStopwatchEndPoint(Stopwatch s, string instrumentationPointId)
+        {
+            Console.WriteLine("Captured Stopwatch " + s);
+            Console.WriteLine("Instrumentation point: " + instrumentationPointId);
+            Console.WriteLine("Elapsed ms: " + s.ElapsedMilliseconds);
+        }
+
         public void Message(int metadata, int wpId, Stopwatch s)
         {
             /*Console.WriteLine("Sending result to 127.0.0.1:" + metadata);
