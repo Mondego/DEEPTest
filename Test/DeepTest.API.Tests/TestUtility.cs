@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace DeepTest.API.Tests
 {
@@ -28,6 +29,7 @@ namespace DeepTest.API.Tests
             while (client.Available <= 0)
             {
             }
+            Thread.Sleep(1000);
 
             client.Close();
         }
