@@ -1,13 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Example.EchoChatServer", "Test\Example\Test.Example.EchoChatServer\Test.Example.EchoChatServer.csproj", "{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DeepTest", "DeepTest", "{4034F715-C916-45DA-BDA0-2C2C84A9D9E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTest", "DeepTest\DeepTest.csproj", "{175F8A87-38F8-469B-8C1F-B0F09BC53A03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteAssertionMessages", "DeepTest\RemoteAssertionMessages\RemoteAssertionMessages.csproj", "{8A3DF506-6F80-46B0-B08E-B166267A1654}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Example.EchoChatDTSuite", "Test\Example\Test.Example.EchoChatDTSuite\Test.Example.EchoChatDTSuite.csproj", "{A7FB3487-D07A-461E-B238-38142E01634B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteTestingWrapper", "DeepTest\RemoteTestingWrapper\RemoteTestingWrapper.csproj", "{6E11FF0E-4B96-4235-A61D-9916579BBCCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTestWrapper", "DeepTestWrapper\DeepTestWrapper.csproj", "{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTestFramework", "DeepTest\DeepTestFramework\DeepTestFramework.csproj", "{16E02605-4148-4A13-B3AD-3581A2C6B2FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{D9514804-5683-42EE-913F-2A632123A048}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepTest.API.Tests", "Test\DeepTest.API.Tests\DeepTest.API.Tests.csproj", "{8FED18AA-10D8-425A-BD04-BFC9856313A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{52C00346-CA08-44CD-882E-6C896A4217ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleClientServerEchoApp", "Examples\ExampleClientServerEchoApp\ExampleClientServerEchoApp.csproj", "{6242E4D4-C49E-43AE-AFA5-56EE984115D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,21 +23,32 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Debug|x86.Build.0 = Debug|Any CPU
-		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Release|x86.ActiveCfg = Release|Any CPU
-		{175F8A87-38F8-469B-8C1F-B0F09BC53A03}.Release|x86.Build.0 = Release|Any CPU
-		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Debug|x86.Build.0 = Debug|Any CPU
-		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Release|x86.ActiveCfg = Release|Any CPU
-		{6B7AEF1F-E818-4F3B-9CEA-DAE23F48DBF6}.Release|x86.Build.0 = Release|Any CPU
-		{A7FB3487-D07A-461E-B238-38142E01634B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A7FB3487-D07A-461E-B238-38142E01634B}.Debug|x86.Build.0 = Debug|Any CPU
-		{A7FB3487-D07A-461E-B238-38142E01634B}.Release|x86.ActiveCfg = Release|Any CPU
-		{A7FB3487-D07A-461E-B238-38142E01634B}.Release|x86.Build.0 = Release|Any CPU
-		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Debug|x86.ActiveCfg = Debug|x86
-		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Debug|x86.Build.0 = Debug|x86
-		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Release|x86.ActiveCfg = Release|x86
-		{B27C9E68-68B1-46A5-9D12-C9F578D99B0C}.Release|x86.Build.0 = Release|x86
+		{16E02605-4148-4A13-B3AD-3581A2C6B2FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{16E02605-4148-4A13-B3AD-3581A2C6B2FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{16E02605-4148-4A13-B3AD-3581A2C6B2FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{16E02605-4148-4A13-B3AD-3581A2C6B2FA}.Release|x86.Build.0 = Release|Any CPU
+		{6242E4D4-C49E-43AE-AFA5-56EE984115D9}.Debug|x86.ActiveCfg = Debug|x86
+		{6242E4D4-C49E-43AE-AFA5-56EE984115D9}.Debug|x86.Build.0 = Debug|x86
+		{6242E4D4-C49E-43AE-AFA5-56EE984115D9}.Release|x86.ActiveCfg = Release|x86
+		{6242E4D4-C49E-43AE-AFA5-56EE984115D9}.Release|x86.Build.0 = Release|x86
+		{6E11FF0E-4B96-4235-A61D-9916579BBCCF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6E11FF0E-4B96-4235-A61D-9916579BBCCF}.Debug|x86.Build.0 = Debug|Any CPU
+		{6E11FF0E-4B96-4235-A61D-9916579BBCCF}.Release|x86.ActiveCfg = Release|Any CPU
+		{6E11FF0E-4B96-4235-A61D-9916579BBCCF}.Release|x86.Build.0 = Release|Any CPU
+		{8A3DF506-6F80-46B0-B08E-B166267A1654}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8A3DF506-6F80-46B0-B08E-B166267A1654}.Debug|x86.Build.0 = Debug|Any CPU
+		{8A3DF506-6F80-46B0-B08E-B166267A1654}.Release|x86.ActiveCfg = Release|Any CPU
+		{8A3DF506-6F80-46B0-B08E-B166267A1654}.Release|x86.Build.0 = Release|Any CPU
+		{8FED18AA-10D8-425A-BD04-BFC9856313A5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8FED18AA-10D8-425A-BD04-BFC9856313A5}.Debug|x86.Build.0 = Debug|Any CPU
+		{8FED18AA-10D8-425A-BD04-BFC9856313A5}.Release|x86.ActiveCfg = Release|Any CPU
+		{8FED18AA-10D8-425A-BD04-BFC9856313A5}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8A3DF506-6F80-46B0-B08E-B166267A1654} = {4034F715-C916-45DA-BDA0-2C2C84A9D9E9}
+		{6E11FF0E-4B96-4235-A61D-9916579BBCCF} = {4034F715-C916-45DA-BDA0-2C2C84A9D9E9}
+		{16E02605-4148-4A13-B3AD-3581A2C6B2FA} = {4034F715-C916-45DA-BDA0-2C2C84A9D9E9}
+		{8FED18AA-10D8-425A-BD04-BFC9856313A5} = {D9514804-5683-42EE-913F-2A632123A048}
+		{6242E4D4-C49E-43AE-AFA5-56EE984115D9} = {52C00346-CA08-44CD-882E-6C896A4217ED}
 	EndGlobalSection
 EndGlobal

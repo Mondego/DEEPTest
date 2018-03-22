@@ -1,4 +1,5 @@
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.7.0
+#addin "Cake.Incubator"
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -8,15 +9,17 @@ var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Debug");
 
 //////////////////////////////////////////////////////////////////////
-// PREPARATION
 //////////////////////////////////////////////////////////////////////
 
-// Define directories.
-var deepTestBuildDir = Directory("./DeepTest/bin") + Directory(configuration);
-var deepTestWrapperBuildDir = Directory("./DeepTestWrapper/bin") + Directory(configuration);
+var DeepTestSolutionPath = "DeepTest.sln";
 
-var echoServerExampleTestSuiteBuildDir = Directory("./Test/Example/Test.Example.EchoChatDTSuite/bin") + Directory(configuration);
-var echoServerExampleBuildDir = Directory("./Test/Example/Test.Example.EchoChatServer/bin") + Directory(configuration);
+var RootDir = Directory("./");
+var DeepTestFrameworkDir = Directory("./DeepTest/");
+var TestDir = Directory("./Test/"); 
+var ExamplesDir = Directory("./Examples/");
+
+// Demo & Staging
+var stagingDir = Directory("./staging");
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -25,38 +28,69 @@ var echoServerExampleBuildDir = Directory("./Test/Example/Test.Example.EchoChatS
 Task("Clean")
     .Does(() =>
 {
-    CleanDirectory(deepTestBuildDir);
-    CleanDirectory(deepTestWrapperBuildDir);
-    CleanDirectory(echoServerExampleTestSuiteBuildDir);
-    CleanDirectory(echoServerExampleBuildDir);
+    foreach(var path in GetSubDirectories(DeepTestFrameworkDir))
+    {
+        Information("Cleaning {0}", path);
+        CleanDirectories(path + "/bin/" + configuration);
+        CleanDirectories(path + "/obj/" + configuration);
+    }
+
+    foreach(var path in GetSubDirectories(TestDir))
+    {
+        Information("Cleaning {0}", path);
+        CleanDirectories(path + "/bin/" + configuration);
+        CleanDirectories(path + "/obj/" + configuration);
+    }
+
+    foreach(var path in GetSubDirectories(ExamplesDir))
+    {
+        Information("Cleaning {0}", path);
+        CleanDirectories(path + "/bin/" + configuration);
+        CleanDirectories(path + "/obj/" + configuration);
+    }
 });
 
 Task("Restore-NuGet-Packages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    NuGetRestore("DeepTest.sln");
+    NuGetRestore(DeepTestSolutionPath);
 });
 
 Task("Build")
     .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
 {
-    MSBuild("DeepTest.sln", settings =>
+    MSBuild(DeepTestSolutionPath, settings =>
         settings.SetVerbosity(Verbosity.Minimal));
 });
 
-Task("Run-Example-Deep-Tests")
+Task("Test")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    EnsureDirectoryExists("./staging");
-    CleanDirectory("./staging");
-        
-    var files = GetFiles("./Test/Example/Test.Example.EchoChatDTSuite/bin/Debug/*");
-    CopyFiles(files, "./staging/");
-        
-    NUnit3("./staging/Test.*.dll", new NUnit3Settings {
+    EnsureDirectoryExists(stagingDir);
+    CleanDirectory(stagingDir);
+    
+    foreach(var path in GetSubDirectories(ExamplesDir))
+    {
+        Information("Copying Example Project {0}", path);
+        CopyFiles(
+            GetFiles(path + "/bin/" + configuration + "/*.exe"),
+            stagingDir
+        );
+        CopyFiles(
+            GetFiles(path + "/bin/" + configuration + "/*.dll"),
+            stagingDir
+        );
+    }
+
+    CopyFiles(
+        GetFiles("./DeepTest/RemoteTestingWrapper/bin/Debug/*.dll"),
+        stagingDir
+    );
+
+    NUnit3("./Test/**/bin/Debug/*.Tests.dll", new NUnit3Settings {
         NoResults = true
     });
 });
@@ -66,10 +100,6 @@ Task("Run-Example-Deep-Tests")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Run-Example-Deep-Tests");
-
-//////////////////////////////////////////////////////////////////////
-// EXECUTION
-//////////////////////////////////////////////////////////////////////
+    .IsDependentOn("Test");
 
 RunTarget(target);
