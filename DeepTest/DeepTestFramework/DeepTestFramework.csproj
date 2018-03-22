@@ -41,11 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Deployment\SystemProcessWithInput.cs" />
+    <Compile Include="Deployment\SystemProcessWrapperWithInput.cs" />
     <Compile Include="Instrumentation\InstrumentationPlanHandlers\DelayHandler.cs" />
     <Compile Include="Instrumentation\InstrumentationPlanHandlers\MeasurementHandler.cs" />
     <Compile Include="Instrumentation\InstrumentationPlanHandlers\SnapshotHandler.cs" />
-    <Compile Include="TestAPI\DeepTestHandler.cs" />
     <Compile Include="TestAPI\InstrumentationPoint.cs" />
     <Compile Include="TestAPI\SystemUnderTestDeploymentAPI.cs" />
     <Compile Include="TestAPI\InstrumentationAPI.cs" />

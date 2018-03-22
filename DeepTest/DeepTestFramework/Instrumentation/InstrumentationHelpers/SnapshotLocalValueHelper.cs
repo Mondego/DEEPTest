@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
@@ -12,6 +11,7 @@ namespace DeepTestFramework
     public class SnapshotLocalValueHelper : InstrumentationHelper
     {
         protected string snapshotFieldName;
+        private FieldDefinition mSnapshotFieldDefinition;
 
         public SnapshotLocalValueHelper(InstrumentationAPI i, string fieldName) : base(i)
         {
@@ -22,8 +22,59 @@ namespace DeepTestFramework
             InstrumentationPoint ip
         )
         {
-            // TODO will likely need more initialization to retrieve a value on demand
-            base.InstrumentationHelperInitialization(ip);
+            // TODO --- need a more graceful way to name these
+            mSnapshotFieldDefinition =
+                new FieldDefinition(
+                    "snapshot_" + ip.Name,
+                    FieldAttributes.Public,
+                    ip.instrumentationPointTypeDefinition.Module.Import(typeof(WovenSnapshot))
+                );
+            
+            ip.instrumentationPointTypeDefinition.Fields.Add(mSnapshotFieldDefinition);
+
+            // TODO might want a special case of this for constructors, static classes/constructors get messy
+            List<Instruction> wovenFieldInitializationInstructions = new List<Instruction>();
+            MethodDefinition ipParentTypeConstructor = ip.instrumentationPointTypeDefinition.Methods.Single(m => m.Name == ".ctor");
+            FieldDefinition snapshotTargetField = 
+                ip.instrumentationPointTypeDefinition.Fields
+                    .Single(f => f.Name == snapshotFieldName);
+            ILProcessor ctorIlp = ipParentTypeConstructor.Body.GetILProcessor();
+
+            // Load self
+            wovenFieldInitializationInstructions.Add(
+                ctorIlp.Create(OpCodes.Ldarg_0)
+            );
+
+            // Load arguments to WovenSnapshot constructor: IP Name
+            wovenFieldInitializationInstructions.Add(
+                ctorIlp.Create(OpCodes.Ldstr, ip.Name)
+            );
+
+            // Load arguments to WovenSnapshot constructor: Target field
+            wovenFieldInitializationInstructions.Add(
+                ctorIlp.Create(OpCodes.Ldarg_0)
+            );
+            wovenFieldInitializationInstructions.Add(
+                ctorIlp.Create(OpCodes.Ldfld, snapshotTargetField)
+            );
+            wovenFieldInitializationInstructions.Add(
+                ctorIlp.Create(OpCodes.Box, snapshotTargetField.FieldType)
+            );
+
+            // Create with constructor call and store into field
+            wovenFieldInitializationInstructions.Add(
+                ctorIlp.Create(
+                    OpCodes.Newobj,
+                    ipParentTypeConstructor.Module.Import(
+                        typeof(WovenSnapshot).GetConstructor(new Type[] { typeof(string), typeof(object) }))
+                )
+            );
+
+            wovenFieldInitializationInstructions.Add(
+                ctorIlp.Create(OpCodes.Stfld, mSnapshotFieldDefinition)
+            );
+
+            InstrumentationPositionInMethodHelper. WeaveInstructionsAtMethodExit(ipParentTypeConstructor, wovenFieldInitializationInstructions); 
         }
 
         protected override List<Instruction> InstrumentationHelperOpeningInstructions(

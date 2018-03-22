@@ -86,7 +86,7 @@ Task("Test")
     }
 
     CopyFiles(
-        GetFiles("./Test/**/bin/Debug/RemoteTestingWrapper.dll"),
+        GetFiles("./DeepTest/RemoteTestingWrapper/bin/Debug/*.dll"),
         stagingDir
     );
 

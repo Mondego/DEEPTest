@@ -7,6 +7,7 @@ namespace ExampleClientServerEchoApp
 {
     public class EchoServer
     {
+        private int theAnswer = 42;
         private UdpClient listener;
         private bool listening = false;
         private int mPort;
@@ -27,6 +28,7 @@ namespace ExampleClientServerEchoApp
             while (listening) {
                 if (listener.Available > 0) {
                     string message = GetAvailableMessage();
+                    Console.WriteLine(remote.ToString() + ": " + message);
                     RespondToMessage(remote, message);
                 }
             }

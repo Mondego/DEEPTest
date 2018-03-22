@@ -14,7 +14,7 @@ namespace DeepTest.API.Tests
             return Directory.GetParent(testDirectory).Parent.Parent.Parent.FullName;
         }
 
-        public static void mockUdpClientRequest(
+        public static void mockUdpClientMessageRequest(
             string serverHostname, 
             int serverPort, 
             string message
@@ -25,6 +25,10 @@ namespace DeepTest.API.Tests
             byte[] datagram = Encoding.UTF8.GetBytes(message);
             client.Send(datagram, datagram.Length, serverHostname, serverPort);
              
+            while (client.Available <= 0)
+            {
+            }
+
             client.Close();
         }
     }

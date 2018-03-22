@@ -36,6 +36,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StandaloneInstrumentationMessageHandler.cs" />
+    <Compile Include="WovenSnapshot.cs" />
+    <Compile Include="RemoteConfigurations.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

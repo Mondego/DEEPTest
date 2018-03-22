@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
+using System.Linq;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
-using System.Linq;
 
 namespace DeepTestFramework
 {
@@ -12,29 +11,32 @@ namespace DeepTestFramework
         // TODO make something more elegant than just passing a list
         // TODO improved error checking
         public static void WeaveInstructionsAtMethodExit(
-            InstrumentationPoint ip,
+            MethodDefinition weaveIntoMethod,
             List<Instruction> instructionsToWeave
         )
         {
-            if (instructionsToWeave.Count == 0) {
+            if (instructionsToWeave.Count == 0)
+            {
                 return;
             }
 
-            List<Instruction> findReturnInstructionsInTargetMethod = 
-                ip.instrumentationPointMethodDefinition.Body.Instructions
+            List<Instruction> findReturnInstructions =
+                weaveIntoMethod.Body.Instructions
                     .Where(i => i.OpCode == OpCodes.Ret).ToList();
 
-            ILProcessor instructionProcessor = ip.instrumentationPointMethodDefinition.Body.GetILProcessor();
-            ip.instrumentationPointMethodDefinition.Body.SimplifyMacros();
+            ILProcessor instructionProcessor = weaveIntoMethod.Body.GetILProcessor();
+            weaveIntoMethod.Body.SimplifyMacros();
 
             // TODO need more elegant way to resolve this
-            foreach (Instruction returnInstruction in findReturnInstructionsInTargetMethod) {
-                foreach (Instruction weaveInstruction in instructionsToWeave) {
-                    instructionProcessor.InsertBefore (returnInstruction, weaveInstruction);
+            foreach (Instruction returnInstruction in findReturnInstructions)
+            {
+                foreach (Instruction weaveInstruction in instructionsToWeave)
+                {
+                    instructionProcessor.InsertBefore(returnInstruction, weaveInstruction);
                 }
             }
 
-            ip.instrumentationPointMethodDefinition.Body.OptimizeMacros();
+            weaveIntoMethod.Body.OptimizeMacros();
         }
 
         // TODO make something more elegant than just passing a list

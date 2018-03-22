@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System.Linq;
@@ -28,21 +27,21 @@ namespace DeepTestFramework
         {
             InstrumentationHelperInitialization(ip);
             List<Instruction> openingInstructions = InstrumentationHelperOpeningInstructions(ip);
-            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(ip, openingInstructions);  
+            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(ip.instrumentationPointMethodDefinition, openingInstructions);  
             return _Save(ip);
         }
 
         public InstrumentationHelper UntilEntry(InstrumentationPoint ip)
         {
             List<Instruction> closingInstructions = InstrumentationHelperClosingInstructions(ip);
-            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(ip, closingInstructions); 
+            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(ip.instrumentationPointMethodDefinition, closingInstructions); 
             return _Save(ip);
         }
 
         public InstrumentationHelper UntilExit(InstrumentationPoint ip)
         {
             List<Instruction> closingInstructions = InstrumentationHelperClosingInstructions(ip);
-            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(ip, closingInstructions); 
+            InstrumentationPositionInMethodHelper.WeaveInstructionsAtMethodExit(ip.instrumentationPointMethodDefinition, closingInstructions); 
             return _Save(ip);
         }
 

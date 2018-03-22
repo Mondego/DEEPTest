@@ -6,13 +6,13 @@ using System.Collections.Generic;
 
 namespace DeepTestFramework
 {
-	public class SystemProcessWithInput
+    public class SystemProcessWrapperWithInput : IDisposable
 	{
         public Process p { get; }
 		private StreamWriter ProcessStreamInterface;
         private string exePath;
 
-        public SystemProcessWithInput (string targetPath, string arguments, string workingdir = null)
+        public SystemProcessWrapperWithInput (string targetPath, string arguments, string workingdir = null)
 		{
             exePath = targetPath;
 
@@ -46,7 +46,8 @@ namespace DeepTestFramework
                         e.Data.ToString().Trim());
                 }
             };
-           
+
+            Start();
 		}
 
         public void Start(int wait = 0)
@@ -61,7 +62,7 @@ namespace DeepTestFramework
                 p.BeginOutputReadLine();
                 p.BeginErrorReadLine();
                 ProcessStreamInterface = p.StandardInput;
-                Thread.Sleep(1000);
+                Thread.Sleep(5000);
             }
 
             catch (Exception e) {
@@ -89,6 +90,11 @@ namespace DeepTestFramework
         {
             Console.WriteLine("Stopping P{0} {1} in {2} seconds", p.Id, exePath, n);
             Thread.Sleep(n * 1000);
+            Stop();
+        }
+
+        public void Dispose()
+        {
             Stop();
         }
 	}
