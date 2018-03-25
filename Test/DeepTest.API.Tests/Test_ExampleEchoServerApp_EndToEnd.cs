@@ -1,64 +1,15 @@
 ﻿using System;
 using System.IO;
-
-using NUnit.Framework;
-
-using DeepTestFramework;
 using System.Threading;
+using DeepTestFramework;
+using NUnit.Framework;
 
 namespace DeepTest.API.Tests
 {
     [TestFixture]
     public class Test_ExampleEchoServerApp_EndToEnd
     {
-        //[Test]
-        public void ExampleEchoServer_InstrumentationDelay_ShouldIncreaseMessageRoundtrip()
-        {
-            InstrumentationAPI Instrumentation = new InstrumentationAPI();
-            SystemUnderTestDeploymentAPI Driver = new SystemUnderTestDeploymentAPI();
-
-            string stagingPath = 
-                Path.Combine(
-                    TestUtility.getRelativeSolutionPath(TestContext.CurrentContext.TestDirectory),
-                    "staging/"
-                );
-            string echoClientServerExamplePath = 
-                Path.Combine(
-                    stagingPath,
-                    "ExampleClientServerEchoApp.exe"
-                );
-            string instrumentedAppPath = 
-                Path.Combine(
-                    stagingPath,
-                    "Instrumented_DelayTest_ExampleClientServerEchoApp.exe"
-                );
-
-            Console.WriteLine("Instrumenting system: {0}", echoClientServerExamplePath);
-            Console.WriteLine("Writing to: {0}", instrumentedAppPath);
-
-            Instrumentation.AddAssemblyFromPath(echoClientServerExamplePath);
-            Instrumentation.SetAssemblyOutputPath(
-                "ExampleClientServerEchoApp",
-                instrumentedAppPath
-            );
-
-            InstrumentationPoint testDelayIp = 
-                Instrumentation.AddNamedInstrumentationPoint("testDelayIP")
-                    .FindInAssemblyNamed("ExampleClientServerEchoApp")
-                    .FindInTypeNamed("EchoServer")
-                    .FindMethodNamed("RespondToMessage");
-
-            Instrumentation.Delay
-                .AddSecondsOfSleep(5)
-                .StartingAtEntry(testDelayIp);
-            
-            using (SystemProcessWrapperWithInput sut = Driver.ExecuteWithArguments(instrumentedAppPath, "server 60013"))
-            {
-                TestUtility.mockUdpClientMessageRequest("127.0.0.1", 60013, "test");
-            }
-        }
-
-        //[Test]
+        [Test]
         public void ExampleEchoServer_MeasureStopwatch_ShouldCollectRoundtripMessageTimes()
         {
             InstrumentationAPI Instrumentation = new InstrumentationAPI();
@@ -101,6 +52,10 @@ namespace DeepTest.API.Tests
                     .FindInTypeNamed("EchoServer")
                     .FindMethodNamed("RespondToMessage");
 
+            Instrumentation.Delay
+                .AddSecondsOfSleep(3)
+                .StartingAtEntry(stopwatchEndPoint);
+
             Instrumentation.Measure
                 .WithStopWatch()
                 .StartingAtEntry(stopwatchStartPoint)
@@ -109,6 +64,10 @@ namespace DeepTest.API.Tests
             using (SystemProcessWrapperWithInput sut = Driver.ExecuteWithArguments(instrumentedAppPath, "server 60012"))
             {
                 TestUtility.mockUdpClientMessageRequest("127.0.0.1", 60012, "test");
+
+                long elapsed = (long)Driver.captureValue(stopwatchEndPoint);
+                Assert.GreaterOrEqual(elapsed, 3000.0);
+                Assert.LessOrEqual(elapsed, 4000.0);
             }
         }
 

@@ -56,6 +56,10 @@ namespace RemoteTestingWrapper
                 m.value = snapshots[m.instrumentationPointName].Value;
             }
 
+            if (watches.ContainsKey(m.instrumentationPointName)) {
+                m.value = watches[m.instrumentationPointName][watches[m.instrumentationPointName].Count - 1];
+            }
+
             byte[] responseData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(m));
             listener.Send(responseData, responseData.Length, endPoint);
             listener.BeginReceive(new AsyncCallback(receiveMessageCallback), listener);
