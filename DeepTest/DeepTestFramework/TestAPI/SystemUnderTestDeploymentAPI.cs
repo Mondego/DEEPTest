@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using RemoteAssertionMessages;
+using System.Threading.Tasks;
 
 namespace DeepTestFramework
 {
@@ -27,27 +28,26 @@ namespace DeepTestFramework
             return new SystemProcessWrapperWithInput(path, arguments);
         }
 
-        public object captureValue(InstrumentationPoint ip)
+        public object CaptureValueBlocking(InstrumentationPoint ip)
         {
-            using (UdpClient client = new UdpClient(0))
-            {
+            using (UdpClient client = new UdpClient(0)) {
                 IPEndPoint responseEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                InstrumentationPointExchangeMessage requestContents = new InstrumentationPointExchangeMessage
-                {
+                InstrumentationPointExchangeMessage requestContents = new InstrumentationPointExchangeMessage {
                     instrumentationPointName = ip.Name,
                     instrumentationPointType = ip.GetType().ToString(),
                     value = ""
                 };
-                byte[] requestData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestContents));
+                byte[] requestData = 
+                    Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(
+                        requestContents, Formatting.Indented));
+
+                // This will block
                 client.Send(requestData, requestData.Length, "127.0.0.1", RemoteTestingWrapper.RemoteConfigurations.RemoteListenerPort);
-
-                while (client.Available <= 0) {}
-
                 byte[] encoded = client.Receive(ref responseEndPoint);
-                InstrumentationPointExchangeMessage response = 
+                InstrumentationPointExchangeMessage response =
                     JsonConvert.DeserializeObject<InstrumentationPointExchangeMessage>(
                         Encoding.UTF8.GetString(encoded));
-
+        
                 return response.value;
             }
         }

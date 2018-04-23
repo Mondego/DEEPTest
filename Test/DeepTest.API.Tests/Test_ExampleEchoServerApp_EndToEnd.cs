@@ -60,14 +60,15 @@ namespace DeepTest.API.Tests
                 .WithStopWatch()
                 .StartingAtEntry(stopwatchStartPoint)
                 .UntilExit(stopwatchEndPoint);
+
+            Instrumentation.EnableBootstrap();
             
             using (SystemProcessWrapperWithInput sut = Driver.ExecuteWithArguments(instrumentedAppPath, "server 60012"))
             {
                 TestUtility.mockUdpClientMessageRequest("127.0.0.1", 60012, "test");
 
-                long elapsed = (long)Driver.captureValue(stopwatchEndPoint);
-                Assert.GreaterOrEqual(elapsed, 3000.0);
-                Assert.LessOrEqual(elapsed, 4000.0);
+                Assert.That(Driver.CaptureValueBlocking(stopwatchEndPoint), 
+                    Is.GreaterThanOrEqualTo(3000).And.LessThanOrEqualTo(4000));
             }
         }
 
@@ -123,15 +124,16 @@ namespace DeepTest.API.Tests
                    .ValueOfField("nMessagesSent")
                    .StartingAtExit(snapshotNMessagesSent);
 
+            Instrumentation.EnableBootstrap();
 
             using (SystemProcessWrapperWithInput sut = Driver.ExecuteWithArguments(instrumentedAppPath, "server 60011"))
             {
-                Assert.AreEqual(42, Driver.captureValue(snapshotPrivateInner));
-                Assert.AreEqual(0, Driver.captureValue(snapshotNMessagesSent));
+                Assert.That(Driver.CaptureValueBlocking(snapshotPrivateInner), Is.EqualTo(42));
+                Assert.That(Driver.CaptureValueBlocking(snapshotNMessagesSent), Is.EqualTo(0));
 
                 TestUtility.mockUdpClientMessageRequest("127.0.0.1", 60011, "test 1");
 
-                Assert.AreEqual(1, Driver.captureValue(snapshotNMessagesSent));
+                Assert.That(Driver.CaptureValueBlocking(snapshotNMessagesSent), Is.EqualTo(1));
             }
         }
     }

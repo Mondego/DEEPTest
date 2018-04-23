@@ -21,6 +21,7 @@ namespace DeepTestFramework
             List<Instruction> weaveOpeningInstructions = new List<Instruction>();
 
             ILProcessor ilp = ip.instrumentationPointMethodDefinition.Body.GetILProcessor();
+            ip.instrumentationPointMethodDefinition.Body.SimplifyMacros();
 
             Instruction loadIntSleepQuantity = ilp.Create(OpCodes.Ldc_I4, nSecondsSleep * 1000);
             Instruction loadCallThreadSleep = 

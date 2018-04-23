@@ -60,6 +60,14 @@ namespace DeepTestFramework
             return this;
         }
 
+        // This is a temporary fix for the deadlock bug and should be ported out.
+        public InstrumentationPoint _overrideSetMethodDefinition(MethodDefinition md)
+        {
+            instrumentationPointMethodDefinition = md;
+
+            return this;
+        }
+
         public void printMethodInstructions()
         {
             Console.WriteLine("/// {0} ///", instrumentationPointMethodDefinition.FullName);

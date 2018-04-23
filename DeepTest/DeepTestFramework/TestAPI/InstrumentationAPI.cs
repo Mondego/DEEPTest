@@ -40,9 +40,33 @@ namespace DeepTestFramework
             return this;
         }
 
+        public void EnableBootstrap()
+        {
+            BootstrapBrokerInstanceHelper bootstrapHelper = new BootstrapBrokerInstanceHelper(this);
+            InstrumentationAPI iapi = this;
+
+            foreach (InstrumentationPoint i in mapInstrumentationPointNamesToSpecifications.Values) {
+                InstrumentationPoint ctor = 
+                    new InstrumentationPoint("ctor", iapi)
+                        .FindInAssemblyNamed(i.instrumentationPointAssemblyDefinition.Name.Name)
+                        .FindInTypeNamed(i.instrumentationPointTypeDefinition.Name)
+                        .FindMethodNamed(".ctor");
+                bootstrapHelper.StartingAtEntry(ctor);
+            }
+        }
+
         public void updateAssembly(InstrumentationPoint ip)
         {
             mapAssemblyNamesToDefinitions[ip.AssemblyName] = ip.instrumentationPointAssemblyDefinition;
+
+            // Add bootstrapper code to get around the async deadlock bug
+            /*
+            InstrumentationPoint ctor = 
+                new InstrumentationPoint("ctor", this)
+                    .FindInAssemblyNamed(ip.instrumentationPointAssemblyDefinition.Name.Name)
+                    .FindInTypeNamed(ip.instrumentationPointTypeDefinition.Name)
+                    .FindMethodNamed(".ctor");
+            bootstrapHelper.StartingAtEntry(ctor);*/
         }
 
         public void writeAssembly(InstrumentationPoint ip)

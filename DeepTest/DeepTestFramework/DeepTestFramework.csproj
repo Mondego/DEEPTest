@@ -54,6 +54,7 @@
     <Compile Include="Instrumentation\InstrumentationHelpers\StopwatchHelper.cs" />
     <Compile Include="Instrumentation\InstrumentationHelpers\SleepHelper.cs" />
     <Compile Include="Instrumentation\InstrumentationHelpers\SnapshotLocalValueHelper.cs" />
+    <Compile Include="Instrumentation\InstrumentationHelpers\BootstrapBrokerInstanceHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

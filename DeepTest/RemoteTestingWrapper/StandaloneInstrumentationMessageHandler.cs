@@ -18,6 +18,14 @@ namespace RemoteTestingWrapper
         private Dictionary<string, List<long>> watches;
         private UdpClient listener;
 
+        private static readonly StandaloneInstrumentationMessageHandler instance = new StandaloneInstrumentationMessageHandler();
+
+        // Explicit static constructor to tell C# compiler
+        // not to mark type as beforefieldinit
+        static StandaloneInstrumentationMessageHandler()
+        {
+        }
+
         private StandaloneInstrumentationMessageHandler()
         {
             Console.WriteLine("First-time setup of StandaloneInstrumentationMessageHandler");
@@ -28,17 +36,12 @@ namespace RemoteTestingWrapper
             listener.BeginReceive(new AsyncCallback(receiveMessageCallback), listener);
         }
 
-        public static StandaloneInstrumentationMessageHandler Instance { get { return Nested.instance; } }
-
-        private class Nested
+        public static StandaloneInstrumentationMessageHandler Instance
         {
-            // Explicit static constructor to tell C# compiler
-            // not to mark type as beforefieldinit
-            static Nested()
+            get
             {
+                return instance;
             }
-
-            internal static readonly StandaloneInstrumentationMessageHandler instance = new StandaloneInstrumentationMessageHandler();
         }
 
         private void receiveMessageCallback(IAsyncResult ar)
@@ -47,9 +50,10 @@ namespace RemoteTestingWrapper
             byte[] messageBuffer = ((UdpClient)ar.AsyncState).EndReceive(ar, ref endPoint);
             string decoded = Encoding.UTF8.GetString(messageBuffer);
 
+            Console.WriteLine("decoded: " + decoded);
+
             InstrumentationPointExchangeMessage m =
                 JsonConvert.DeserializeObject<InstrumentationPointExchangeMessage>(decoded);
-            //Console.WriteLine("Received value request: " + m.instrumentationPointName);
 
             if (snapshots.ContainsKey(m.instrumentationPointName))
             {
@@ -60,7 +64,9 @@ namespace RemoteTestingWrapper
                 m.value = watches[m.instrumentationPointName][watches[m.instrumentationPointName].Count - 1];
             }
 
-            byte[] responseData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(m));
+            string responseString = JsonConvert.SerializeObject(m, Formatting.Indented);
+            Console.WriteLine("Replying with: " + responseString);
+            byte[] responseData = Encoding.UTF8.GetBytes(responseString);
             listener.Send(responseData, responseData.Length, endPoint);
             listener.BeginReceive(new AsyncCallback(receiveMessageCallback), listener);
         }
@@ -85,10 +91,14 @@ namespace RemoteTestingWrapper
             watches[instrumentationPointId].Add(s.ElapsedMilliseconds);
         }
 
+        public void Bootstrap()
+        {
+            Console.WriteLine("Eager instantiation");
+        }
+
         public void Register(WovenSnapshot injectedField)
         {
             snapshots.Add(injectedField.Name, injectedField);
-            //Console.WriteLine("Registered at {0}", injectedField.Name);
         }
 
         public object getSnapshot(string ipName)
